@@ -13,7 +13,7 @@ Chưa có skill chính thức thì người dùng tự cài: `npx skills add hey
 
 ## Video "giải thích kinh tế – địa phương" từ giọng đọc có sẵn
 
-Đọc và tuân thủ `references/quy-tac-chuyen-gia.md` (8 nhóm quy tắc, mỗi quy tắc có cách kiểm). Tóm tắt: mọi câu thoại được chứng minh bằng hình; ≥ 4 chất liệu xen kẽ (bản đồ vector, cảnh quay thật, bảng số tích luỹ trên bản đồ, ảnh tài liệu gốc); 0–3 s toàn quốc → vùng → tỉnh, tỉnh tô cam #F28C28 80%; cắt ở khoảng lặng; whip zoom, cấm thu nhỏ lộ viền; chữ to ≤ 1 ý/8–10 s, phụ đề nhỏ; −14 LUFS / −1 dBTP + SFX thấp hơn giọng ≥ 12 dB; 10–15 s cuối là người hoặc footage thật. Công cụ: `transcribe_vi.py`, `doc_capture.js`, `vector_map.js/.css` + `geo/README.md`, `make_sfx.py`, `mix_audio.py`, `qa_frames.py`.
+Đọc và tuân thủ `references/quy-tac-chuyen-gia.md` và trình bày theo `references/he-thiet-ke.md` (Be Vietnam Pro, 1 màu nhấn cam #F28C28, nhãn kiểu A/B, dòng neo thay phụ đề, không vàng/không hộp đen) (8 nhóm quy tắc, mỗi quy tắc có cách kiểm). Tóm tắt: mọi câu thoại được chứng minh bằng hình; ≥ 4 chất liệu xen kẽ (bản đồ vector, cảnh quay thật, bảng số tích luỹ trên bản đồ, ảnh tài liệu gốc); 0–3 s toàn quốc → vùng → tỉnh, tỉnh tô cam #F28C28 80%; cắt ở khoảng lặng; whip zoom, cấm thu nhỏ lộ viền; chữ to ≤ 1 ý/8–10 s, phụ đề nhỏ; −14 LUFS / −1 dBTP + SFX thấp hơn giọng ≥ 12 dB; 10–15 s cuối là người hoặc footage thật. Công cụ: `transcribe_vi.py`, `doc_capture.js`, `vector_map.js/.css` + `geo/README.md`, `make_sfx.py`, `mix_audio.py`, `qa_frames.py`.
 
 ## Ba điều không được vi phạm
 
@@ -87,6 +87,7 @@ cp -r <skill>/template/* <dir>/
 | --- | --- |
 | Toán phối cảnh, API của rig, công thức từng kiểu move, nối take, lỗi thường gặp, chuẩn bị ảnh tách lớp | `references/camera-rig.md` |
 | **Quy tắc bắt buộc từ chuyên gia (video giải thích kinh tế – địa phương)** | `references/quy-tac-chuyen-gia.md` |
+| **Hệ thiết kế (phông, màu, 2 kiểu nhãn, dòng neo) + kiểm tra cuối** | `references/he-thiet-ke.md`, `design/` |
 | **Phong cách đo từ 5 video mẫu của người dùng (mặc định)** | `references/style-mau.md` |
 | Từ vựng hình ảnh BĐS/kinh tế, màu tăng/giảm, font tiếng Việt, nhịp | `references/genre-grammar.md` |
 | Đọc kết quả phân tích video mẫu, giới hạn của phép đo | `references/analysis.md` |

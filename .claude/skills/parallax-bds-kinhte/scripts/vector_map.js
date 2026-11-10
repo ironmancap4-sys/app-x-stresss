@@ -35,6 +35,16 @@ function makeMap(opts) {
   rings.forEach((r) => S(r, 4));
   // nhãn HTML gắn toạ độ
   const labels = [...document.querySelectorAll(opts.labels)].map((n) => ({ n, p: L[n.dataset.at], dx: +(n.dataset.dx || 0), dy: +(n.dataset.dy || 0) }));
+  // Kiểu A: chấm tại vật thể, đường dẫn tới (lx,ly), chữ canh theo hướng đường dẫn
+  document.querySelectorAll(opts.labels + ".la").forEach((n) => {
+    const lx = +(n.dataset.lx || 0), ly = +(n.dataset.ly || 0), al = n.dataset.align || (lx >= 0 ? "l" : "r");
+    const lead = n.querySelector(".lead"), tx = n.querySelector(".tx");
+    if (lead) { lead.style.width = Math.hypot(lx, ly) + "px"; lead.style.transform = `rotate(${Math.atan2(ly, lx)}rad)`; }
+    if (tx) { const gx = al === "l" ? 10 : al === "r" ? -10 : 0, gy = al === "c" ? (ly >= 0 ? 12 : -12) : 0;
+      tx.style.left = (lx + gx) + "px"; tx.style.top = (ly + gy) + "px";
+      tx.style.transform = al === "l" ? "translate(0,-50%)" : al === "r" ? "translate(-100%,-50%)" : (ly >= 0 ? "translate(-50%,0)" : "translate(-50%,-100%)");
+      tx.style.textAlign = al === "r" ? "right" : al === "c" ? "center" : "left"; }
+  });
   const ringR = { r0: 0, r1: 0, r2: 0 };
 
   // camera: (lat,lng,Z) -> Hermite đơn điệu trên x,y,Z => vận tốc liên tục

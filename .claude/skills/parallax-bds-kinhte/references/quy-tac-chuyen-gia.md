@@ -46,10 +46,10 @@ Google Earth 3D là hình dựng, không phải cảnh quay thật: dùng đư�
 
 ## 5. Chữ trên màn hình
 
-- Chữ to giữa màn hình: tối đa 1 ý chính mỗi 8–10 s (câu hỏi, luận điểm, thông điệp chốt). Còn lại: nhãn nhỏ gắn vào đồ hoạ hoặc phụ đề nhỏ (38 px, nền tối).
+- Không phụ đề chạy theo lời. Mỗi cảnh 1 "dòng neo" (≤ 7 từ) nói ý chính, hiện đúng lúc đọc từ khoá; các ý còn lại do nhãn gắn đồ hoạ (kiểu A/B, `he-thiet-ke.md`) gánh.
 - Ngắt dòng thủ công: không để 1 từ đơn lẻ trên một dòng, không tách cụm trong ngoặc kép, mỗi dòng ≥ 2 từ (kiểm bằng `assert` khi sinh phụ đề).
 - Chữ không đè nhãn bản đồ: khi hiện chữ to, ẩn nhãn bản đồ hoặc dời camera.
-- Giữ: nhãn phân đoạn (pill xanh) ở trên, nguồn ở chân khung, nhãn phụ xanh lá cho % tăng trưởng (chữ trắng trên `#1e8a4c` để đủ tương phản).
+- Giữ: nhãn phân đoạn (kính mờ) ở trên, nguồn ở chân khung; % tăng trưởng = chữ cam + ▲, không nền.
 
 ## 6. Số liệu
 

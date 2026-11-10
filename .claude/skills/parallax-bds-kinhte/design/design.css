@@ -1,0 +1,31 @@
+    /* ===== HỆ THIẾT KẾ: báo chí kinh tế, tối giản (1 phông, 1 màu nhấn) ===== */
+    #root { --navy0: #0E1A2B; --navy1: #13243A; --accent: #F28C28; --ink: #FFFFFF; --ink75: rgba(255,255,255,0.75); --ink45: rgba(255,255,255,0.45); --neutral: #8A97A8;
+      font-family: 'Be Vietnam Pro', sans-serif; color: var(--ink); background: var(--navy0); }
+    /* nhãn phân đoạn trên cùng: kính mờ */
+    .seg { position: absolute; left: 0; right: 0; top: 150px; text-align: center; }
+    .seg > span { display: inline-block; padding: 12px 28px 13px; font-size: 24px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--ink); background: rgba(255,255,255,0.10); border: 1.5px solid rgba(255,255,255,0.20); border-radius: 999px; backdrop-filter: blur(10px); }
+    /* dòng neo: tiêu đề lớn duy nhất của khung */
+    .anchor { position: absolute; left: 80px; right: 80px; text-align: center; font-size: 68px; font-weight: 800; line-height: 1.08; letter-spacing: 0.01em;
+      text-transform: uppercase; text-shadow: 0 2px 4px rgba(5,10,20,0.55), 0 6px 30px rgba(5,10,20,0.8); }
+    .anchor .ln { display: block; white-space: nowrap; }
+    .anchor .w { display: inline-block; }
+    .anchor em { font-style: normal; color: var(--accent); }
+    .anchor.low { bottom: 300px; } .anchor.mid { top: 820px; }
+    /* Kiểu A: nhãn gắn vật thể — chấm 10px + đường dẫn 2px + chữ, không hộp */
+    .la { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+    .la .dot { position: absolute; left: -5px; top: -5px; width: 10px; height: 10px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 3px rgba(14,26,43,0.6); }
+    .la .lead { position: absolute; left: 0; top: -1px; height: 2px; background: var(--ink); transform-origin: 0 50%; }
+    .la .tx { position: absolute; white-space: nowrap; font-size: 32px; font-weight: 600; line-height: 1.1; text-shadow: 0 0 12px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.45); }
+    .la .tx small { display: block; margin-top: 4px; font-size: 28px; font-weight: 500; color: var(--ink75); }
+    .la.acc .dot { background: var(--accent); }
+    /* Kiểu B: thẻ khái niệm */
+    .lb { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+    .lb > span { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; padding: 9px 16px 10px; font-size: 28px; font-weight: 600; letter-spacing: 0.02em;
+      text-transform: uppercase; color: var(--ink); background: rgba(14,26,43,0.70); border: 2px solid var(--accent); border-radius: 8px; }
+    /* chân trang nguồn */
+    .foot { position: absolute; left: 60px; right: 60px; bottom: 64px; text-align: center; font-size: 19px; font-weight: 400; line-height: 1.4; color: var(--ink45); }
+    /* gradient navy cho ảnh/video: trên 18%, dưới 22% */
+    .gtop { position: absolute; left: 0; right: 0; top: 0; height: 346px; background: linear-gradient(180deg, rgba(14,26,43,0.85), rgba(14,26,43,0)); }
+    .gbot { position: absolute; left: 0; right: 0; bottom: 0; height: 422px; background: linear-gradient(0deg, rgba(14,26,43,0.85), rgba(14,26,43,0)); }
+    .up { color: var(--accent); font-weight: 600; }
