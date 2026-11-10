@@ -11,6 +11,10 @@ Chưa có skill chính thức thì người dùng tự cài: `npx skills add hey
 
 **Mặc định của skill = phong cách 5 video mẫu của người dùng** (`references/style-mau.md`): khung **dọc 1080×1920**, bay vào bản đồ vệ tinh → tuyến neon tự vẽ → ghim/thẻ dự án → cảnh 3D kiểu Google Earth (toà nhà, cao tốc dựng 3D từ dữ liệu bản đồ, không phải flycam thật), nối bằng zoom-blur; camera chạy ≥ 85% thời gian, cảnh thật 2,5–4 s. Video ngang chỉ khi được yêu cầu (`template-ngang/`).
 
+## Video "giải thích kinh tế – địa phương" từ giọng đọc có sẵn
+
+Đọc và tuân thủ `references/quy-tac-chuyen-gia.md` (8 nhóm quy tắc, mỗi quy tắc có cách kiểm). Tóm tắt: mọi câu thoại được chứng minh bằng hình; ≥ 4 chất liệu xen kẽ (bản đồ vector, cảnh quay thật, bảng số tích luỹ trên bản đồ, ảnh tài liệu gốc); 0–3 s toàn quốc → vùng → tỉnh, tỉnh tô cam #F28C28 80%; cắt ở khoảng lặng; whip zoom, cấm thu nhỏ lộ viền; chữ to ≤ 1 ý/8–10 s, phụ đề nhỏ; −14 LUFS / −1 dBTP + SFX thấp hơn giọng ≥ 12 dB; 10–15 s cuối là người hoặc footage thật. Công cụ: `transcribe_vi.py`, `doc_capture.js`, `vector_map.js/.css` + `geo/README.md`, `make_sfx.py`, `mix_audio.py`, `qa_frames.py`.
+
 ## Ba điều không được vi phạm
 
 1. **Camera liên tục.** Trong một take, camera luôn có ít nhất một kênh (x, y, z, orbit) đang chạy; vận tốc liên tục (không giật, không "trượt–dừng–trượt"). Chỉ dừng hẳn khi có chủ đích (`stop: true`) và tối đa một lần mỗi take. Mục tiêu đo được: camera chạy ≥ con số `continuity` của video mẫu (thường ≥ 85% thời gian).
@@ -73,14 +77,16 @@ cp -r <skill>/template/* <dir>/
 
 1. `npx hyperframes check --json` — sửa hết lỗi. Nếu báo `dead_stretch` trong lúc camera đang chạy: kiểm tra xem stage/cam của rig (`#d-stage`/`#d-cam` hoặc `#w-stage`/`#w-cam`) có bị gắn `data-layout-ignore` không (gắn vào thì detector không thấy camera).
 2. `npx hyperframes snapshot --at <các mốc trong CAMERA.md>` và xem: chữ có bị cắt, nhãn có ra ngoài khung, lớp có hở mép khi dolly lùi/orbit không.
-3. Render rồi **đo lại chính video của mình** bằng `analyze_refs.py` và so với cột "Mục tiêu" trong `references/style-mau.md` (hoặc `STYLE.md`): camera chạy ≥ 85%, ≤ 4 lần dừng/phút, cảnh thật 2,5–4 s, ≥ 75% cut khi đang chạy, parallax ≥ 70% cảnh (nội dung BĐS). Lệch thì sửa `KEYS`/cách nối take, không sửa ngưỡng đo.
-4. Ghi `REVIEW.md` ngắn: các số đo so với mẫu, chỗ còn khác.
+3. `python scripts/qa_frames.py out.mp4` — không còn DEAD_EDGE / HAZE / DARK_RUN / BLUR_RUN / STATIC chưa giải thích (xem ảnh lỗi nó lưu).
+4. Render rồi **đo lại chính video của mình** bằng `analyze_refs.py` và so với cột "Mục tiêu" trong `references/style-mau.md` (hoặc `STYLE.md`): camera chạy ≥ 85%, ≤ 4 lần dừng/phút, cảnh thật 2,5–4 s, ≥ 75% cut khi đang chạy, parallax ≥ 70% cảnh (nội dung BĐS). Lệch thì sửa `KEYS`/cách nối take, không sửa ngưỡng đo.
+5. Ghi `REVIEW.md` ngắn: các số đo so với mẫu, chỗ còn khác.
 
 ## Tham chiếu
 
 | Cần | Đọc |
 | --- | --- |
 | Toán phối cảnh, API của rig, công thức từng kiểu move, nối take, lỗi thường gặp, chuẩn bị ảnh tách lớp | `references/camera-rig.md` |
+| **Quy tắc bắt buộc từ chuyên gia (video giải thích kinh tế – địa phương)** | `references/quy-tac-chuyen-gia.md` |
 | **Phong cách đo từ 5 video mẫu của người dùng (mặc định)** | `references/style-mau.md` |
 | Từ vựng hình ảnh BĐS/kinh tế, màu tăng/giảm, font tiếng Việt, nhịp | `references/genre-grammar.md` |
 | Đọc kết quả phân tích video mẫu, giới hạn của phép đo | `references/analysis.md` |
