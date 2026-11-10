@@ -26,7 +26,8 @@ Template đã kiểm chứng: `templates/kinh-te-dia-phuong/` (đọc `TEMPLATE.
 2. **Kiểm chứng số liệu**: tìm bài báo chính thống, đọc toàn văn, lập bảng số (giá trị, đơn vị, nguồn, ngày). Chụp bằng chứng: `node scripts/doc_capture.js <url> "<đầu tiêu đề>" "<chuỗi đoạn 1>" "<đoạn 2>" "<đoạn 3>"`.
 3. **Bản đồ**: viết `geo_config.json` (tỉnh gộp theo nghị quyết hiện hành, điểm, sông, trục bờ biển — mẫu trong template) → `python scripts/geo_build.py geo_config.json geo.json`; xem `work/rivers_preview.jpg`.
 4. **Hình thật**: footage giấy phép mở (Wikimedia Commons CC, Pexels, Pixabay; không lách giới hạn tải, không giả trình duyệt), cắt dọc tránh watermark, ghi tác giả + giấy phép; Google Earth: `scripts/earth_capture.js` + `scripts/earth_encode.sh`, rồi chỉnh màu về navy (lệnh trong `he-thiet-ke.md`). Chỉ gắn nhãn địa danh đúng chỗ quay; footage nơi khác ghi chung ("Đồng bằng sông Cửu Long").
-5. **Dựng**: copy template, cài phông (`design/install_fonts.sh <project>` nếu thiếu), sửa thời lượng cảnh trong `index.html`, `KEYS` camera + mốc nhãn trong `src/geo.html`, `ROWS` trong `rows.py` (`python rows.py`), đích zoom/highlight trong `src/doc.html`, `footage.json`; `python build.py`.
+5. **Dựng (cách nhanh, khuyên dùng)**: viết `storyboard.json` (mỗi cảnh: `map` bản đồ vector + ảnh vệ tinh trong 1 cú máy, `media` video/ảnh, `board` bảng số tích luỹ, `doc` tài liệu gốc; mốc theo từ khoá) → `python scripts/scenegen.py storyboard.json <project>` sinh toàn bộ cảnh theo hệ thiết kế (vào/ra cảnh, chữ tắt trước chuyển cảnh, chặn số đếm từ 0 đã tự áp). Project cần `fonts.css`, `design.css`, `vmap.js`, `vector_map.css`, `geo.json`. Ví dụ đầy đủ: `templates/one-era/` (257 s, 23 cảnh).
+   **Dựng (thủ công)**: copy template, cài phông (`design/install_fonts.sh <project>` nếu thiếu), sửa thời lượng cảnh trong `index.html`, `KEYS` camera + mốc nhãn trong `src/geo.html`, `ROWS` trong `rows.py` (`python rows.py`), đích zoom/highlight trong `src/doc.html`, `footage.json`; `python build.py`.
 6. **Âm thanh**: `python scripts/make_sfx.py` → `sfx/`; sửa `sfx_events.json` theo mốc chuyển cảnh/nhãn/số; `python scripts/mix_audio.py voice.mp3 sfx_events.json assets/mix.wav --duration <s>` (script tự đo và báo nếu chưa đạt −14 LUFS/−1 dBTP).
 7. **Kiểm tra** (bắt buộc trước khi giao):
    - `npx hyperframes check --json` — sửa hết lỗi (cảnh báo nhãn phân đoạn 24 px là chủ đích).
@@ -43,6 +44,7 @@ Template đã kiểm chứng: `templates/kinh-te-dia-phuong/` (đọc `TEMPLATE.
 | Template | Dùng cho |
 | --- | --- |
 | `templates/kinh-te-dia-phuong/` (**mặc định**) | giải thích kinh tế – địa phương từ giọng đọc: bản đồ vector + footage + bảng số + tài liệu gốc + Google Earth |
+| `templates/one-era/` | ví dụ dựng bằng `scenegen.py`: dự án BĐS (nguồn cung CBRE → vị trí → quy mô → đối tác → giao thông → tiện ích → sản phẩm → lộ trình) |
 | `templates/map-dive-parallax/` | video BĐS dọc kiểu bay vào bản đồ, rig camera 3D parallax (tuyến neon, ghim, thẻ dự án) |
 | `templates/ngang-parallax/` | bản 16:9: skyline nhiều lớp, nhãn giá gắn toà nhà, biểu đồ camera bay dọc |
 
@@ -62,8 +64,10 @@ Template đã kiểm chứng: `templates/kinh-te-dia-phuong/` (đọc `TEMPLATE.
 | --- | --- |
 | `transcribe_vi.py` | chép lời tiếng Việt + mốc từng từ (faster-whisper) |
 | `doc_capture.js` | chụp bài báo gốc + vị trí các đoạn số |
-| `geo_build.py` | tỉnh gộp, sông dò theo ảnh vệ tinh, dải ven biển → `geo.json` |
-| `vector_map.js/.css` | bản đồ vector: camera Hermite, nét cố định, nhãn A/B, vòng sóng |
+| `geo_build.py` | tỉnh gộp, sông dò theo ảnh vệ tinh, dải ven biển, đường/kênh/ranh dự án theo toạ độ → `geo.json` |
+| `scenegen.py` | storyboard JSON → toàn bộ project HyperFrames theo hệ thiết kế |
+| `vmap.js` | bản đồ vector tổng quát (lớp tỉnh/đường/kênh/ảnh vệ tinh theo toạ độ, nối điểm, vòng sóng, nhãn A/B, camera Hermite) |
+| `vector_map.js/.css` | bản đồ vector của template Vĩnh Long; `.css` dùng chung |
 | `earth_capture.js`, `earth_encode.sh` | quay Google Earth web từng khung, ghép 30 fps |
 | `make_sfx.py`, `mix_audio.py` | SFX tổng hợp; trộn + chuẩn hoá loudness có kiểm chứng |
 | `qa_frames.py`, `style_check.py` | kiểm lỗi render; contact sheet + vùng TikTok + màu cấm |

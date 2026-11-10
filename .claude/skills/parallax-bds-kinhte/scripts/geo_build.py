@@ -70,11 +70,18 @@ def main():
     out["prov"]["_vn"] = poly_d(country.simplify(0.008), 0.02)
     for k, g in G.items():
         p = g.representative_point(); out["lab"][k] = [round(mx(p.x), 1), round(my(p.y), 1)]
-    out["region"] = poly_d(unary_union([G[k] for k in C["region"]]).buffer(0.01).buffer(-0.01), 0.01)
+    if C.get("region"): out["region"] = poly_d(unary_union([G[k] for k in C["region"]]).buffer(0.01).buffer(-0.01), 0.01)
     for k, (lng, lat) in {**C.get("points", {}), **C.get("label_points", {})}.items():
         out["lab"][k] = [round(mx(lng), 1), round(my(lat), 1)]
 
-    # 2. sông: nhánh Natural Earth (cắt) + dò tiếp ra cửa biển trên ảnh vệ tinh
+    # 1b. đường/kênh/ranh dự án khai báo bằng toạ độ: "lines": {"ql13": [[lng,lat],...]}, "polys": {"site": [[lng,lat],...]}
+    out["lines"] = {k: line_d(v) for k, v in C.get("lines", {}).items()}
+    for k, v in C.get("polys", {}).items():
+        out["lines"][k] = line_d(v) + "Z"
+    # 2. sông: nhánh Natural Earth (cắt) + dò tiếp ra cửa biển trên ảnh vệ tinh (tuỳ chọn)
+    if not C.get("rivers"):
+        os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
+        json.dump(out, open(a.out, "w", encoding="utf-8")); print(f"{a.out}: {len(G)} vùng, {len(out['lines'])} đường"); return
     import numpy as np
     from PIL import Image, ImageDraw
     from skimage.graph import route_through_array
