@@ -1,0 +1,23 @@
+# (bắt đầu, kết thúc, [dòng...], kiểu)  kiểu: "c" = giữa đáy, "l" = 1/3 dưới căn trái (đoạn kết)
+CAPS = [
+ (0.05, 2.35, ["Nằm ở trái tim của vùng châu thổ,"], "c"),
+ (2.6, 4.45, ["giữa hai nhánh sông Tiền và sông Hậu,"], "c"),
+ (4.6, 6.85, ["Vĩnh Long từng bị xem là vùng đệm"], "c"),
+ (6.9, 10.2, ["đi ngang qua giữa TP.HCM", "và trung tâm kinh tế Cần Thơ."], "c"),
+ (10.3, 13.1, ["Tuy nhiên, trong chiến lược phát triển", "vùng đồng bằng sông Cửu Long,"], "c"),
+ (13.45, 16.3, ["địa phương này đang được quy hoạch", "để trở thành một cực tăng trưởng"], "c"),
+ (17.45, 19.8, ["giữ vai trò bản lề,", "kết nối không gian kinh tế"], "c"),
+ (19.8, 22.9, ["giữa dải ven biển phía Đông", "và tiểu vùng trung tâm châu thổ."], "c"),
+ (28.6, 30.72, ["Nhìn vào các chỉ số kinh tế mới nhất,"], "c"),
+ (30.75, 33.0, ["chúng ta sẽ thấy sự tích lũy nội tại", "của địa phương này"], "c"),
+ (33.05, 35.6, ["đang diễn ra với một tốc độ", "đáng kinh ngạc."], "c"),
+ (35.85, 37.2, ["Chỉ trong 8 tháng đầu năm,"], "c"),
+ (64.8, 66.7, ["cùng hàng loạt các chỉ số tích cực khác,"], "c"),
+ (66.75, 69.1, ["vừa được công bố tại họp báo", "của UBND tỉnh Vĩnh Long"], "c"),
+ (69.15, 74.1, ["chiều ngày 7/9/2026 về tình hình", "kinh tế – xã hội 8 tháng đầu năm."], "c"),
+ (74.45, 76.1, ["Với sự phát triển vượt bậc như vậy,"], "c"),
+ (76.1, 78.25, ["Vĩnh Long đang đứng trước", "vận hội phát triển chưa từng có,"], "c"),
+ (78.3, 81.4, ["nhưng lại đứng trước bài toán", "tái cấu trúc không gian đô thị"], "l"),
+ (81.45, 83.2, ["và giải toả các điểm nghẽn", "giao thông"], "l"),
+ (86.75, 88.55, ["để giải quyết bài toán này."], "l"),
+]

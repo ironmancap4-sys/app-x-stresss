@@ -1,0 +1,14 @@
+{
+ "F1SRC": "assets/earth/s2.mp4",
+ "F1MS": 0.3,
+ "F1LOC": "Trung tâm TP Vĩnh Long",
+ "F2SRC": "assets/earth/s3.mp4",
+ "F2MS": 0.3,
+ "F2LOC": "TP Vĩnh Long nhìn từ trên cao",
+ "FSRC": "Hình ảnh 3D: Google Earth",
+ "E1SRC": "assets/earth/s6.mp4",
+ "E1MS": 0.0,
+ "E2SRC": "assets/earth/s5.mp4",
+ "E2MS": 1.0,
+ "ESRC": "Hình ảnh 3D: Google Earth"
+}

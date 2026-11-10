@@ -1,0 +1,30 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: #0a1220; font-family: "Montserrat", sans-serif; color: #fff; }
+    #ew { position: absolute; inset: 0; transform-origin: 540px 960px; }
+    #ew video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+    #e-top { position: absolute; left: 0; right: 0; top: 0; height: 360px; background: linear-gradient(0deg, rgba(0,0,0,0), rgba(0,0,0,0.45)); }
+    #e-pill { position: absolute; left: 0; right: 0; top: 150px; text-align: center; }
+    #e-pill span { display: inline-block; padding: 12px 30px 14px; font-size: 34px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; background: #2f5bd3; border-radius: 999px; }
+    .loc { position: absolute; left: 60px; top: 250px; padding: 8px 16px 10px; font-size: 32px; font-weight: 800; background: rgba(10,14,22,0.82); border-left: 8px solid #F28C28; border-radius: 6px; }
+    .loc .li { display: inline-block; }
+    #e-src { position: absolute; left: 50px; right: 50px; bottom: 70px; text-align: center; font-size: 26px; font-weight: 600; color: rgba(255,255,255,0.85); }
+  </style>
+  <div id="root" data-composition-id="earthb" data-width="1080" data-height="1920">
+    <div id="ew"><video id="ebv" class="clip" src="assets/earth/s4.mp4" muted playsinline data-start="0" data-duration="6.3" data-media-start="0.4" data-track-index="1"></video></div>
+    <div id="e-top" data-layout-allow-occlusion></div>
+    <div id="e-pill" class="clip" data-start="0" data-duration="6.3" data-track-index="2" data-layout-allow-occlusion><span id="e-pill-t">Vận hội mới</span></div>
+    <span id="e-loc" class="loc clip" data-start="0.3" data-duration="5.9" data-track-index="3"><span class="li">Cầu Mỹ Thuận 1 &amp; 2 · nối Vĩnh Long – Đồng Tháp</span></span>
+    <p id="e-src" class="clip" data-start="0" data-duration="6.3" data-track-index="4" data-layout-ignore><span>Hình ảnh 3D: Google Earth</span></p>
+  </div>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#ew", { scale: 1.4, filter: "blur(10px)" }, { scale: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" }, 0);
+      tl.fromTo("#e-pill-t", { opacity: 0, y: -16 }, { opacity: 1, y: 0, duration: 0.35, ease: "expo.out" }, 0.15);
+      tl.fromTo("#e-loc .li", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.35, ease: "expo.out" }, 0.3);
+      tl.fromTo("#ew", { scale: 1, filter: "blur(0px)" }, { scale: 1.35, filter: "blur(10px)", duration: 0.17, ease: "power3.in", immediateRender: false }, 6.13);
+      window.__timelines["earthb"] = tl;
+    })();
+  </script>
+</template>

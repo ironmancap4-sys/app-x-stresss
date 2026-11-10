@@ -1,0 +1,120 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: #0a1220; font-family: "Montserrat", sans-serif; color: #fff; }
+    /*MAPCSS*/
+    .lab { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+    .lab > span { position: absolute; white-space: nowrap; transform: translate(-50%, -50%); }
+    .t-prov { font-size: 40px; font-weight: 900; letter-spacing: 0.04em; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.9); text-align: center; line-height: 1.1; }
+    .t-prov small { display: block; font-size: 28px; font-weight: 700; letter-spacing: 0; color: #ffe2c2; }
+    .t-cmp { font-size: 34px; font-weight: 800; color: #e6e9ee; text-shadow: 0 2px 10px rgba(0,0,0,0.9); }
+    .t-rv { font-size: 30px; font-weight: 800; letter-spacing: 0.14em; color: #bfeaff; text-shadow: 0 2px 8px rgba(0,0,0,1); }
+    .t-reg { font-size: 34px; font-weight: 900; letter-spacing: 0.08em; color: #7fe3d0; text-shadow: 0 2px 10px rgba(0,0,0,0.9); }
+    .t-tag { padding: 8px 16px 10px; font-size: 32px; font-weight: 800; border-radius: 8px; background: rgba(10,14,22,0.88); }
+    .t-tag.or { color: #ffb15c; border: 2px solid #F28C28; }
+    .t-tag.gr { color: #6ff0a4; border: 2px solid #3ccf7a; }
+    .t-tag.ye { color: #111; background: #ffd23f; }
+    #g-pill { position: absolute; left: 0; right: 0; top: 150px; text-align: center; }
+    #g-pill span { display: inline-block; padding: 12px 30px 14px; font-size: 34px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; background: #2f5bd3; border-radius: 999px; }
+    #g-q { position: absolute; left: 80px; right: 80px; top: 770px; text-align: center; font-size: 76px; font-weight: 900; line-height: 1.08; text-transform: uppercase; text-shadow: 0 6px 30px rgba(0,0,0,0.7); }
+    #g-q .ln { display: block; white-space: nowrap; }
+    #g-q em { font-style: normal; color: #ffd23f; }
+    #g-qdim { position: absolute; inset: 0; background: rgba(5,8,14,0.55); opacity: 0; }
+    #g-src { position: absolute; left: 0; right: 0; bottom: 70px; text-align: center; font-size: 26px; font-weight: 600; color: rgba(255,255,255,0.75); }
+    #g-whip { position: absolute; inset: 0; }
+  </style>
+  <div id="root" data-composition-id="geo" data-width="1080" data-height="1920">
+    <div id="g-whip">
+      <svg id="g-map" class="map" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overflow><g class="world"></g></svg>
+      <div class="mapdots"></div>
+      <div class="lab g-lab" id="l-reg" data-at="pt_vl" data-dx="-170" data-dy="-330"><span class="t-reg">ĐỒNG BẰNG SÔNG CỬU LONG</span></div>
+      <div class="lab g-lab" id="l-vl" data-at="pt_vl" data-dx="150" data-dy="170"><span class="t-prov">VĨNH LONG<small>(Vĩnh Long, Bến Tre, Trà Vinh cũ)</small></span></div>
+      <div class="lab g-lab" id="l-tien" data-at="rv_tien" data-dx="0" data-dy="-36"><span class="t-rv">SÔNG TIỀN</span></div>
+      <div class="lab g-lab" id="l-hau" data-at="rv_hau" data-dx="-30" data-dy="40"><span class="t-rv">SÔNG HẬU</span></div>
+      <div class="lab g-lab" id="l-hcm" data-at="pt_hcm" data-dx="0" data-dy="-60"><span class="t-cmp">TP.HCM</span></div>
+      <div class="lab g-lab" id="l-ct" data-at="pt_ct" data-dx="-120" data-dy="10"><span class="t-cmp">CẦN THƠ</span></div>
+      <div class="lab g-lab" id="l-buf" data-at="pt_vl" data-dx="-60" data-dy="-100"><span class="t-tag ye">VÙNG ĐỆM?</span></div>
+      <div class="lab g-lab" id="l-pole" data-at="pt_vl" data-dx="0" data-dy="-120"><span class="t-tag or">CỰC TĂNG TRƯỞNG</span></div>
+      <div class="lab g-lab" id="l-coast" data-at="coast" data-dx="-70" data-dy="120"><span class="t-tag or">DẢI VEN BIỂN PHÍA ĐÔNG</span></div>
+      <div class="lab g-lab" id="l-center" data-at="pt_ct" data-dx="-60" data-dy="130"><span class="t-tag gr">TIỂU VÙNG TRUNG TÂM</span></div>
+      <div class="lab g-lab" id="l-hinge" data-at="pt_vl" data-dx="40" data-dy="-110"><span class="t-tag ye">BẢN LỀ KẾT NỐI</span></div>
+    </div>
+    <div id="g-qdim"></div>
+    <div id="g-pill" class="clip" data-start="0.15" data-duration="22.7" data-track-index="2" data-layout-allow-occlusion><span id="g-pill-t">Vị trí · Vĩnh Long</span></div>
+    <h1 id="g-q" class="clip" data-start="22.9" data-duration="5.5" data-track-index="3">
+      <span class="ln"><span class="w">Kinh</span> <span class="w">tế</span> <span class="w">Vĩnh</span> <span class="w">Long</span></span>
+      <span class="ln"><span class="w">đã</span> <em><span class="w">tích</span> <span class="w">lũy</span></em></span>
+      <span class="ln"><span class="w">được</span> <span class="w">những</span> <span class="w">gì?</span></span>
+    </h1>
+    <p id="g-src" class="clip" data-start="0" data-duration="28.4" data-track-index="4" data-layout-ignore><span>Bản đồ: Natural Earth (gộp tỉnh theo NQ 202/2025/QH15)</span></p>
+  </div>
+  <script>
+    (() => {
+      /*GEOJSON*/
+      /*MAPJS*/
+      const DUR = 28.4;
+      const map = makeMap({ svg: "#g-map", id: "g", labels: ".g-lab", rings: [[15.6, 1.5, 300], [16.05, 1.5, 300], [16.5, 1.5, 300]], keys: [
+        [0.0, 16.2, 105.9, 7.22],
+        [1.6, 10.35, 105.75, 8.55],
+        [2.9, 10.08, 106.15, 9.3],
+        [4.4, 10.12, 106.12, 9.22],
+        [7.3, 10.42, 106.35, 9.02],
+        [10.1, 10.38, 106.25, 9.0],
+        [12.0, 9.8, 105.35, 8.45],
+        [15.6, 10.0, 106.22, 9.62],
+        [17.4, 10.0, 106.15, 9.55],
+        [19.6, 9.98, 106.18, 9.22],
+        [22.8, 10.0, 106.15, 9.28],
+        [28.4, 10.12, 106.08, 10.25, true],
+      ] });
+      const tl = gsap.timeline({ paused: true });
+      const clock = { t: 0 };
+      tl.fromTo(clock, { t: 0 }, { t: DUR, duration: DUR, ease: "none", onUpdate: () => map.apply(clock.t) }, 0);
+      map.apply(0);
+      const pop = (sel, at) => tl.fromTo(`${sel} > span`, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.8)" }, at);
+      const out = (sel, at) => tl.to(`${sel} > span`, { opacity: 0, duration: 0.3, ease: "power1.in" }, at);
+      const show = (sel, at, d = 0.5, to = 1) => tl.fromTo(sel, { opacity: 0 }, { opacity: to, duration: d, ease: "power2.out" }, at);
+      const hide = (sel, at, d = 0.4) => tl.to(sel, { opacity: 0, duration: d, ease: "power1.in" }, at);
+      const draw = (sel, at, d) => tl.fromTo(sel, { strokeDashoffset: 100 }, { strokeDashoffset: 0, duration: d, ease: "power1.inOut" }, at);
+
+      tl.fromTo("#g-pill-t", { opacity: 0, y: -16 }, { opacity: 1, y: 0, duration: 0.35, ease: "expo.out" }, 0.15);
+      // 0–3 s: toàn quốc -> vùng -> tỉnh
+      show("#g-region", 0.6, 0.6); pop("#l-reg", 1.3); out("#l-reg", 2.7); hide("#g-region", 3.0, 0.6);
+      show("#g-vl", 2.4, 0.4); show("#g-vlglow", 2.4, 0.4, 0.55); pop("#l-vl", 2.8);
+      // sông: phát sáng chạy theo dòng chảy (thượng nguồn -> cửa biển)
+      draw("#g-tieng", 3.0, 1.3); draw("#g-tien", 3.0, 1.3); pop("#l-tien", 3.3);
+      draw("#g-haug", 3.7, 1.3); draw("#g-hau", 3.7, 1.3); pop("#l-hau", 4.0);
+      // vùng đệm giữa TP.HCM và Cần Thơ: tô xám để so sánh + hành lang nối 2 đầu
+      out("#l-tien", 5.4); out("#l-hau", 5.4); pop("#l-buf", 5.7);
+      show("#g-hcm", 7.6, 0.4); pop("#l-hcm", 7.7);
+      show("#g-ct", 9.6, 0.4); pop("#l-ct", 9.7);
+      draw("#g-corr", 6.3, 3.8);
+      out("#l-buf", 10.1);
+      hide(["#g-tien", "#g-tieng", "#g-hau", "#g-haug"], 10.2, 0.6);
+      // chiến lược phát triển vùng ĐBSCL
+      tl.to("#g-region", { opacity: 1, duration: 0.3 }, 10.4);
+      tl.fromTo("#g-region", { strokeOpacity: 0.4 }, { strokeOpacity: 1, duration: 0.6, ease: "power2.out" }, 10.4);
+      pop("#l-reg", 11.0); out("#l-reg", 13.1); hide("#g-region", 13.2, 0.6);
+      hide(["#g-hcm", "#g-ct", "#g-corr"], 11.2, 0.6); out("#l-hcm", 11.2); out("#l-ct", 11.2);
+      // cực tăng trưởng: viền tỉnh phát sáng + sóng lan đúng lúc đọc từ khoá
+      tl.to("#g-vlglow", { opacity: 1, duration: 0.3 }, 15.5);
+      pop("#l-pole", 15.7); out("#l-pole", 17.4);
+      tl.to("#g-vlglow", { opacity: 0.55, duration: 0.5 }, 17.4);
+      // bản lề: nối dải ven biển phía Đông và tiểu vùng trung tâm
+      pop("#l-hinge", 17.9); out("#l-hinge", 20.4); out("#l-vl", 20.4);
+      draw("#g-coastg", 20.6, 1.0); draw("#g-coast", 20.6, 1.0); pop("#l-coast", 21.0);
+      draw("#g-cone", 18.7, 1.6);
+      show("#g-center", 21.9, 0.5); pop("#l-center", 22.2);
+      draw("#g-conc", 21.4, 1.0);
+      // câu hỏi lớn: ẩn nhãn bản đồ để chữ không đè nhãn, rồi đẩy máy vào tỉnh
+      out("#l-coast", 22.75); out("#l-center", 22.75);
+      hide(["#g-cone", "#g-conc", "#g-coast", "#g-coastg", "#g-center"], 22.8, 0.4);
+      tl.to("#g-qdim", { opacity: 1, duration: 0.4 }, 22.85);
+      hide("#g-pill-t", 22.75, 0.3);
+      tl.fromTo("#g-q .w", { opacity: 0, filter: "blur(10px)", scale: 1.08 }, { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.2, ease: "power4.out", stagger: 0.14 }, 22.95);
+      // whip zoom ra khỏi cảnh (luôn phóng to, không bao giờ thu nhỏ để lộ viền)
+      tl.to("#g-q", { opacity: 0, duration: 0.15 }, 28.05);
+      tl.fromTo("#g-whip", { scale: 1, filter: "blur(0px)" }, { scale: 1.5, filter: "blur(10px)", duration: 0.17, ease: "power3.in", immediateRender: false }, 28.23);
+      window.__timelines["geo"] = tl;
+    })();
+  </script>
+</template>
