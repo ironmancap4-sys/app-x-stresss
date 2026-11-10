@@ -22,7 +22,7 @@ def dead_mask(gray, hsv, block=16):
     sat = hsv[: hb * block, : wb * block, 1].reshape(hb, block, wb, block).astype(np.float32).mean(axis=(1, 3))
     # vùng chết = gần đen, hoặc phẳng tuyệt đối VÀ (tối hoặc mất màu): tile chưa tải, lưới 3D thủng, nền đặc.
     # Mặt nước/bầu trời thật có màu (bão hoà > 14) nên không bị tính.
-    flat = (std < 1.2) & ((mean < 70) | (sat < 14))
+    flat = (std < 1.2) & ((mean < 70) | ((sat < 14) & (mean < 150)))   # trời sáng phẳng là bình thường
     black = mean < 12
     return flat | black, mean, std
 
