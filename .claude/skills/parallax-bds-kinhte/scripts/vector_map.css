@@ -1,6 +1,6 @@
     .mapbg { position: absolute; inset: 0; background:
-      radial-gradient(circle at 1px 1px, rgba(120,150,190,0.22) 1.2px, transparent 1.6px) 0 0 / 26px 26px,
-      radial-gradient(ellipse at 50% 45%, #13213a 0%, #0a1220 70%); }
+      radial-gradient(circle at 2px 2px, rgba(140,170,210,0.30) 1.3px, transparent 1.8px) 0 0 / 9px 9px,
+      radial-gradient(ellipse at 50% 42%, #1c3152 0%, #13223b 55%, #0f1b30 100%); }
     .map { position: absolute; left: 0; top: 0; }
     .map .vn { fill: #1d2738; stroke: #55657f; }
     .map .prov { fill: none; stroke: #4a5a74; }
