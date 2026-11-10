@@ -1,0 +1,37 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: #0b0d0c; font-family: "Montserrat", sans-serif; color: #fff; }
+    #s-map { position: absolute; left: -484px; top: 64px; width: 2048px; height: 1792px; transform-origin: 1024px 896px; }
+    #s-dim { position: absolute; inset: 0; background: radial-gradient(closest-side at 50% 50%, rgba(0,0,0,0.15), rgba(0,0,0,0.55)); }
+    #s-card { position: absolute; left: 90px; right: 90px; top: 600px; padding: 50px 44px 46px; text-align: center; background: rgba(250,250,247,0.96); color: #10161f; border-radius: 26px; box-shadow: 0 30px 80px rgba(0,0,0,0.5); }
+    #s-card .k { display: block; font-size: 34px; font-weight: 800; letter-spacing: 0.08em; color: #2f5bd3; }
+    #s-card .h { display: block; margin-top: 18px; font-size: 64px; font-weight: 900; line-height: 1.08; text-transform: uppercase; }
+    #s-card .d { display: block; margin-top: 22px; font-size: 40px; font-weight: 700; color: #3a4656; }
+    #s-card .src { display: block; margin-top: 30px; padding-top: 24px; border-top: 3px solid #e3e6ea; font-size: 32px; font-weight: 700; color: #5b6676; }
+    #s-credit { position: absolute; left: 0; right: 0; bottom: 120px; text-align: center; font-size: 28px; font-weight: 600; color: rgba(255,255,255,0.8); }
+    #s-flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="src" data-width="1080" data-height="1920">
+    <img id="s-map" src="assets/maps/city.jpg" alt="" data-layout-allow-overflow />
+    <div id="s-dim"></div>
+    <div id="s-card" class="clip" data-start="0.15" data-duration="4.85" data-track-index="2">
+      <span class="k">NGUỒN SỐ LIỆU</span>
+      <span class="h">Họp báo UBND tỉnh Vĩnh Long</span>
+      <span class="d">Chiều 7/9/2026 · Tình hình kinh tế – xã hội 8 tháng đầu năm</span>
+      <span class="src">Báo Đầu tư · Mekong ASEAN</span>
+    </div>
+    <p id="s-credit" class="clip" data-start="0" data-duration="5" data-track-index="3" data-layout-ignore><span>Ảnh vệ tinh: Esri, Maxar, Earthstar Geographics</span></p>
+    <div id="s-flash"></div>
+  </div>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#s-map", { scale: 1.05, rotation: -2 }, { scale: 1.32, rotation: 2, duration: 5, ease: "none" }, 0);
+      tl.fromTo("#root", { filter: "blur(16px)" }, { filter: "blur(0px)", duration: 0.32, ease: "power3.out" }, 0);
+      tl.fromTo("#s-card > span", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out", stagger: 0.12 }, 0.2);
+      tl.to("#s-card", { opacity: 0, scale: 1.1, filter: "blur(12px)", duration: 0.28, ease: "power3.in" }, 4.72);
+      tl.fromTo("#s-flash", { opacity: 0 }, { opacity: 0.3, duration: 0.28, ease: "power2.in", immediateRender: false }, 4.72);
+      window.__timelines["src"] = tl;
+    })();
+  </script>
+</template>

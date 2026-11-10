@@ -1,0 +1,114 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: #0b0d0c; font-family: "Montserrat", sans-serif; color: #fff; }
+    .ew { position: absolute; inset: 0; transform-origin: 540px 960px; }
+    .ew video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+    #e-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 900px; background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.8)); }
+    #e-scrim-top { position: absolute; left: 0; right: 0; top: 0; height: 420px; background: linear-gradient(0deg, rgba(0,0,0,0), rgba(0,0,0,0.45)); }
+    #e-pill { position: absolute; left: 0; right: 0; top: 190px; text-align: center; }
+    #e-pill span { display: inline-block; padding: 12px 30px 14px; font-size: 34px; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase; background: #2f5bd3; border-radius: 999px; }
+    .h-title { position: absolute; left: 70px; right: 70px; bottom: 470px; text-align: center; font-weight: 900; text-transform: uppercase; line-height: 1.05; font-size: 84px; text-shadow: 0 6px 30px rgba(0,0,0,0.6); }
+    .h-title span { display: inline-block; }
+    .h-title em { font-style: normal; color: #ffd23f; }
+    .card { position: absolute; left: 70px; right: 70px; bottom: 330px; text-align: center; }
+    .card .k { display: block; font-size: 38px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.15; text-shadow: 0 3px 16px rgba(0,0,0,0.9); }
+    .card .n { display: block; margin: 6px 0 4px; font-size: 176px; font-weight: 900; line-height: 1; color: #ffd23f; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; text-shadow: 0 8px 40px rgba(0,0,0,0.6); }
+    .card .u { font-size: 64px; letter-spacing: 0; }
+    #c3 .n { font-size: 136px; }
+    #c3 .u { font-size: 54px; }
+    .card .s { display: inline-block; margin-top: 10px; padding: 10px 22px 12px; font-size: 36px; font-weight: 800; color: #0d1a0f; background: #3ccf7a; border-radius: 10px; }
+    #e-src { position: absolute; left: 60px; right: 60px; bottom: 110px; text-align: center; font-size: 28px; font-weight: 600; line-height: 1.35; color: rgba(255,255,255,0.85); }
+    #e-flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+  </style>
+
+  <div id="root" data-composition-id="earth" data-width="1080" data-height="1920">
+    <div id="ew1" class="ew"><video id="ev1" class="clip" src="assets/earth/s1.mp4" muted playsinline data-start="0" data-duration="7.8" data-track-index="1"></video></div>
+    <div id="ew2" class="ew"><video id="ev2" data-playback-rate="0.97" class="clip" src="assets/earth/s2.mp4" muted playsinline data-start="7.8" data-duration="7.5" data-track-index="1"></video></div>
+    <div id="ew3" class="ew"><video id="ev3" data-playback-rate="0.97" class="clip" src="assets/earth/s3.mp4" muted playsinline data-start="15.3" data-duration="7.5" data-track-index="1"></video></div>
+    <div id="ew4" class="ew"><video id="ev4" data-playback-rate="0.98" class="clip" src="assets/earth/s4.mp4" muted playsinline data-start="22.8" data-duration="9.0" data-track-index="1"></video></div>
+    <div id="ew5" class="ew"><video id="ev5" data-playback-rate="0.99" class="clip" src="assets/earth/s5.mp4" muted playsinline data-start="31.8" data-duration="9.4" data-track-index="1"></video></div>
+
+    <div id="e-scrim-top" data-layout-allow-occlusion></div>
+    <div id="e-scrim" data-layout-allow-occlusion></div>
+
+    <h2 id="t1" class="h-title clip" data-start="0.3" data-duration="4.4" data-track-index="2">
+      <span>Chỉ</span> <span>số</span> <span>kinh</span> <span>tế</span> <em><span>mới</span> <span>nhất</span></em>
+    </h2>
+    <h2 id="t2" class="h-title clip" data-start="4.9" data-duration="2.8" data-track-index="2">
+      <span>Tốc</span> <span>độ</span> <em><span>đáng</span> <span>kinh</span> <span>ngạc</span></em>
+    </h2>
+    <div id="e-pill" class="clip" data-start="7.6" data-duration="33.6" data-track-index="3" data-layout-allow-occlusion><span id="e-pill-t">Vĩnh Long · 8 tháng đầu năm 2026</span></div>
+
+    <div id="c1" class="card clip" data-start="9.2" data-duration="5.3" data-track-index="4">
+      <span class="k">Doanh nghiệp thành lập mới</span><span class="n" id="n1">0</span><span class="s" id="s1">Vượt 9,26% kế hoạch năm</span>
+    </div>
+    <div id="c2" class="card clip" data-start="14.6" data-duration="3.3" data-track-index="4">
+      <span class="k">Vốn đăng ký</span><span class="n"><span id="n2">0</span> <span class="u">tỷ đồng</span></span>
+    </div>
+    <div id="c3" class="card clip" data-start="18.0" data-duration="6.6" data-track-index="4">
+      <span class="k">Tổng mức bán lẻ hàng hoá &amp;<br />doanh thu dịch vụ tiêu dùng</span><span class="n"><span id="n3">0</span> <span class="u">tỷ đồng</span></span><span class="s" id="s3">+19,34% so với cùng kỳ</span>
+    </div>
+    <div id="c4" class="card clip" data-start="24.7" data-duration="3.2" data-track-index="4">
+      <span class="k">Xuất siêu</span><span class="n"><span id="n4">0</span> <span class="u">tỷ USD</span></span>
+    </div>
+    <div id="c5" class="card clip" data-start="28.0" data-duration="3.6" data-track-index="4">
+      <span class="k">Dự án FDI còn hiệu lực</span><span class="n" id="n5">0</span><span class="s" id="s5">Tổng vốn 5,93 tỷ USD</span>
+    </div>
+    <div id="c6" class="card clip" data-start="31.7" data-duration="4.7" data-track-index="4">
+      <span class="k">Dự án đầu tư trong nước</span><span class="n" id="n6">0</span><span class="s" id="s6">Tổng vốn hơn 264.000 tỷ đồng</span>
+    </div>
+    <h2 id="t3" class="h-title clip" data-start="36.6" data-duration="4.4" data-track-index="2">
+      <span>Hàng</span> <span>loạt</span> <span>chỉ</span> <span>số</span> <em><span>tích</span> <span>cực</span></em>
+    </h2>
+
+    <p id="e-src" class="clip" data-start="0" data-duration="41.2" data-track-index="5" data-layout-ignore>
+      <span id="e-src-t">Số liệu: UBND tỉnh Vĩnh Long, họp báo 7/9/2026 (Báo Đầu tư, Mekong ASEAN)<br />Hình ảnh 3D: Google Earth</span>
+    </p>
+    <div id="e-flash"></div>
+  </div>
+
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      const DUR = 41.2;
+      // zoom-blur vào (lao tới): ảnh mới bắt đầu nhỏ + nhoè rồi về 1; ảnh cũ phóng to + nhoè
+      const zin = (sel, at) => tl.fromTo(sel, { scale: 0.8, filter: "blur(16px)" }, { scale: 1, filter: "blur(0px)", duration: 0.32, ease: "power3.out" }, at);
+      const zout = (sel, at) => tl.fromTo(sel, { scale: 1, filter: "blur(0px)" }, { scale: 1.3, filter: "blur(16px)", duration: 0.28, ease: "power3.in", immediateRender: false }, at - 0.28);
+      const flash = (at) => tl.fromTo("#e-flash", { opacity: 0.3 }, { opacity: 0, duration: 0.3, ease: "power2.out", immediateRender: false }, at);
+      const seams = [7.8, 15.3, 22.8, 31.8];
+      zin("#ew1", 0); flash(0);
+      seams.forEach((t, i) => { zout(`#ew${i + 1}`, t); zin(`#ew${i + 2}`, t); flash(t); });
+      zout("#ew5", DUR);
+      tl.fromTo("#e-flash", { opacity: 0 }, { opacity: 0.3, duration: 0.28, ease: "power2.in", immediateRender: false }, DUR - 0.28);
+
+      const wIn = (sel, at, gap = 0.08) => tl.fromTo(`${sel} span`, { opacity: 0, filter: "blur(10px)", scale: 1.08 },
+        { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.18, ease: "power4.out", stagger: gap }, at);
+      const wOut = (sel, at) => tl.to(`${sel} span`, { opacity: 0, filter: "blur(10px)", duration: 0.18, ease: "power2.in", stagger: 0.03 }, at);
+      const cardIn = (sel, at) => tl.fromTo(`${sel} .k`, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.35, ease: "expo.out" }, at);
+      const cardOut = (sel, at) => tl.to(sel, { opacity: 0, filter: "blur(10px)", duration: 0.2, ease: "power2.in" }, at);
+      const sub = (sel, at) => tl.fromTo(sel, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.7)" }, at);
+      const fmt = (v, dec) => { const [i, d] = v.toFixed(dec).split("."); return i.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (d ? "," + d : ""); };
+      const count = (sel, to, dec, at, dur = 1.3) => {
+        const el = document.querySelector(sel), o = { v: 0 };
+        tl.fromTo(el.closest(".n"), { opacity: 0 }, { opacity: 1, duration: 0.15 }, at);
+        tl.fromTo(o, { v: 0 }, { v: to, duration: dur, ease: "power2.out", onUpdate: () => { el.textContent = fmt(o.v, dec); } }, at);
+      };
+
+      wIn("#t1", 0.35, 0.08); wOut("#t1", 4.5);
+      wIn("#t2", 5.0, 0.1); wOut("#t2", 7.45);
+      tl.fromTo("#e-pill-t", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, 7.6);
+
+      cardIn("#c1", 9.2); count("#n1", 2076, 0, 9.6); sub("#s1", 12.5); cardOut("#c1", 14.3);
+      cardIn("#c2", 14.6); count("#n2", 8308, 0, 15.0); cardOut("#c2", 17.7);
+      cardIn("#c3", 18.0); count("#n3", 134414, 0, 19.9); sub("#s3", 22.8); cardOut("#c3", 24.4);
+      cardIn("#c4", 24.7); count("#n4", 1.37, 2, 25.3, 1.1); cardOut("#c4", 27.7);
+      cardIn("#c5", 28.0); count("#n5", 183, 0, 28.2, 1.0); sub("#s5", 30.1); cardOut("#c5", 31.4);
+      cardIn("#c6", 31.7); count("#n6", 772, 0, 31.9, 1.1); sub("#s6", 34.3); cardOut("#c6", 36.2);
+      wIn("#t3", 36.6, 0.09);
+      wOut("#t3", 40.8);
+      tl.fromTo("#e-src-t", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0.4);
+
+      window.__timelines["earth"] = tl;
+    })();
+  </script>
+</template>
