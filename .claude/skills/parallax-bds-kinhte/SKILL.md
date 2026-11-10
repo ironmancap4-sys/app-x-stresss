@@ -9,7 +9,7 @@ Skill này nằm TRÊN skill chính thức `/hyperframes`. Luật render (contra
 
 Chưa có skill chính thức thì người dùng tự cài: `npx skills add heygen-com/hyperframes` (hoặc `npx hyperframes skills update`). Không tự chạy lệnh cài.
 
-**Mặc định của skill = phong cách 5 video mẫu của người dùng** (`references/style-mau.md`): khung **dọc 1080×1920**, bay vào bản đồ vệ tinh → tuyến neon tự vẽ → ghim/thẻ dự án → flycam thật, nối bằng zoom-blur; camera chạy ≥ 85% thời gian, cảnh thật 2,5–4 s. Video ngang chỉ khi được yêu cầu (`template-ngang/`).
+**Mặc định của skill = phong cách 5 video mẫu của người dùng** (`references/style-mau.md`): khung **dọc 1080×1920**, bay vào bản đồ vệ tinh → tuyến neon tự vẽ → ghim/thẻ dự án → cảnh 3D kiểu Google Earth (toà nhà, cao tốc dựng 3D từ dữ liệu bản đồ, không phải flycam thật), nối bằng zoom-blur; camera chạy ≥ 85% thời gian, cảnh thật 2,5–4 s. Video ngang chỉ khi được yêu cầu (`template-ngang/`).
 
 ## Ba điều không được vi phạm
 

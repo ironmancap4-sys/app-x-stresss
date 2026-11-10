@@ -82,7 +82,7 @@ Kiểm tra bằng `analyze_refs.py` trên bản render: pan/zoom trung vị nằ
 
 ## 5. Tài sản (ảnh tách lớp)
 
-- **Nguồn:** ảnh flycam, ảnh/phối cảnh dự án, ảnh đường phố có quyền dùng; hoặc minh hoạ vector vẽ theo lớp. Ảnh nơi thật thì dùng ảnh thật, không vẽ lại.
+- **Nguồn:** ảnh/video Google Earth 3D (§8), ảnh flycam, ảnh/phối cảnh dự án, ảnh đường phố có quyền dùng; hoặc minh hoạ vector vẽ theo lớp. Ảnh nơi thật thì dùng ảnh thật, không vẽ lại.
 - **Tách lớp:** Photoshop (Select Subject/Sky), `rembg`, hoặc bản đồ độ sâu (Depth Anything) rồi cắt theo ngưỡng thành 3–5 PNG nền trong suốt. **Vá phần nền** phía sau mỗi lớp trước (content-aware/generative fill), nếu không camera trượt sẽ lộ lỗ.
 - **Độ phân giải cần có:** ảnh ở lớp `d` hiện lớn tới `(P+d)/(P+d−z_max)` lần kích thước thiết kế. Ví dụ depth 0, z_max = 400 → 1,67×: khung 1920 cần ảnh ≥ 3200 px. Ảnh rất rộng (skyline dài) cắt thành các ô ≤ 8000 px.
 - **Phủ đủ:** mỗi lớp rộng hơn vùng camera quét + 30–50% dự phòng cho dolly lùi/orbit/float; lớp trời và đất kéo dài thoải mái.
@@ -117,3 +117,27 @@ Rig hiện chạy cả take từ một đồng hồ; khi tách take, sao chép f
 | Giật ở mốc key | hai key quá gần với vận tốc khác nhau; giãn key ≥ 2 s hoặc bỏ key thừa. |
 | Render khác preview | có `Math.random`/`Date.now`/`requestAnimationFrame`; mọi thứ phải là hàm của `clock.t`. |
 | Motion blur (`data-motion-blur`) làm mất 3D | blur dùng filter trên phần tử; chỉ bật sau khi snapshot xác nhận parallax còn nguyên. |
+
+## 8. Cảnh 3D kiểu Google Earth / Google Maps
+
+Các cảnh "flycam" trong video mẫu thực ra là camera bay trên **mô hình 3D ảnh thật của Google** (toà nhà, cầu, cao tốc dựng 3D). Parallax ở đây là thật, vì đây là hình học 3D. Có hai cách đưa vào HyperFrames:
+
+**A. Google Earth Studio → video (nên dùng trước).**
+1. Tạo project ở Google Earth Studio (trình duyệt Chrome, đăng nhập Google, miễn phí).
+2. Đặt keyframe camera theo `CAMERA.md`:
+   - camera đã chạy sẵn khi mở cảnh;
+   - không dừng giữa chừng;
+   - ease mềm ở 2 đầu, hoặc để tuyến tính nếu cảnh nối bằng zoom-blur.
+3. Xuất chuỗi ảnh ở khung 1080×1920 và 30 fps, rồi ghép thành video bằng lệnh `ffmpeg -framerate 30 -i anh_%03d.jpeg -c:v libx264 -crf 16 -pix_fmt yuv420p canh.mp4` (mẫu tên ảnh `%03d` phải khớp tên file Earth Studio xuất ra).
+4. Đưa vào take dạng `<video class="clip" muted playsinline src="assets/canh.mp4">`, đặt full khung.
+5. Đặt ghim, nhãn, tuyến neon bằng HTML phía trên:
+   - Earth Studio có xuất "3D tracking data", là vị trí trên màn hình của các điểm đánh dấu, dùng cho After Effects. Đổi dữ liệu này sang JSON theo từng khung, rồi cho nhãn bám theo bằng một tween `onUpdate` đọc toạ độ ở frame hiện tại.
+   - Chưa có bộ chuyển đổi thì chỉ hiện nhãn lúc camera chậm, rồi chỉnh vị trí bằng snapshot.
+6. Ghi nguồn trên màn hình theo yêu cầu của Google ("Google Earth" kèm nhà cung cấp dữ liệu), chữ nhỏ trên nền tối, và gắn `data-layout-ignore` cho dòng này.
+
+**B. Render trực tiếp Google Photorealistic 3D Tiles trong trang (nâng cao, chưa kiểm thử trong skill này).**
+- Dùng CesiumJS hoặc three.js kèm 3d-tiles-renderer, với Map Tiles API key. Dựng camera từ chính `KEYS` của rig, nên mọi chuyển động, nhãn và tuyến dùng chung một hệ toạ độ và luôn khớp tuyệt đối.
+- Vẽ theo `hf-seek` (`/hyperframes` → `references/runtimes.md`) và dùng `e.detail.waitUntil(...)` để chờ tile tải xong ở mỗi frame. Nếu không chờ, frame sẽ bị thiếu mảnh và mỗi lần render ra một kiểu.
+- Cần mạng khi render và có tính phí theo lượt gọi tile. Chỉ chọn cách này khi cần nhãn bám chính xác tuyệt đối hoặc phải dựng rất nhiều cảnh tự động.
+
+Dù chọn cách nào, cảnh 3D vẫn phải đạt cột "Mục tiêu" trong `style-mau.md`: chạy liên tục, vào và ra cảnh khi camera đang lao, và nối với đoạn bản đồ bằng `cinematic-zoom` cùng chiều.

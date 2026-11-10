@@ -29,7 +29,7 @@ Nguồn: thư mục `video mau` (5 video, đo bằng `analyze_refs.py` ngày 10/
 
 Hai nhóm rõ rệt:
 
-- **BĐS/đô thị (B, D):** parallax cao vì có nhiều flycam thật cộng với bản đồ nghiêng.
+- **BĐS/đô thị (B, D):** parallax cao vì có nhiều cảnh **3D Google Earth/Google Maps** (camera bay quanh toà nhà, nút giao dựng 3D) cộng với bản đồ nghiêng.
 - **Vĩ mô/chính trị (A, E):** chủ yếu là bản đồ phẳng và đồ hoạ, parallax thấp. Ở nhóm này camera vẫn chạy liên tục bằng zoom và pan đều.
 
 Tốc độ thường thấp (trôi 1–5 %W/s), xen các cú lướt rất nhanh khi chuyển. Tức là nhịp **trôi chậm, lướt nhanh, trôi chậm**.
@@ -45,7 +45,7 @@ Phần này chỉ dựa trên ảnh tổng hợp cảnh của video A và B, cù
    - ghim tròn trắng kèm nhãn chữ hoa trên nền đen;
    - thẻ logo dự án nền trắng cắm vào tuyến;
    - nhãn khoanh vùng màu xanh dương.
-3. **Flycam thật** (cao tốc, nút giao, thành phố về đêm) xen giữa các đoạn bản đồ. Đây là nguồn parallax chính ở nhóm BĐS.
+3. **Cảnh 3D lấy từ Google Earth/Google Maps** (cao tốc, nút giao, thành phố về đêm), không phải flycam quay thật (người dùng xác nhận). Camera bay vòng, lặn, lướt trên mô hình 3D ảnh thật của thành phố, xen giữa các đoạn bản đồ phẳng. Đây là nguồn parallax chính ở nhóm BĐS. Cách làm: `camera-rig.md` §8.
 4. **Chuyển cảnh:**
    - phổ biến nhất là zoom-blur xuyên tâm (lao vào hoặc lùi ra);
    - cắt match-move khi đang lướt;
@@ -63,5 +63,5 @@ Phần này chỉ dựa trên ảnh tổng hợp cảnh của video A và B, cù
 ## Áp vào skill
 
 - Template mặc định `template/` là **dọc 1080×1920**, theo kiểu bay vào bản đồ, có tuyến neon, ghim, thẻ dự án và tiêu đề dưới. Template ngang cũ nằm ở `template-ngang/`.
-- Ghép take: đoạn bản đồ (rig) → cinematic-zoom → flycam (video thật, có thể push-in bằng rig) → cinematic-zoom → đoạn bản đồ. Xem `camera-rig.md` §6.
+- Ghép take: đoạn bản đồ (rig) → cinematic-zoom → cảnh 3D Google Earth (`camera-rig.md` §8) → cinematic-zoom → đoạn bản đồ. Xem `camera-rig.md` §6.
 - Khi nghiệm thu, chạy `analyze_refs.py` trên bản render. Các chỉ số phải nằm trong cột **Mục tiêu** ở trên.
