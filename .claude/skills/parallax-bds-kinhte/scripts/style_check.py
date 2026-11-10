@@ -3,7 +3,7 @@
 
   python style_check.py video.mp4 [--out style] [--per-sheet 15]
 
-- sheet-NN.jpg: mỗi ô 1 giây, có nhãn thời gian -> soát bằng mắt: mỗi khung tối đa 1 tiêu đề lớn + 1 nhãn phân đoạn
+- sheet-NN.jpg: mỗi ô 1 giây, có nhãn thời gian và vùng TikTok che (đỏ mờ) -> soát bằng mắt: không chữ/nhãn nào nằm trong vùng đỏ; mỗi khung tối đa 1 tiêu đề lớn + 1 nhãn phân đoạn
   + nhãn kiểu A/B; không hộp đen, không phông thứ hai.
 - Quét VÀNG (hue OpenCV 21–35, bão hoà và sáng cao) trong lớp đồ hoạ: > 0,3% khung -> cờ YELLOW.
   Cam nhấn #F28C28 có hue ≈ 14 nên không bị tính. Footage thật có vật màu vàng -> xem ảnh để quyết định.
@@ -30,6 +30,11 @@ def main():
         hsv = cv2.cvtColor(small, cv2.COLOR_BGR2HSV)
         y = ((hsv[..., 0] >= 21) & (hsv[..., 0] <= 35) & (hsv[..., 1] > 150) & (hsv[..., 2] > 170)).mean()
         t = small.copy()
+        # tô vùng bị giao diện TikTok che (đỏ mờ): trên 0–210, dưới 1440–1920, cột phải x>940 khi 700<y<1440
+        ov = t.copy(); k = 216 / 1080
+        for (x0, y0, x1, y1) in [(0, 0, 1080, 210), (0, 1440, 1080, 1920), (940, 700, 1080, 1440)]:
+            cv2.rectangle(ov, (int(x0 * k), int(y0 * k)), (int(x1 * k), int(y1 * k)), (0, 0, 255), -1)
+        t = cv2.addWeighted(ov, 0.18, t, 0.82, 0)
         cv2.rectangle(t, (0, 0), (70, 22), (0, 0, 0), -1)
         cv2.putText(t, f"{sec}s", (4, 16), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
         if y > a.yellow:

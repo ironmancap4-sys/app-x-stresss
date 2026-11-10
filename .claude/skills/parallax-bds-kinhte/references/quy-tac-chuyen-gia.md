@@ -51,6 +51,9 @@ Google Earth 3D là hình dựng, không phải cảnh quay thật: dùng đư�
 - Chữ không đè nhãn bản đồ: khi hiện chữ to, ẩn nhãn bản đồ hoặc dời camera.
 - Giữ: nhãn phân đoạn (kính mờ) ở trên, nguồn ở chân khung; % tăng trưởng = chữ cam + ▲, không nền.
 
+- **Vùng an toàn TikTok:** không chữ/nhãn ở y < 210, y > 1440, và x > 940 trong 700 < y < 1440 (chi tiết `he-thiet-ke.md`). Chữ sát đáy sẽ bị caption và tên kênh che.
+- **Không mờ:** chữ ≥ 72% trắng, nét vẽ ≥ 2 px và đủ sáng trên nền navy.
+
 ## 6. Số liệu
 
 - **Danh sách tích luỹ:** mỗi chỉ số = icon + số lớn + mô tả; xuất hiện lần lượt **và ở lại**; tới chỉ số cuối thấy cả bộ.

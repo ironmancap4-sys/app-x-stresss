@@ -20,7 +20,7 @@ HUD (ngoài #w-stage)            chữ khoá màn hình, không đi theo camera
 
 ## 2. API của rig
 
-Hai template dùng chung rig. `template/compositions/dive.html` (dọc, bay vào bản đồ) điều khiển dolly bằng **zoom**:
+Hai template dùng chung rig. `templates/map-dive-parallax/compositions/dive.html` (dọc, bay vào bản đồ) điều khiển dolly bằng **zoom**:
 
 ```js
 const at = (t, lx, ly, zoom, tilt = 0, orbit = 0) => ...; // nhắm điểm (lx,ly) của bản đồ (depth 0)
@@ -35,7 +35,7 @@ const KEYS = [
 - `tilt` (rotateX) nghiêng bản đồ như flycam nhìn xiên, ≤ 12°: ghim/thẻ ở depth âm "đứng" trên mặt đất và trượt so với bản đồ → parallax ngay cả trên bản đồ phẳng. `orbit` (rotateZ) xoay quanh điểm nhìn, ≤ 6°.
 - Giới hạn: lớp depth `d` phải giữ `P + d − z ≥ 0,3P` → với nhãn −30, thẻ −60 thì zoom ≤ ~2,8. Lặn sâu hơn (châu lục → phố) dùng video `bake-basemap` làm lớp bản đồ, hoặc ghép nhiều ảnh bản đồ chi tiết tăng dần (ảnh chi tiết đặt chồng đúng vị trí, hiện dần khi zoom tới).
 
-`template-ngang/compositions/world.html` dùng `z` trực tiếp:
+`templates/ngang-parallax/compositions/world.html` dùng `z` trực tiếp:
 
 ```js
 const P = 1000;           // khớp với CSS perspective

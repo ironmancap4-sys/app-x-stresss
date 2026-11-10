@@ -8,8 +8,8 @@ function makeMap(opts) {
   const stroked = []; // [el, screenWidthPx]
   const S = (e, w) => { stroked.push([e, w]); return e; };
   // lớp vẽ
-  el("path", { d: GEO.prov._vn, class: "vn" });
-  for (const k in GEO.prov) if (!k.startsWith("_")) S(el("path", { d: GEO.prov[k], class: "prov", "data-name": k }), 1.6);
+  S(el("path", { d: GEO.prov._vn, class: "vn" }), 2);
+  for (const k in GEO.prov) if (!k.startsWith("_")) S(el("path", { d: GEO.prov[k], class: "prov", "data-name": k }), 2);
   const region = S(el("path", { d: GEO.region, class: "region", id: opts.id + "-region" }), 3);
   const fill = {};
   for (const k of ["TP.HCM", "Cần Thơ"]) fill[k] = S(el("path", { d: GEO.prov[k], class: "cmp", id: opts.id + "-" + (k === "TP.HCM" ? "hcm" : "ct") }), 2);

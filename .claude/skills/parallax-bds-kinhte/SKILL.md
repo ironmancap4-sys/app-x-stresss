@@ -1,94 +1,70 @@
 ---
 name: parallax-bds-kinhte
-description: Dựng video bất động sản và kinh tế/tài chính trong HyperFrames với camera chuyển động liên tục và parallax nhiều lớp (2.5D) - giá nhà, dự án, quy hoạch, lãi suất, thị trường, giải thích số liệu. Đọc trước khi dựng, edit hoặc remake video thể loại này, và khi cần phân tích video mẫu để học phong cách camera. Use for real-estate / economics explainer videos with continuous camera moves and parallax in HyperFrames.
+description: Dựng video dọc 9:16 (TikTok/Reels/Shorts) về kinh tế, bất động sản, địa phương trong HyperFrames — từ một file giọng đọc có sẵn ra video hoàn chỉnh: bản đồ vector định vị tỉnh, sông, kết nối; cảnh quay thật; bảng số liệu tích luỹ có nguồn báo chính thống; ảnh tài liệu gốc; Google Earth 3D; camera chuyển động liên tục và parallax; hệ thiết kế báo chí kinh tế; vùng an toàn TikTok; âm thanh −14 LUFS. Dùng khi dựng/sửa video giải thích kinh tế – địa phương, giá nhà, dự án, quy hoạch, hạ tầng, hoặc phân tích video mẫu để học phong cách. Vietnamese economic / real-estate explainer videos with continuous camera and parallax.
 ---
 
-# Video BĐS & kinh tế: camera liên tục + parallax (HyperFrames)
+# Video kinh tế – bất động sản – địa phương (HyperFrames, dọc 9:16)
 
-Skill này nằm TRÊN skill chính thức `/hyperframes`. Luật render (contract), CLI và vòng làm việc vẫn theo `/hyperframes`; ở đây chỉ có những gì riêng của thể loại: **một camera không bao giờ đứng chết, đi xuyên qua một thế giới có độ sâu**, và số liệu BĐS/kinh tế đặt vào thế giới đó.
+Skill này nằm trên skill chính thức `/hyperframes` (luật render, CLI). Chưa có thì người dùng tự cài: `npx skills add heygen-com/hyperframes`.
+Mục tiêu: **mọi câu thoại được CHỨNG MINH bằng hình**, trình bày theo một hệ thiết kế báo chí kinh tế, xem tốt trên TikTok.
 
-Chưa có skill chính thức thì người dùng tự cài: `npx skills add heygen-com/hyperframes` (hoặc `npx hyperframes skills update`). Không tự chạy lệnh cài.
+## Luật cốt lõi (chi tiết + cách kiểm trong `references/`)
 
-**Mặc định của skill = phong cách 5 video mẫu của người dùng** (`references/style-mau.md`): khung **dọc 1080×1920**, bay vào bản đồ vệ tinh → tuyến neon tự vẽ → ghim/thẻ dự án → cảnh 3D kiểu Google Earth (toà nhà, cao tốc dựng 3D từ dữ liệu bản đồ, không phải flycam thật), nối bằng zoom-blur; camera chạy ≥ 85% thời gian, cảnh thật 2,5–4 s. Video ngang chỉ khi được yêu cầu (`template-ngang/`).
+1. **Chứng minh bằng hình**, ≥ 4 chất liệu xen kẽ: bản đồ vector · cảnh quay thật · bảng số tích luỹ trên nền bản đồ · ảnh tài liệu gốc (+ Google Earth 3D minh hoạ). 10–15 s cuối là người hoặc footage thật có chuyển động. → `quy-tac-chuyen-gia.md`
+2. **Số liệu từ báo chính thống**, đọc bài gốc, ghi nguồn + ngày trên màn hình; số trên màn hình theo nguồn, không theo bản chép lời (Whisper hay nghe nhầm số) — lệch thì báo người dùng.
+3. **Hệ thiết kế**: 1 phông Be Vietnam Pro; 1 màu nhấn cam `#F28C28` trên nền navy; chỉ 2 kiểu nhãn (A gắn vật thể, B khái niệm); không phụ đề — mỗi cảnh 1 "dòng neo" ≤ 7 từ đúng lúc đọc từ khoá; không vàng, không hộp đen. → `he-thiet-ke.md`
+4. **Vùng an toàn TikTok**: không chữ/nhãn ở y < 210, y > 1440, và x > 940 khi 700 < y < 1440 (UI ứng dụng che). Chữ sát đáy sẽ bị caption/tên kênh che.
+5. **Không mờ**: chữ ≥ 72% trắng có bóng; nét vẽ ≥ 2 px, đủ sáng trên nền navy.
+6. **Camera liên tục, parallax thật**: camera không đứng chết; bản đồ nội suy Hermite (vận tốc liên tục); Google Earth/footage là chuyển động thật; chuyển cảnh = whip zoom ngắn (luôn phóng to, không bao giờ thu nhỏ lộ viền) hoặc cắt thẳng ở khoảng lặng; bản đồ → ảnh: zoom xuyên + hoà 12 khung. Mọi chữ tắt trước điểm chuyển. → `camera-rig.md`
+7. **Âm thanh**: −14 LUFS, true peak ≤ −1 dBTP; SFX whoosh/pop/riser thấp hơn giọng ≥ 12 dB.
 
-## Video "giải thích kinh tế – địa phương" từ giọng đọc có sẵn
+## Quy trình: từ giọng đọc tới video
 
-Đọc và tuân thủ `references/quy-tac-chuyen-gia.md` và trình bày theo `references/he-thiet-ke.md` (Be Vietnam Pro, 1 màu nhấn cam #F28C28, nhãn kiểu A/B, dòng neo thay phụ đề, không vàng/không hộp đen) (8 nhóm quy tắc, mỗi quy tắc có cách kiểm). Tóm tắt: mọi câu thoại được chứng minh bằng hình; ≥ 4 chất liệu xen kẽ (bản đồ vector, cảnh quay thật, bảng số tích luỹ trên bản đồ, ảnh tài liệu gốc); 0–3 s toàn quốc → vùng → tỉnh, tỉnh tô cam #F28C28 80%; cắt ở khoảng lặng; whip zoom, cấm thu nhỏ lộ viền; chữ to ≤ 1 ý/8–10 s, phụ đề nhỏ; −14 LUFS / −1 dBTP + SFX thấp hơn giọng ≥ 12 dB; 10–15 s cuối là người hoặc footage thật. Công cụ: `transcribe_vi.py`, `doc_capture.js`, `vector_map.js/.css` + `geo/README.md`, `make_sfx.py`, `mix_audio.py`, `qa_frames.py`.
+Template đã kiểm chứng: `templates/kinh-te-dia-phuong/` (đọc `TEMPLATE.md`). Mỗi bước có script trong `scripts/`.
 
-## Ba điều không được vi phạm
+1. **Giọng đọc** → `python scripts/transcribe_vi.py voice.mp3 transcript.json` (mốc từng từ) và `ffmpeg -i voice.mp3 -af silencedetect=noise=-30dB:d=0.25 -f null -` (khoảng lặng; đổi chất liệu ở khoảng > 0,4 s, thiếu thì dùng khoảng dài nhất).
+2. **Kiểm chứng số liệu**: tìm bài báo chính thống, đọc toàn văn, lập bảng số (giá trị, đơn vị, nguồn, ngày). Chụp bằng chứng: `node scripts/doc_capture.js <url> "<đầu tiêu đề>" "<chuỗi đoạn 1>" "<đoạn 2>" "<đoạn 3>"`.
+3. **Bản đồ**: viết `geo_config.json` (tỉnh gộp theo nghị quyết hiện hành, điểm, sông, trục bờ biển — mẫu trong template) → `python scripts/geo_build.py geo_config.json geo.json`; xem `work/rivers_preview.jpg`.
+4. **Hình thật**: footage giấy phép mở (Wikimedia Commons CC, Pexels, Pixabay; không lách giới hạn tải, không giả trình duyệt), cắt dọc tránh watermark, ghi tác giả + giấy phép; Google Earth: `scripts/earth_capture.js` + `scripts/earth_encode.sh`, rồi chỉnh màu về navy (lệnh trong `he-thiet-ke.md`). Chỉ gắn nhãn địa danh đúng chỗ quay; footage nơi khác ghi chung ("Đồng bằng sông Cửu Long").
+5. **Dựng**: copy template, cài phông (`design/install_fonts.sh <project>` nếu thiếu), sửa thời lượng cảnh trong `index.html`, `KEYS` camera + mốc nhãn trong `src/geo.html`, `ROWS` trong `rows.py` (`python rows.py`), đích zoom/highlight trong `src/doc.html`, `footage.json`; `python build.py`.
+6. **Âm thanh**: `python scripts/make_sfx.py` → `sfx/`; sửa `sfx_events.json` theo mốc chuyển cảnh/nhãn/số; `python scripts/mix_audio.py voice.mp3 sfx_events.json assets/mix.wav --duration <s>` (script tự đo và báo nếu chưa đạt −14 LUFS/−1 dBTP).
+7. **Kiểm tra** (bắt buộc trước khi giao):
+   - `npx hyperframes check --json` — sửa hết lỗi (cảnh báo nhãn phân đoạn 24 px là chủ đích).
+   - `npx hyperframes snapshot --at <mốc từ khoá>` — nhìn từng khung.
+   - render → `python scripts/qa_frames.py out.mp4` (vùng chết, mây/mảng trắng, khung tối/nhoè, đứng yên > 6 s) và `python scripts/style_check.py out.mp4` (contact sheet 1 khung/giây có tô đỏ vùng TikTok che + quét màu vàng). Mọi cờ phải xem ảnh và giải thích; sai → sửa, render lại.
+   - Nén giao: `ffmpeg -i out.mp4 -c:v libx264 -b:v 5000k -maxrate 6500k -bufsize 10000k -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 192k final.mp4`, rồi giải mã thử toàn bộ (`ffmpeg -v error -i final.mp4 -f null -`) trước khi gửi. Không để hai tiến trình ghi cùng một file.
 
-1. **Camera liên tục.** Trong một take, camera luôn có ít nhất một kênh (x, y, z, orbit) đang chạy; vận tốc liên tục (không giật, không "trượt–dừng–trượt"). Chỉ dừng hẳn khi có chủ đích (`stop: true`) và tối đa một lần mỗi take. Mục tiêu đo được: camera chạy ≥ con số `continuity` của video mẫu (thường ≥ 85% thời gian).
-2. **Parallax thật.** Mỗi cảnh có ≥ 3 lớp độ sâu (xa / giữa / gần), cộng thêm tiền cảnh khi camera di chuyển ngang. Parallax sinh ra từ phối cảnh thật (`perspective` + `translateZ`) của rig trong `template/`, không phải từ việc tween từng lớp với hệ số tự bịa.
-3. **Chữ đứng yên khi đã đáp.** Camera chạy, chữ thì không: tiêu đề HUD (khoá màn hình) đáp xong là đứng im; nhãn số gắn vào thế giới (world-locked) thì trôi theo camera như một vật thể. Không dùng hiệu ứng "thở/lơ lửng" cho chữ.
+## Học phong cách từ video mẫu (khi người dùng đưa video tham khảo)
 
-## Quy trình
+`python scripts/analyze_refs.py "<thư mục video mẫu>" --out phan-tich` → `SUMMARY.md`, `STYLE_DRAFT.md`, contact sheet, đồ thị tốc độ camera; số đo của 5 video mẫu gốc nằm trong `references/style-mau.md` (camera chạy ≥ 85% thời gian, cảnh 2,5–4 s, transition zoom-blur…). Dùng chính script này để đo lại video của mình.
 
-### 1. Học phong cách từ video mẫu (khi có)
+## Templates
 
-```bash
-pip install opencv-python-headless numpy
-python scripts/analyze_refs.py "<thư mục video mẫu>" --out phan-tich
-```
-
-Đọc `phan-tich/SUMMARY.md`, xem `*/sheet-*.jpg` và `*/motion.png`, rồi điền các dòng `[NHÌN]` trong `phan-tich/STYLE_DRAFT.md` và lưu thành `STYLE.md` ở gốc project. Giữ rõ cái gì ĐO, cái gì NHÌN. Chi tiết cách đọc số: `references/analysis.md`.
-
-Video mẫu cho **ngữ pháp** (nhịp cảnh, kiểu move, tốc độ, số lớp, cách chữ vào/ra, bảng màu), không cho nội dung: không lấy logo, giọng, cảnh quay của kênh khác. Muốn dựng lại y hệt một video cụ thể thì dùng `/reverse-any-video`.
-
-Không có video mẫu mới: dùng `references/style-mau.md` (đã đo từ 5 video của người dùng), bổ sung bằng `references/genre-grammar.md`.
-
-### 2. Kịch bản & số liệu
-
-- Một ý chính cho cả video (theo `/hyperframes` → `references/types/explainer.md`, `types/data.md`).
-- Mọi con số có nguồn; ghi nguồn nhỏ trên màn hình. Số chưa có nguồn thì ghi "minh hoạ". Một module dữ liệu duy nhất cấp số cho mọi chỗ.
-- Lời dẫn tiếng Việt: đo tốc độ đọc thực tế của giọng (TTS/người thật), thường 3–4 âm tiết/giây; mỗi cụm ý ≈ một "điểm dừng" của camera.
-
-### 2b. Có file giọng đọc sẵn
-
-`python scripts/transcribe_vi.py voice.mp3 transcript.json` → lời + mốc từng từ. Mọi số liệu trong lời đọc phải đối chiếu nguồn báo chính thống (đọc bài gốc, ghi tên báo + ngày lên màn hình); Whisper hay nghe nhầm số và tên riêng. Mỗi cảnh/thẻ số đặt theo mốc của từ khoá.
-
-### 3. Thiết kế thế giới & đường camera — `CAMERA.md`
-
-Trước khi viết code, trải câu chuyện thành **một bản đồ thế giới** (các chương nằm nối nhau theo trục x, sâu dần theo z) và lập bảng đường camera:
-
-| t (s) | Camera nhìn vào | z (dolly) | orbit | Lời dẫn / sự kiện tại đây |
-| --- | --- | --- | --- | --- |
-| 0 | toàn cảnh thành phố | −150 | −4° | hook |
-| 8 | toà nhà dự án (depth 300) | 380 | 3° | "giá tăng 12,4%" — nhãn nổi lên |
-
-Mỗi câu lời dẫn → camera *đang tới* đối tượng được nhắc (đến nơi đúng lúc từ khoá được đọc). Chuyển chương bằng chính chuyển động camera (bay ngang qua tiền cảnh, dive vào vật thể, kéo lùi để lộ cảnh mới), không fade giữa hai thế giới. Công thức các kiểu move: `references/camera-rig.md`.
-
-### 4. Dựng từ template
-
-```bash
-npx hyperframes init <dir> --skip-skills
-cp -r <skill>/template/* <dir>/
-```
-
-- `template/` (dọc, mặc định): `compositions/dive.html` = một take bay vào bản đồ: rig camera, lớp bản đồ (depth 0), nhãn/ghim (−30), thẻ dự án (−60), mây bay xuyên (−350), HUD (nhãn đầu trang, tiêu đề dưới, nguồn).
-- `template-ngang/` (16:9): `compositions/world.html`, skyline nhiều lớp + biểu đồ.
-- Thay bản đồ giả lập bằng ảnh vệ tinh thật hoặc video `bake-basemap` (Esri/Carto, ghi nguồn ảnh trên màn hình); thay lớp giả lập bằng ảnh tách lớp — "Tài sản" trong `references/camera-rig.md`.
-- Sửa mảng `KEYS` theo `CAMERA.md`: `at(t, x, y, zoom, tilt, orbit)` nhắm vào điểm (x, y) của bản đồ; `zoom` nội suy theo log nên tốc độ lặn cảm nhận đều.
-- Nhiều take (> ~25 s hoặc đổi hẳn không gian): mỗi take một file scene, nối bằng **match-move** (`references/camera-rig.md` §6).
-- Đoạn bay bản đồ vệ tinh: ghép ảnh tile nhiều mức (vd. z10 vùng → z13 tỉnh → z15 thành phố), camera `lat/lng + Z` nội suy Hermite, ảnh chi tiết hiện dần khi Z tới; ghim/nhãn chiếu theo toạ độ mỗi khung nên giữ cỡ chữ cố định.
-- Cảnh 3D: `scripts/earth_capture.js` + `scripts/earth_encode.sh` (`references/camera-rig.md` §8 A2).
-- Video > 15 s có nhạc nền và SFX "whoosh" theo các cú lướt camera (`/hyperframes` → `references/sound.md`).
-
-### 5. Kiểm tra (bắt buộc trước khi giao)
-
-1. `npx hyperframes check --json` — sửa hết lỗi. Nếu báo `dead_stretch` trong lúc camera đang chạy: kiểm tra xem stage/cam của rig (`#d-stage`/`#d-cam` hoặc `#w-stage`/`#w-cam`) có bị gắn `data-layout-ignore` không (gắn vào thì detector không thấy camera).
-2. `npx hyperframes snapshot --at <các mốc trong CAMERA.md>` và xem: chữ có bị cắt, nhãn có ra ngoài khung, lớp có hở mép khi dolly lùi/orbit không.
-3. `python scripts/qa_frames.py out.mp4` — không còn DEAD_EDGE / HAZE / DARK_RUN / BLUR_RUN / STATIC chưa giải thích (xem ảnh lỗi nó lưu).
-4. Render rồi **đo lại chính video của mình** bằng `analyze_refs.py` và so với cột "Mục tiêu" trong `references/style-mau.md` (hoặc `STYLE.md`): camera chạy ≥ 85%, ≤ 4 lần dừng/phút, cảnh thật 2,5–4 s, ≥ 75% cut khi đang chạy, parallax ≥ 70% cảnh (nội dung BĐS). Lệch thì sửa `KEYS`/cách nối take, không sửa ngưỡng đo.
-5. Ghi `REVIEW.md` ngắn: các số đo so với mẫu, chỗ còn khác.
+| Template | Dùng cho |
+| --- | --- |
+| `templates/kinh-te-dia-phuong/` (**mặc định**) | giải thích kinh tế – địa phương từ giọng đọc: bản đồ vector + footage + bảng số + tài liệu gốc + Google Earth |
+| `templates/map-dive-parallax/` | video BĐS dọc kiểu bay vào bản đồ, rig camera 3D parallax (tuyến neon, ghim, thẻ dự án) |
+| `templates/ngang-parallax/` | bản 16:9: skyline nhiều lớp, nhãn giá gắn toà nhà, biểu đồ camera bay dọc |
 
 ## Tham chiếu
 
 | Cần | Đọc |
 | --- | --- |
-| Toán phối cảnh, API của rig, công thức từng kiểu move, nối take, lỗi thường gặp, chuẩn bị ảnh tách lớp | `references/camera-rig.md` |
-| **Quy tắc bắt buộc từ chuyên gia (video giải thích kinh tế – địa phương)** | `references/quy-tac-chuyen-gia.md` |
-| **Hệ thiết kế (phông, màu, 2 kiểu nhãn, dòng neo) + kiểm tra cuối** | `references/he-thiet-ke.md`, `design/` |
-| **Phong cách đo từ 5 video mẫu của người dùng (mặc định)** | `references/style-mau.md` |
-| Từ vựng hình ảnh BĐS/kinh tế, màu tăng/giảm, font tiếng Việt, nhịp | `references/genre-grammar.md` |
-| Đọc kết quả phân tích video mẫu, giới hạn của phép đo | `references/analysis.md` |
-| Project mẫu chạy được, đã qua `check`: dọc bay vào bản đồ (mặc định) / ngang skyline | `template/` / `template-ngang/` |
+| 8 nhóm quy tắc chuyên gia + cách kiểm | `references/quy-tac-chuyen-gia.md` |
+| Hệ thiết kế, vùng an toàn TikTok, độ rõ tối thiểu | `references/he-thiet-ke.md`, `design/` |
+| Rig camera 3D, parallax, Google Earth, nối take | `references/camera-rig.md` |
+| Phong cách đo từ video mẫu | `references/style-mau.md`, `references/analysis.md` |
+| Từ vựng hình ảnh BĐS/kinh tế, màu tăng/giảm, chữ tiếng Việt | `references/genre-grammar.md` |
+
+## Scripts
+
+| Script | Việc |
+| --- | --- |
+| `transcribe_vi.py` | chép lời tiếng Việt + mốc từng từ (faster-whisper) |
+| `doc_capture.js` | chụp bài báo gốc + vị trí các đoạn số |
+| `geo_build.py` | tỉnh gộp, sông dò theo ảnh vệ tinh, dải ven biển → `geo.json` |
+| `vector_map.js/.css` | bản đồ vector: camera Hermite, nét cố định, nhãn A/B, vòng sóng |
+| `earth_capture.js`, `earth_encode.sh` | quay Google Earth web từng khung, ghép 30 fps |
+| `make_sfx.py`, `mix_audio.py` | SFX tổng hợp; trộn + chuẩn hoá loudness có kiểm chứng |
+| `qa_frames.py`, `style_check.py` | kiểm lỗi render; contact sheet + vùng TikTok + màu cấm |
+| `analyze_refs.py` | đo video mẫu / video của mình |

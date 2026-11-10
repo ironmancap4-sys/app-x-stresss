@@ -62,6 +62,6 @@ Phần này chỉ dựa trên ảnh tổng hợp cảnh của video A và B, cù
 
 ## Áp vào skill
 
-- Template mặc định `template/` là **dọc 1080×1920**, theo kiểu bay vào bản đồ, có tuyến neon, ghim, thẻ dự án và tiêu đề dưới. Template ngang cũ nằm ở `template-ngang/`.
+- Template `templates/map-dive-parallax/` là **dọc 1080×1920**, theo kiểu bay vào bản đồ, có tuyến neon, ghim, thẻ dự án và tiêu đề dưới. Bản ngang ở `templates/ngang-parallax/`.
 - Ghép take: đoạn bản đồ (rig) → cinematic-zoom → cảnh 3D Google Earth (`camera-rig.md` §8) → cinematic-zoom → đoạn bản đồ. Xem `camera-rig.md` §6.
 - Khi nghiệm thu, chạy `analyze_refs.py` trên bản render. Các chỉ số phải nằm trong cột **Mục tiêu** ở trên.
