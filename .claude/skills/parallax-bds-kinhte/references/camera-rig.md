@@ -135,6 +135,12 @@ Các cảnh "flycam" trong video mẫu thực ra là camera bay trên **mô hìn
    - Chưa có bộ chuyển đổi thì chỉ hiện nhãn lúc camera chậm, rồi chỉnh vị trí bằng snapshot.
 6. Ghi nguồn trên màn hình theo yêu cầu của Google ("Google Earth" kèm nhà cung cấp dữ liệu), chữ nhỏ trên nền tối, và gắn `data-layout-ignore` cho dòng này.
 
+**A2. Tự động quay Google Earth web (đã dùng thật cho video Vĩnh Long, 11/2026).**
+- `scripts/earth_capture.js` mở Google Earth web trong Chromium headless (Playwright, WebGL qua SwiftShader), chọn Basemap "Clean" (không nhãn, không đường, không biên giới), đưa `#earth-canvas` lên trên giao diện, rồi với mỗi khung: đổi URL `@lat,lng,alt,dist,fov,head,tilt` bằng `history.replaceState` + `popstate` (camera nhảy tức thì, không tải lại trang), chờ cố định ~1,8 s cho tile, chụp.
+- Tốc độ thực tế: ~8 s/khung ở dpr 1,5 với 2–3 luồng song song trên 4 nhân → quay 10 fps rồi `scripts/earth_encode.sh` nội suy lên 30 fps (minterpolate, hình mượt, không vỡ khi camera chạy đều).
+- Chụp thử góc máy trước bằng chế độ `list` (dpr 1), xem ảnh, chọn góc tránh lỗ lưới 3D (vùng nước/ven sông đôi khi có mảng tối).
+- Một cảnh = nội suy tuyến tính từ `from` tới `to` (dist theo log) → camera chạy đều suốt cảnh; nối các cảnh bằng zoom-blur.
+
 **B. Render trực tiếp Google Photorealistic 3D Tiles trong trang (nâng cao, chưa kiểm thử trong skill này).**
 - Dùng CesiumJS hoặc three.js kèm 3d-tiles-renderer, với Map Tiles API key. Dựng camera từ chính `KEYS` của rig, nên mọi chuyển động, nhãn và tuyến dùng chung một hệ toạ độ và luôn khớp tuyệt đối.
 - Vẽ theo `hf-seek` (`/hyperframes` → `references/runtimes.md`) và dùng `e.detail.waitUntil(...)` để chờ tile tải xong ở mỗi frame. Nếu không chờ, frame sẽ bị thiếu mảnh và mỗi lần render ra một kiểu.

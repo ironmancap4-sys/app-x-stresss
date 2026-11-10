@@ -38,6 +38,10 @@ Không có video mẫu mới: dùng `references/style-mau.md` (đã đo từ 5 v
 - Mọi con số có nguồn; ghi nguồn nhỏ trên màn hình. Số chưa có nguồn thì ghi "minh hoạ". Một module dữ liệu duy nhất cấp số cho mọi chỗ.
 - Lời dẫn tiếng Việt: đo tốc độ đọc thực tế của giọng (TTS/người thật), thường 3–4 âm tiết/giây; mỗi cụm ý ≈ một "điểm dừng" của camera.
 
+### 2b. Có file giọng đọc sẵn
+
+`python scripts/transcribe_vi.py voice.mp3 transcript.json` → lời + mốc từng từ. Mọi số liệu trong lời đọc phải đối chiếu nguồn báo chính thống (đọc bài gốc, ghi tên báo + ngày lên màn hình); Whisper hay nghe nhầm số và tên riêng. Mỗi cảnh/thẻ số đặt theo mốc của từ khoá.
+
 ### 3. Thiết kế thế giới & đường camera — `CAMERA.md`
 
 Trước khi viết code, trải câu chuyện thành **một bản đồ thế giới** (các chương nằm nối nhau theo trục x, sâu dần theo z) và lập bảng đường camera:
@@ -61,6 +65,8 @@ cp -r <skill>/template/* <dir>/
 - Thay bản đồ giả lập bằng ảnh vệ tinh thật hoặc video `bake-basemap` (Esri/Carto, ghi nguồn ảnh trên màn hình); thay lớp giả lập bằng ảnh tách lớp — "Tài sản" trong `references/camera-rig.md`.
 - Sửa mảng `KEYS` theo `CAMERA.md`: `at(t, x, y, zoom, tilt, orbit)` nhắm vào điểm (x, y) của bản đồ; `zoom` nội suy theo log nên tốc độ lặn cảm nhận đều.
 - Nhiều take (> ~25 s hoặc đổi hẳn không gian): mỗi take một file scene, nối bằng **match-move** (`references/camera-rig.md` §6).
+- Đoạn bay bản đồ vệ tinh: ghép ảnh tile nhiều mức (vd. z10 vùng → z13 tỉnh → z15 thành phố), camera `lat/lng + Z` nội suy Hermite, ảnh chi tiết hiện dần khi Z tới; ghim/nhãn chiếu theo toạ độ mỗi khung nên giữ cỡ chữ cố định.
+- Cảnh 3D: `scripts/earth_capture.js` + `scripts/earth_encode.sh` (`references/camera-rig.md` §8 A2).
 - Video > 15 s có nhạc nền và SFX "whoosh" theo các cú lướt camera (`/hyperframes` → `references/sound.md`).
 
 ### 5. Kiểm tra (bắt buộc trước khi giao)
