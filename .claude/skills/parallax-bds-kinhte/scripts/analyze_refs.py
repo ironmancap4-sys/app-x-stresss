@@ -313,13 +313,30 @@ def analyze_video(path: Path, out_dir: Path, width: int, step: int) -> dict:
             palette.append({"hex": "#%02x%02x%02x" % (int(bgr[2]), int(bgr[1]), int(bgr[0])),
                             "share": round(float(counts[ci] / counts.sum()), 3)})
 
+    # ---- gom cut dồn dập (≤ 0,6 s) thành MỘT lần chuyển cảnh: đó thường là transition
+    # zoom-blur / flash / glitch nhiều khung, không phải nhiều cảnh thật.
+    groups = []
+    for c in cuts:
+        if groups and c["t"] - groups[-1][-1] <= 0.6:
+            groups[-1].append(c["t"])
+        else:
+            groups.append([c["t"]])
+    starts = [0.0] + [g[0] for g in groups] + [duration]
+    real = [b - a for a, b in zip(starts, starts[1:]) if b - a > 1e-3]
+    transitions = [{"t": g[0], "len": round(g[-1] - g[0], 3), "kind": "burst (zoom-blur/flash)" if len(g) > 1 else "cut"}
+                   for g in groups]
+
     # ---- tổng hợp
     vm = valid & ~np.isin(np.arange(n), cut_idx)
     durs = [s["dur"] for s in shots]
     pars = [s["parallax"] for s in shots if s.get("parallax") is not None]
     summary = dict(
         file=str(path), fps=round(fps, 3), size=[W0, H0], duration=round(duration, 3),
+        aspect="dọc 9:16" if H0 > W0 * 1.5 else ("ngang 16:9" if W0 > H0 * 1.5 else f"{W0}:{H0}"),
         shots=len(shots), cuts=cuts,
+        transitions=len(transitions), burst_transitions=sum(1 for t in transitions if t["len"] > 0),
+        real_shot_median_sec=round(float(np.median(real)), 2), real_shot_mean_sec=round(float(np.mean(real)), 2),
+        real_shot_p90_sec=round(float(np.percentile(real, 90)), 2), transition_list=transitions,
         avg_shot_sec=round(float(np.mean(durs)), 2), median_shot_sec=round(float(np.median(durs)), 2),
         continuity_moving_frac=round(float(moving[vm].mean()) if vm.any() else 0.0, 3),
         stops_total=int(sum(s.get("stops", 0) for s in shots)),
@@ -403,13 +420,16 @@ def write_reports(out: Path, results: list[dict]) -> None:
 
     L = ["# Tổng hợp phân tích video mẫu", "",
          "Mọi số liệu dưới đây là ĐO bằng optical flow; nhãn cảnh là phân loại tự động, hãy xác nhận bằng mắt trên sheet-*.jpg.", "",
-         "| Video | Dài (s) | Cảnh | TB cảnh (s) | % thời gian camera chạy | Số lần dừng | Cắt khi đang chạy | Match-move | Cảnh có parallax | Pan trung vị %W/s | Zoom trung vị %/s |",
-         "|---|---|---|---|---|---|---|---|---|---|---|"]
+         "Cột 'Cảnh thật': gom các cut cách nhau ≤ 0,6 s thành một lần chuyển (transition nhiều khung).", "",
+         "| Video | Khung | Dài (s) | Cảnh thật (trung vị/p90 s) | Transition dồn dập | Cảnh | TB cảnh (s) | % thời gian camera chạy | Số lần dừng | Cắt khi đang chạy | Match-move | Cảnh có parallax | Pan trung vị %W/s | Zoom trung vị %/s |",
+         "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in results:
         if "error" in r:
-            L.append(f"| {Path(r['file']).name} | lỗi: {r['error']} |||||||||| ")
+            L.append(f"| {Path(r['file']).name} | lỗi: {r['error']} ||||||||||||| ")
             continue
-        L.append(f"| {Path(r['file']).name} | {r['duration']} | {r['shots']} | {r['avg_shot_sec']} | "
+        L.append(f"| {Path(r['file']).name} | {r['aspect']} | {r['duration']} | "
+                 f"{r['real_shot_median_sec']}/{r['real_shot_p90_sec']} | {r['burst_transitions']}/{r['transitions']} | "
+                 f"{r['shots']} | {r['avg_shot_sec']} | "
                  f"{pct(r['continuity_moving_frac'])} | {r['stops_total']} | {pct(r['cuts_on_motion_frac'])} | "
                  f"{pct(r['match_move_cuts_frac'])} | {pct(r['parallax_shots_frac'])} | "
                  f"{r['pan_speed_median_pct_w_s']} | {r['zoom_speed_median_pct_s']} |")
@@ -434,7 +454,8 @@ def write_reports(out: Path, results: list[dict]) -> None:
          "Các dòng [ĐO] lấy từ analyze_refs.py. Các dòng [NHÌN] phải do người/agent điền sau khi xem sheet-*.jpg và video.", "",
          "## Camera",
          f"- [ĐO] % thời gian camera chuyển động (trung vị các video): {pct(med('continuity_moving_frac'))}  → mục tiêu khi dựng: ≥ con số này",
-         f"- [ĐO] Độ dài cảnh trung bình: {med('avg_shot_sec')} s (trung vị {med('median_shot_sec')} s)",
+         f"- [ĐO] Khung hình: {', '.join(sorted(set(r['aspect'] for r in ok)))}",
+         f"- [ĐO] Độ dài cảnh thật (đã gom transition): trung vị {med('real_shot_median_sec')} s, p90 {med('real_shot_p90_sec')} s",
          f"- [ĐO] Tốc độ pan trung vị: {med('pan_speed_median_pct_w_s')} %W/s; p90: {med('pan_speed_p90_pct_w_s')} %W/s",
          f"- [ĐO] Tốc độ zoom/dolly trung vị: {med('zoom_speed_median_pct_s')} %/s",
          f"- [ĐO] Tỉ lệ cắt khi camera đang chạy: {pct(med('cuts_on_motion_frac'))}; cắt match-move cùng hướng: {pct(med('match_move_cuts_frac'))}",

@@ -2,23 +2,27 @@
 <html
   lang="vi"
   data-composition-variables='[
-    {"id":"color-ground","type":"color","label":"Nền","default":"#0d1420"},
-    {"id":"color-ink","type":"color","label":"Chữ","default":"#f4f1ea"},
-    {"id":"color-accent","type":"color","label":"Nhấn (tăng giá)","default":"#f2b544"},
-    {"id":"color-down","type":"color","label":"Nhấn (giảm giá)","default":"#e5484d"},
+    {"id":"color-ground","type":"color","label":"Nền","default":"#101210"},
+    {"id":"color-ink","type":"color","label":"Chữ","default":"#ffffff"},
+    {"id":"color-accent","type":"color","label":"Nhấn (vàng)","default":"#ffd23f"},
+    {"id":"color-route","type":"color","label":"Tuyến đường (cam)","default":"#ff7a1a"},
+    {"id":"color-pill","type":"color","label":"Nhãn đầu trang","default":"#2f5bd3"},
+    {"id":"color-zone","type":"color","label":"Vùng khu vực","default":"#3ccf7a"},
     {"id":"font-display","type":"string","label":"Font tiêu đề","default":"Montserrat"}
   ]'
 >
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=1920, height=1080" />
+    <meta name="viewport" content="width=1080, height=1920" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
     <style>
       :root {
-        --color-ground: #0d1420;
-        --color-ink: #f4f1ea;
-        --color-accent: #f2b544;
-        --color-down: #e5484d;
+        --color-ground: #101210;
+        --color-ink: #ffffff;
+        --color-accent: #ffd23f;
+        --color-route: #ff7a1a;
+        --color-pill: #2f5bd3;
+        --color-zone: #3ccf7a;
         --font-display: "Montserrat";
       }
       * {
@@ -28,8 +32,8 @@
       }
       html,
       body {
-        width: 1920px;
-        height: 1080px;
+        width: 1080px;
+        height: 1920px;
         overflow: hidden;
         background: var(--color-ground);
       }
@@ -46,21 +50,21 @@
       data-composition-id="main"
       data-start="0"
       data-duration="20"
-      data-width="1920"
-      data-height="1080"
+      data-width="1080"
+      data-height="1920"
     >
       <div id="ground"></div>
-      <!-- Một cảnh = một "take" camera liên tục. Nhiều take: thêm host mới, nối bằng match-move (references/camera-rig.md §6). -->
+      <!-- Một take = một cú máy liền. Nối nhiều take: references/camera-rig.md §6 (cinematic-zoom / match-move). -->
       <div
-        id="world"
-        data-composition-id="world"
-        data-composition-src="compositions/world.html"
+        id="dive"
+        data-composition-id="dive"
+        data-composition-src="compositions/dive.html"
         data-start="0"
         data-duration="20"
         data-track-index="1"
         data-track-kind="graphics"
-        data-width="1920"
-        data-height="1080"
+        data-width="1080"
+        data-height="1920"
       ></div>
     </div>
     <script>

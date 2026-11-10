@@ -9,6 +9,8 @@ Skill này nằm TRÊN skill chính thức `/hyperframes`. Luật render (contra
 
 Chưa có skill chính thức thì người dùng tự cài: `npx skills add heygen-com/hyperframes` (hoặc `npx hyperframes skills update`). Không tự chạy lệnh cài.
 
+**Mặc định của skill = phong cách 5 video mẫu của người dùng** (`references/style-mau.md`): khung **dọc 1080×1920**, bay vào bản đồ vệ tinh → tuyến neon tự vẽ → ghim/thẻ dự án → flycam thật, nối bằng zoom-blur; camera chạy ≥ 85% thời gian, cảnh thật 2,5–4 s. Video ngang chỉ khi được yêu cầu (`template-ngang/`).
+
 ## Ba điều không được vi phạm
 
 1. **Camera liên tục.** Trong một take, camera luôn có ít nhất một kênh (x, y, z, orbit) đang chạy; vận tốc liên tục (không giật, không "trượt–dừng–trượt"). Chỉ dừng hẳn khi có chủ đích (`stop: true`) và tối đa một lần mỗi take. Mục tiêu đo được: camera chạy ≥ con số `continuity` của video mẫu (thường ≥ 85% thời gian).
@@ -28,7 +30,7 @@ python scripts/analyze_refs.py "<thư mục video mẫu>" --out phan-tich
 
 Video mẫu cho **ngữ pháp** (nhịp cảnh, kiểu move, tốc độ, số lớp, cách chữ vào/ra, bảng màu), không cho nội dung: không lấy logo, giọng, cảnh quay của kênh khác. Muốn dựng lại y hệt một video cụ thể thì dùng `/reverse-any-video`.
 
-Không có video mẫu: dùng giá trị mặc định trong `references/genre-grammar.md`.
+Không có video mẫu mới: dùng `references/style-mau.md` (đã đo từ 5 video của người dùng), bổ sung bằng `references/genre-grammar.md`.
 
 ### 2. Kịch bản & số liệu
 
@@ -54,16 +56,18 @@ npx hyperframes init <dir> --skip-skills
 cp -r <skill>/template/* <dir>/
 ```
 
-- `compositions/world.html` = một take liên tục: rig camera, các lớp `.w-layer[data-depth]`, HUD, timeline.
-- Thay lớp giả lập bằng ảnh thật tách lớp (PNG nền trong suốt) — xem "Tài sản" trong `references/camera-rig.md`; sửa mảng `KEYS` theo `CAMERA.md`; dùng `look(depth, x, y)` để camera nhắm đúng vật thể.
+- `template/` (dọc, mặc định): `compositions/dive.html` = một take bay vào bản đồ: rig camera, lớp bản đồ (depth 0), nhãn/ghim (−30), thẻ dự án (−60), mây bay xuyên (−350), HUD (nhãn đầu trang, tiêu đề dưới, nguồn).
+- `template-ngang/` (16:9): `compositions/world.html`, skyline nhiều lớp + biểu đồ.
+- Thay bản đồ giả lập bằng ảnh vệ tinh thật hoặc video `bake-basemap` (Esri/Carto, ghi nguồn ảnh trên màn hình); thay lớp giả lập bằng ảnh tách lớp — "Tài sản" trong `references/camera-rig.md`.
+- Sửa mảng `KEYS` theo `CAMERA.md`: `at(t, x, y, zoom, tilt, orbit)` nhắm vào điểm (x, y) của bản đồ; `zoom` nội suy theo log nên tốc độ lặn cảm nhận đều.
 - Nhiều take (> ~25 s hoặc đổi hẳn không gian): mỗi take một file scene, nối bằng **match-move** (`references/camera-rig.md` §6).
 - Video > 15 s có nhạc nền và SFX "whoosh" theo các cú lướt camera (`/hyperframes` → `references/sound.md`).
 
 ### 5. Kiểm tra (bắt buộc trước khi giao)
 
-1. `npx hyperframes check --json` — sửa hết lỗi. Nếu báo `dead_stretch` trong lúc camera đang chạy: kiểm tra xem `#w-stage`/`#w-cam` có bị gắn `data-layout-ignore` không (gắn vào thì detector không thấy camera).
+1. `npx hyperframes check --json` — sửa hết lỗi. Nếu báo `dead_stretch` trong lúc camera đang chạy: kiểm tra xem stage/cam của rig (`#d-stage`/`#d-cam` hoặc `#w-stage`/`#w-cam`) có bị gắn `data-layout-ignore` không (gắn vào thì detector không thấy camera).
 2. `npx hyperframes snapshot --at <các mốc trong CAMERA.md>` và xem: chữ có bị cắt, nhãn có ra ngoài khung, lớp có hở mép khi dolly lùi/orbit không.
-3. Render rồi **đo lại chính video của mình** bằng `analyze_refs.py` và so với video mẫu: `continuity` ≥ mẫu, tỉ lệ cảnh có parallax ≥ mẫu, tốc độ pan/zoom trong khoảng p50–p90 của mẫu, số lần dừng ≤ mẫu. Lệch thì sửa `KEYS`, không sửa ngưỡng đo.
+3. Render rồi **đo lại chính video của mình** bằng `analyze_refs.py` và so với cột "Mục tiêu" trong `references/style-mau.md` (hoặc `STYLE.md`): camera chạy ≥ 85%, ≤ 4 lần dừng/phút, cảnh thật 2,5–4 s, ≥ 75% cut khi đang chạy, parallax ≥ 70% cảnh (nội dung BĐS). Lệch thì sửa `KEYS`/cách nối take, không sửa ngưỡng đo.
 4. Ghi `REVIEW.md` ngắn: các số đo so với mẫu, chỗ còn khác.
 
 ## Tham chiếu
@@ -71,6 +75,7 @@ cp -r <skill>/template/* <dir>/
 | Cần | Đọc |
 | --- | --- |
 | Toán phối cảnh, API của rig, công thức từng kiểu move, nối take, lỗi thường gặp, chuẩn bị ảnh tách lớp | `references/camera-rig.md` |
-| Từ vựng hình ảnh BĐS/kinh tế, màu tăng/giảm, font tiếng Việt, nhịp, giá trị mặc định | `references/genre-grammar.md` |
+| **Phong cách đo từ 5 video mẫu của người dùng (mặc định)** | `references/style-mau.md` |
+| Từ vựng hình ảnh BĐS/kinh tế, màu tăng/giảm, font tiếng Việt, nhịp | `references/genre-grammar.md` |
 | Đọc kết quả phân tích video mẫu, giới hạn của phép đo | `references/analysis.md` |
-| Project mẫu chạy được (20 s, đã qua `check`) | `template/` |
+| Project mẫu chạy được, đã qua `check`: dọc bay vào bản đồ (mặc định) / ngang skyline | `template/` / `template-ngang/` |

@@ -18,7 +18,24 @@ HUD (ngoài #w-stage)            chữ khoá màn hình, không đi theo camera
 - Dolly `z` (> 0 là tiến vào) phóng lớp theo `P/(P+d−z)`: lớp gần phóng nhanh hơn lớp xa → parallax theo chiều sâu khi push-in. Lớp có `P+d−z` < 0,3P mờ dần, < 0,12P biến mất (bay xuyên qua thay vì chọc vào ống kính).
 - `orbit`/`tilt` xoay thế giới quanh điểm đang nhìn. Lớp là các tấm phẳng, nên giữ |orbit| ≤ 6–8°, quá mức sẽ thấy mép tấm (hiệu ứng "sách pop-up").
 
-## 2. API trong `compositions/world.html`
+## 2. API của rig
+
+Hai template dùng chung rig. `template/compositions/dive.html` (dọc, bay vào bản đồ) điều khiển dolly bằng **zoom**:
+
+```js
+const at = (t, lx, ly, zoom, tilt = 0, orbit = 0) => ...; // nhắm điểm (lx,ly) của bản đồ (depth 0)
+const KEYS = [
+  at(0, 560, 980, 0.85),          // mở rộng, đã đang chạy
+  at(3.5, 300, 700, 1.8, 6, -2),  // xuyên mây, lặn xuống
+  at(10.5, 690, 1280, 2.5, 10, 3) // tới dự án, bản đồ nghiêng 10°
+];
+```
+
+- `zoom` = độ phóng của mặt bản đồ, nội suy theo `log(zoom)` (lặn đều như flycam), quy ra dolly `z = P·(1 − 1/zoom)`.
+- `tilt` (rotateX) nghiêng bản đồ như flycam nhìn xiên, ≤ 12°: ghim/thẻ ở depth âm "đứng" trên mặt đất và trượt so với bản đồ → parallax ngay cả trên bản đồ phẳng. `orbit` (rotateZ) xoay quanh điểm nhìn, ≤ 6°.
+- Giới hạn: lớp depth `d` phải giữ `P + d − z ≥ 0,3P` → với nhãn −30, thẻ −60 thì zoom ≤ ~2,8. Lặn sâu hơn (châu lục → phố) dùng video `bake-basemap` làm lớp bản đồ, hoặc ghép nhiều ảnh bản đồ chi tiết tăng dần (ảnh chi tiết đặt chồng đúng vị trí, hiện dần khi zoom tới).
+
+`template-ngang/compositions/world.html` dùng `z` trực tiếp:
 
 ```js
 const P = 1000;           // khớp với CSS perspective
@@ -78,6 +95,7 @@ Kiểm tra bằng `analyze_refs.py` trên bản render: pan/zoom trung vị nằ
 
 Một take = một file scene. Mối nối phải liên tục về chuyển động:
 
+0. **Kiểu chính của video mẫu: zoom-blur xuyên tâm.** Dùng shader `cinematic-zoom` của `@hyperframes/shader-transitions` (`npx hyperframes catalog --tag transition --json`), đặt đúng lúc cả hai take đang lao vào cùng chiều (take A zoom vào cuối, take B bắt đầu bằng zoom vào). Thời lượng 0,4–0,7 s. Shader chụp cảnh thành texture: snapshot ngay trước/sau mối nối để chắc parallax 3D vẫn hiển thị đúng. Khoảng 1 lần mỗi 8–15 s (`style-mau.md`).
 1. **Cùng vận tốc:** key cuối take A đặt `carry: true` (giữ nguyên vận tốc, không đáp), key đầu take B mặc định đã đang chạy; chỉnh để tốc độ trên màn hình và hướng hai bên khớp nhau (đo bằng `analyze_refs.py`: cột "Vào/ra khi đang chạy", `dir_out`/`dir_in`).
 2. **Che mối nối bằng vật thể:**
    - *Foreground wipe:* một cột/toà nhà tiền cảnh lướt qua che kín khung; cắt đúng lúc che kín; take B mở ra bằng một vật tiền cảnh cùng màu đang lướt đi cùng hướng.
@@ -85,7 +103,7 @@ Một take = một file scene. Mối nối phải liên tục về chuyển đ�
    - *Whip:* lướt nhanh 0,2–0,3 s có motion blur ngang, hai bên cùng hướng.
 3. Không crossfade giữa hai thế giới; hard cut thuần ≤ 1/3 số mối nối.
 
-Rig hiện chạy cả take từ một đồng hồ; khi tách take, sao chép `world.html`, đổi id scene (`data-composition-id`, host id, khoá `window.__timelines`) và tiền tố id phần tử cho duy nhất.
+Rig hiện chạy cả take từ một đồng hồ; khi tách take, sao chép file scene (`dive.html` / `world.html`), đổi id scene (`data-composition-id`, host id, khoá `window.__timelines`) và tiền tố id phần tử cho duy nhất.
 
 ## 7. Lỗi thường gặp
 
