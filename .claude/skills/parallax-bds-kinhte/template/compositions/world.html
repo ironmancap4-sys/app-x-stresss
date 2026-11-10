@@ -1,0 +1,454 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      font-family: var(--font-display), "Montserrat", sans-serif;
+      color: var(--color-ink);
+    }
+
+    /* ---------- CAMERA RIG ----------
+       #w-stage: ống kính (perspective). #w-cam: toàn bộ thế giới, chỉ JS đặt transform.
+       KHÔNG đặt opacity < 1, filter, overflow:hidden, mix-blend-mode, clip-path lên
+       #w-stage / #w-cam: Chrome sẽ làm phẳng 3D và mất parallax. */
+    #w-stage {
+      position: absolute;
+      inset: 0;
+      perspective: 1000px; /* = P trong script, đổi cả hai cùng lúc */
+      perspective-origin: 50% 50%;
+    }
+    #w-cam {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-style: preserve-3d;
+      transform-origin: 960px 540px 0;
+    }
+    .w-layer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 960px 540px 0;
+    }
+    .w-layer > * {
+      position: absolute;
+    }
+
+    /* ---------- LỚP NỀN (thay bằng PNG tách lớp của bạn) ---------- */
+    #w-sky-fill {
+      left: -6000px;
+      top: -3000px;
+      width: 16000px;
+      height: 8000px;
+      background: radial-gradient(
+          ellipse 1800px 900px at 6300px 3500px,
+          rgba(242, 181, 68, 0.35),
+          rgba(242, 181, 68, 0) 70%
+        ),
+        linear-gradient(180deg, #16233a 0%, #2b3b58 38%, #8a6f62 47%, #2b3b58 49%, #1a2638 100%);
+    }
+    #w-far-svg,
+    #w-mid-svg {
+      left: -1600px;
+      top: 0;
+    }
+    #w-haze-fill {
+      left: -4000px;
+      top: 380px;
+      width: 14000px;
+      height: 900px;
+      background: linear-gradient(180deg, rgba(43, 59, 88, 0) 0%, rgba(120, 128, 150, 0.28) 45%, rgba(43, 59, 88, 0) 100%);
+    }
+
+    /* Toà nhà chính (hero) + nhãn giá gắn vào thế giới */
+    #w-hero-bld {
+      left: 2850px;
+      top: 300px;
+      width: 300px;
+      height: 1600px;
+      background: repeating-linear-gradient(
+          180deg,
+          rgba(255, 214, 140, 0.55) 0 10px,
+          rgba(0, 0, 0, 0) 10px 34px
+        ),
+        linear-gradient(90deg, #1d2a40 0%, #2f4466 55%, #1a2538 100%);
+      background-size: 100% 100%, 100% 100%;
+      border-top: 6px solid var(--color-accent);
+    }
+    #w-hero-tag {
+      left: 2780px;
+      top: 120px;
+      width: 440px;
+      text-align: center;
+    }
+    #w-hero-tag .tag-box {
+      display: inline-block;
+      padding: 18px 30px 20px;
+      background: rgba(13, 20, 32, 0.86);
+      border: 3px solid var(--color-accent);
+      border-radius: 14px;
+    }
+    #w-hero-tag .tag-k {
+      display: block;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+    #w-hero-num {
+      display: block;
+      font-size: 84px;
+      font-weight: 900;
+      color: var(--color-accent);
+      font-variant-numeric: tabular-nums;
+      line-height: 1.05;
+    }
+    #w-hero-stem {
+      left: 2998px;
+      top: 262px;
+      width: 4px;
+      height: 40px;
+      background: var(--color-accent);
+    }
+
+    /* Biểu đồ đặt TRONG thế giới (depth 0): camera bay tới nó, đường giá là "con đường" */
+    #w-chart-panel {
+      left: 4990px;
+      top: 150px;
+      width: 1220px;
+      height: 700px;
+      border-radius: 22px;
+      background: rgba(10, 16, 27, 0.82);
+      border: 2px solid rgba(244, 241, 234, 0.12);
+    }
+    #w-chart {
+      left: 5050px;
+      top: 250px;
+      width: 1100px;
+      height: 560px;
+    }
+    #w-chart .axis {
+      stroke: rgba(244, 241, 234, 0.35);
+      stroke-width: 2;
+    }
+    #w-chart-line {
+      fill: none;
+      stroke: var(--color-accent);
+      stroke-width: 9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #w-chart-area {
+      fill: rgba(242, 181, 68, 0.14);
+    }
+    #w-chart .yr {
+      font-size: 34px;
+      font-weight: 700;
+      fill: rgba(244, 241, 234, 0.7);
+    }
+    #w-chart-end {
+      left: 5970px;
+      top: 200px;
+      font-size: 54px;
+      font-weight: 900;
+      color: var(--color-accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Tiền cảnh: cột/cây tối, đi qua khung hình rất nhanh = parallax mạnh + che mối nối */
+    .fg-pillar {
+      background: linear-gradient(90deg, #05080d 0%, #111a28 60%, #05080d 100%);
+    }
+    #w-fg-a {
+      left: 1560px;
+      top: -400px;
+      width: 200px;
+      height: 2200px;
+    }
+    #w-fg-b {
+      left: 6830px;
+      top: -500px;
+      width: 260px;
+      height: 2400px;
+    }
+
+    /* ---------- HUD (khoá theo màn hình, không đi theo camera) ---------- */
+    .hud-title {
+      position: absolute;
+      left: 160px;
+      top: 150px;
+      width: 1400px;
+      font-size: 92px;
+      font-weight: 900;
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+    }
+    .hud-title span,
+    .hud-kicker span {
+      display: inline-block;
+    }
+    .hud-title em {
+      font-style: normal;
+      color: var(--color-accent);
+    }
+    .hud-kicker {
+      position: absolute;
+      left: 160px;
+      bottom: 150px;
+      font-size: 40px;
+      font-weight: 700;
+    }
+    #hud-chart-title {
+      top: 110px;
+      font-size: 58px;
+    }
+    #hud-close {
+      top: auto;
+      bottom: 110px;
+      font-size: 84px;
+    }
+    #hud-source {
+      position: absolute;
+      right: 120px;
+      bottom: 64px;
+      padding: 6px 14px;
+      font-size: 22px;
+      background: rgba(5, 8, 13, 0.6);
+      border-radius: 6px;
+      opacity: 0.85;
+    }
+  </style>
+
+  <div id="root" data-composition-id="world" data-width="1920" data-height="1080">
+    <div id="w-stage" data-layout-allow-overflow data-layout-allow-overlap>
+      <div id="w-cam" data-layout-allow-overflow data-layout-allow-overlap>
+        <!-- data-depth: px phía sau mặt phẳng tiêu cự (âm = tiền cảnh). Xếp từ xa đến gần. -->
+        <div id="w-sky" class="w-layer" data-depth="3000"><div id="w-sky-fill"></div></div>
+        <div id="w-far" class="w-layer" data-depth="1800" data-seed="7" data-skyline="far">
+          <svg id="w-far-svg" width="11000" height="3200"></svg>
+        </div>
+        <div id="w-haze" class="w-layer" data-depth="1350"><div id="w-haze-fill"></div></div>
+        <div id="w-mid" class="w-layer" data-depth="900" data-seed="21" data-skyline="mid">
+          <svg id="w-mid-svg" width="12000" height="3200"></svg>
+        </div>
+        <div id="w-hero" class="w-layer" data-depth="300">
+          <div id="w-hero-bld"></div>
+          <div id="w-hero-stem"></div>
+          <div id="w-hero-tag">
+            <span class="tag-box">
+              <span class="tag-k">Giá TB / m² · 12 tháng</span>
+              <span id="w-hero-num">+0,0%</span>
+            </span>
+          </div>
+        </div>
+        <div id="w-plane" class="w-layer" data-depth="0">
+          <div id="w-chart-panel"></div>
+          <svg id="w-chart" viewBox="0 0 1100 560">
+            <line class="axis" x1="40" y1="500" x2="1080" y2="500" />
+            <path id="w-chart-area" d="M60 430 L220 405 L380 380 L540 395 L700 330 L860 250 L1040 150 L1040 500 L60 500 Z" />
+            <path id="w-chart-line" pathLength="100" stroke-dasharray="100 120" stroke-dashoffset="110"
+              d="M60 430 L220 405 L380 380 L540 395 L700 330 L860 250 L1040 150" />
+            <text class="yr" x="60" y="545" text-anchor="middle">2019</text>
+            <text class="yr" x="540" y="545" text-anchor="middle">2022</text>
+            <text class="yr" x="1040" y="545" text-anchor="middle">2026</text>
+          </svg>
+          <div id="w-chart-end">×1,9</div>
+        </div>
+        <div id="w-fg" class="w-layer" data-depth="-350">
+          <div id="w-fg-a" class="fg-pillar"></div>
+          <div id="w-fg-b" class="fg-pillar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HUD: clip có thời gian; chỉ animate phần tử con -->
+    <h1 id="hud-hook" class="hud-title clip" data-start="0.5" data-duration="4.4" data-track-index="2">
+      <span>Giá</span> <span>căn</span> <span>hộ</span> <span>sẽ</span> <span>đi</span> <span>về</span> <em><span>đâu?</span></em>
+    </h1>
+    <p id="hud-kicker" class="hud-kicker clip" data-start="7.2" data-duration="3.8" data-track-index="3">
+      <span>Khu trung tâm</span> <span>·</span> <span>giá bán trung bình</span>
+    </p>
+    <h2 id="hud-chart-title" class="hud-title clip" data-start="12.8" data-duration="4.2" data-track-index="4">
+      <span>Giá</span> <span>căn</span> <span>hộ</span> <span>2019–2026</span>
+    </h2>
+    <h2 id="hud-close" class="hud-title clip" data-start="17.4" data-duration="2.6" data-track-index="5">
+      <span>Cung</span> <span>thiếu,</span> <em><span>giá</span> <span>giữ</span> <span>đà</span> <span>tăng</span></em>
+    </h2>
+    <p id="hud-source" class="clip" data-start="7" data-duration="13" data-track-index="6" data-layout-ignore>
+      <span id="hud-source-t">Số liệu minh hoạ — thay bằng nguồn thật</span>
+    </p>
+  </div>
+
+  <script>
+    (() => {
+      // ================= CAMERA RIG =================
+      const P = 1000; // = perspective trong CSS
+      const W = 1920, H = 1080;
+      const DUR = 20; // = data-duration của host
+      const FLOAT = 3; // biên độ "drone float" (px). 0 = tắt.
+
+      const cam = document.querySelector("#w-cam");
+      const layers = [...cam.querySelectorAll(":scope > .w-layer")].map((el) => ({
+        el,
+        d: parseFloat(el.dataset.depth),
+      }));
+
+      // Bù tỉ lệ: phần tử trong lớp có depth d hiện đúng kích thước thiết kế khi camera ở gốc.
+      layers.forEach(({ el, d }) => {
+        el.style.transform = `translate3d(0px, 0px, ${-d}px) scale(${(P + d) / P})`;
+      });
+
+      // Điểm (lx, ly) trong lớp có depth d -> toạ độ camera để đặt nó vào giữa khung.
+      const look = (d, lx, ly) => ({ x: ((lx - W / 2) * (P + d)) / P, y: ((ly - H / 2) * (P + d)) / P });
+
+      // ---- Đường camera: các KEY nội suy Hermite đơn điệu, vận tốc liên tục.
+      // x,y: pan (px trên mặt phẳng tiêu cự)  z: dolly (+ tiến vào, − lùi ra)
+      // orbit/tilt: xoay quanh điểm nhìn (độ). stop:true = cố ý dừng (hiếm).
+      // Key cuối mặc định "đáp" nhẹ; carry:true ở key cuối = giữ vận tốc (nối match-move sang take sau).
+      const hero = look(300, 3000, 430);
+      const chart = look(0, 5600, 560);
+      const KEYS = [
+        { t: 0, x: -300, y: -120, z: -150, orbit: -4, tilt: 2 },
+        { t: 4, x: 700, y: -40, z: 60, orbit: -1, tilt: 1 },
+        { t: 8, x: hero.x, y: hero.y, z: 380, orbit: 3, tilt: 0 },
+        { t: 11, x: 3900, y: 0, z: 250, orbit: 1, tilt: 0 },
+        { t: 14, x: chart.x, y: chart.y, z: 180, orbit: 0, tilt: 0 },
+        { t: 17, x: chart.x + 380, y: 60, z: 230, orbit: -1, tilt: 0 },
+        { t: 20, x: chart.x + 600, y: 40, z: -250, orbit: -3, tilt: 1 },
+      ];
+      const CH = ["x", "y", "z", "orbit", "tilt"];
+
+      function slopes(ts, vs, stops) {
+        const n = ts.length, dl = [], m = new Array(n).fill(0);
+        for (let k = 0; k < n - 1; k++) dl[k] = (vs[k + 1] - vs[k]) / (ts[k + 1] - ts[k]);
+        m[0] = dl[0];
+        m[n - 1] = KEYS[n - 1].carry ? dl[n - 2] : 0; // cuối: đáp nhẹ, hoặc giữ vận tốc để nối take
+        for (let k = 1; k < n - 1; k++) m[k] = dl[k - 1] * dl[k] <= 0 ? 0 : (dl[k - 1] + dl[k]) / 2;
+        for (let k = 0; k < n - 1; k++) {
+          if (dl[k] === 0) { m[k] = 0; m[k + 1] = 0; continue; }
+          const a = m[k] / dl[k], b = m[k + 1] / dl[k];
+          const s = a * a + b * b;
+          if (s > 9) { const tau = 3 / Math.sqrt(s); m[k] = tau * a * dl[k]; m[k + 1] = tau * b * dl[k]; }
+        }
+        stops.forEach((st, k) => { if (st) m[k] = 0; });
+        return m;
+      }
+      const TS = KEYS.map((k) => k.t);
+      const STOPS = KEYS.map((k) => !!k.stop);
+      const CURVES = {};
+      CH.forEach((c) => {
+        const vs = KEYS.map((k) => k[c] ?? 0);
+        CURVES[c] = { vs, m: slopes(TS, vs, STOPS) };
+      });
+      function sample(t) {
+        t = Math.min(Math.max(t, TS[0]), TS[TS.length - 1]);
+        let i = 0;
+        while (i < TS.length - 2 && t > TS[i + 1]) i++;
+        const h = TS[i + 1] - TS[i], s = (t - TS[i]) / h, s2 = s * s, s3 = s2 * s;
+        const out = {};
+        CH.forEach((c) => {
+          const { vs, m } = CURVES[c];
+          out[c] = (2 * s3 - 3 * s2 + 1) * vs[i] + (s3 - 2 * s2 + s) * h * m[i] +
+            (-2 * s3 + 3 * s2) * vs[i + 1] + (s3 - s2) * h * m[i + 1];
+        });
+        // drone float: tổng sin cố định pha -> tất định, không dùng Math.random
+        out.x += FLOAT * (Math.sin(2 * Math.PI * 0.13 * t + 1.3) + 0.6 * Math.sin(2 * Math.PI * 0.31 * t + 0.2));
+        out.y += FLOAT * 0.7 * (Math.sin(2 * Math.PI * 0.11 * t + 2.1) + 0.5 * Math.sin(2 * Math.PI * 0.27 * t));
+        return out;
+      }
+      function apply(t) {
+        const c = sample(t);
+        cam.style.transform =
+          `translateZ(${c.z}px) rotateX(${c.tilt}deg) rotateY(${c.orbit}deg) translate3d(${-c.x}px, ${-c.y}px, 0px)`;
+        // Bay xuyên: lớp sắp chạm ống kính mờ dần thay vì phóng to vô hạn
+        layers.forEach(({ el, d }) => {
+          const dist = P + d - c.z;
+          el.style.opacity = String(Math.min(1, Math.max(0, (dist - 0.12 * P) / (0.18 * P))));
+        });
+      }
+
+      // ---- Skyline giả lập có seed (thay bằng ảnh thật). Tất định: mulberry32.
+      function mulberry32(a) {
+        return () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+      }
+      const NS = "http://www.w3.org/2000/svg";
+      cam.querySelectorAll("[data-skyline]").forEach((layer) => {
+        const svg = layer.querySelector("svg");
+        const far = layer.dataset.skyline === "far";
+        const rnd = mulberry32(parseInt(layer.dataset.seed, 10));
+        const base = far ? 700 : 860;
+        let x = 0;
+        while (x < parseFloat(svg.getAttribute("width"))) {
+          const w = (far ? 70 : 110) + rnd() * (far ? 140 : 220);
+          const h = (far ? 60 : 110) + Math.pow(rnd(), 1.8) * (far ? 240 : 380);
+          const r = document.createElementNS(NS, "rect");
+          r.setAttribute("x", x.toFixed(1));
+          r.setAttribute("y", (base - h).toFixed(1));
+          r.setAttribute("width", (w - (far ? 6 : 14)).toFixed(1));
+          r.setAttribute("height", (h + 2600).toFixed(1));
+          r.setAttribute("fill", far ? "#3b4a66" : "#1f2c42"); // xa: sáng & xanh hơn (phối cảnh khí quyển)
+          svg.appendChild(r);
+          if (!far) {
+            for (let wy = base - h + 24; wy < base + 200; wy += 34) {
+              if (rnd() < 0.45) continue;
+              const win = document.createElementNS(NS, "rect");
+              win.setAttribute("x", (x + 12 + rnd() * (w - 50)).toFixed(1));
+              win.setAttribute("y", wy.toFixed(1));
+              win.setAttribute("width", "14");
+              win.setAttribute("height", "10");
+              win.setAttribute("fill", "rgba(255,214,140,0.55)");
+              svg.appendChild(win);
+            }
+          }
+          x += w;
+        }
+      });
+
+      // ================= TIMELINE =================
+      const tl = gsap.timeline({ paused: true });
+      const clock = { t: 0 };
+      tl.fromTo(clock, { t: 0 }, { t: DUR, duration: DUR, ease: "none", onUpdate: () => apply(clock.t) }, 0);
+      apply(0);
+
+      // Chữ vào từng từ bằng blur, đứng yên khi đã đáp, ra bằng blur ngắn.
+      const wordsIn = (sel, at, gap = 0.08) => tl.fromTo(`${sel} span`, { opacity: 0, filter: "blur(8px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power4.out", stagger: gap }, at);
+      const wordsOut = (sel, at) => tl.to(`${sel} span`, { opacity: 0, filter: "blur(8px)", duration: 0.18,
+        ease: "power2.in", stagger: 0.03 }, at);
+
+      wordsIn("#hud-hook", 0.5, 0.09);
+      wordsOut("#hud-hook", 4.45);
+
+      // Nhãn giá gắn vào toà nhà (world-locked): nổi lên khi camera tới, đếm số 1,4 s rồi đứng yên.
+      tl.fromTo("#w-hero-tag .tag-box", { opacity: 0, y: 30, scale: 0.92 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "expo.out" }, 6.9);
+      tl.fromTo("#w-hero-stem", { scaleY: 0, transformOrigin: "50% 100%" }, { scaleY: 1, duration: 0.3, ease: "power3.out" }, 6.8);
+      const num = document.querySelector("#w-hero-num");
+      const cnt = { v: 0 };
+      tl.fromTo(cnt, { v: 0 }, { v: 12.4, duration: 1.4, ease: "power2.out",
+        onUpdate: () => { num.textContent = "+" + cnt.v.toFixed(1).replace(".", ",") + "%"; } }, 7.1);
+
+      wordsIn("#hud-kicker", 7.2, 0.1);
+      wordsOut("#hud-kicker", 10.7);
+
+      // Biểu đồ: đường giá tự vẽ trong lúc camera trượt dọc theo nó.
+      tl.fromTo("#w-chart-area", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.out" }, 12.6);
+      tl.fromTo("#w-chart-line", { strokeDashoffset: 110 }, { strokeDashoffset: 0, duration: 3.2, ease: "power2.inOut" }, 12.6);
+      tl.fromTo("#w-chart-end", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 15.7);
+      wordsIn("#hud-chart-title", 12.8, 0.08);
+      wordsOut("#hud-chart-title", 16.75);
+
+      wordsIn("#hud-close", 17.4, 0.09);
+      tl.fromTo("#hud-source-t", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 7);
+
+      window.__timelines["world"] = tl;
+    })();
+  </script>
+</template>
