@@ -116,7 +116,7 @@ S(id="d04", start=103.9, dur=2.7, kind="map", fx=["M5"], src="Bản đồ + vệ
   keys=[[0, 10.9666, 106.6985, 16.0], [2.7, 10.9666, 106.6985, 16.25]], tilt=[0, 1.0, 10, 40],
   layers=[SITEL("d04-site")], show=[{"id": "d04-site", "t": 0, "d": .2}], draw=[{"id": "d04-site", "t": 0, "d": .4}],
   ground=[{"at": "oneera", "text": "KINERA", "t": 0.4, "d": 2.2}],
-  labels=[{"at": "site_s", "lx": 0, "ly": 240, "align": "c", "text": "nhà phát triển", "color": "proj", "t": 0.9, "d": 1.7}])
+  labels=[{"at": "site_n", "lx": 0, "ly": -280, "align": "c", "text": "nhà phát triển", "color": "proj", "t": 0.9, "d": 1.7}])
 S(id="d05", start=106.6, dur=5.7, kind="foot", fx=["F3", "F2"], media="assets/img/p10.jpg", move="pull", focus="62% 40%", src="Ảnh: The Leader 25/09/2026 – lễ ký kết", foot="Ảnh: The Leader (25/09/2026)", enter="T3",
   kw=[{"t": 2.9, "d": 2.6, "lines": ["THÊM MỘT TÊN", "*RẤT *NẶNG *KÝ"], "pos": "low"}], busy=True)
 S(id="d06", start=112.3, dur=3.7, kind="foot", fx=["T2", "F2"], media="assets/img/p8.jpg", move="push", focus="58% 45%", src="Ảnh: The Leader 25/09/2026 – ký kết Kinera × Longfor", foot="Ảnh: The Leader (25/09/2026)", enter="T2",
@@ -204,14 +204,14 @@ S(id="g04", start=207.9, dur=3.55, kind="map", fx=["M9", "M4"], src="Bản đồ
   keys=[[0, 10.9680, 106.7010, 16.3], [3.55, 10.9682, 106.7012, 16.45]],
   layers=[lay("lines:canal", "water", "g04-c", 6)], draw=[{"id": "g04-c", "t": 0.1, "d": 1.4}],
   movers=[{"path": "g04-c", "t": 0.3, "d": 3.0, "icon": "boat"}],
-  labels=[{"at": "l_canal", "lx": 110, "ly": -110, "big": "KÊNH SUỐI CÁT", "color": "proj", "t": 2.6, "d": 0.9}])
+  labels=[{"at": "l_canal", "lx": -110, "ly": -120, "big": "KÊNH SUỐI CÁT", "color": "proj", "t": 2.6, "d": 0.9}])
 S(id="g05", start=211.45, dur=5.15, kind="foot", fx=["D1", "F1"], media="assets/ge/n_site_low.mp4", media_start=0.0, src="Google Earth: công trường One Era", foot=OES, enter="T3", busy=True,
   kw=[{"t": 0.2, "d": 2.6, "lines": ["DẠO BỘ", "*ĐẠP *XE"], "pos": "high", "accent": "#2FD3E0"}],
   big={"t": 3.7, "d": 1.3, "num": 2.6, "dec": 1, "unit": "km", "label": "dọc hai bờ kênh (khoảng)", "accent": "#2FD3E0"})
 S(id="g06", start=216.6, dur=4.5, kind="foot", fx=["F3", "F2"], media="assets/img/p6.jpg", move="panL", focus="70% 50%", src="Ảnh phối cảnh CĐT (CafeF)", foot=R, enter="T3", whipDir="R",
   kw=[{"t": 0.4, "d": 2.0, "lines": ["SHOPHOUSE"], "pos": "high"}, {"t": 2.4, "d": 2.0, "lines": ["+ TẦNG LỬNG", "*Ở *+ *KINH *DOANH"], "pos": "high"}], busy=True)
 S(id="g07", start=221.1, dur=3.5, kind="foot", fx=["D3", "F2"], media="assets/img/p5.jpg", move="push", focus="60% 50%", src="Ảnh phối cảnh CĐT (CafeF)", foot=R, enter="T5",
-  callouts=[{"x": 540, "y": 1240, "lx": 0, "ly": -460, "align": "c", "big": "2 MẶT TIỀN", "text": "đại lộ nội khu 25 m", "color": "route", "t": 0.2, "d": 3.2}])
+  callouts=[{"x": 540, "y": 1240, "lx": 0, "ly": -170, "align": "c", "big": "2 MẶT TIỀN", "text": "đại lộ nội khu 25 m", "color": "route", "t": 0.2, "d": 3.2}])
 S(id="g08", start=224.6, dur=4.5, kind="map", fx=["M3", "D3"], src="Bản đồ + vệ tinh Esri · vị trí minh hoạ", enter="T5",
   keys=[[0, 10.9666, 106.6985, 16.0], [4.5, 10.9666, 106.6985, 16.2]], tilt=[0, 1.0, 0, 40], orbit=[0, 4.5, -10, 10],
   layers=[SITEL("g08-site")], draw=[{"id": "g08-site", "t": 0, "d": .3}], show=[{"id": "g08-site-fill", "t": 0.2, "d": .3}],
@@ -234,12 +234,12 @@ S(id="h03", start=239.6, dur=7.0, kind="map", fx=["M2", "M7"], src="Bản đồ 
 S(id="h04", start=246.6, dur=3.6, kind="foot", fx=["F3", "F1"], media="assets/ge/n_wide.mp4", src="Google Earth: toàn cảnh Đông Bắc TP.HCM", foot=GE, enter="T5",
   kw=[{"t": 0.6, "d": 2.8, "lines": ["CƯ DÂN", "*ĐẦU *TIÊN"], "pos": "mid"}])
 S(id="h05", start=250.2, dur=3.1, kind="foot", fx=["D3", "F2"], media="assets/img/p5.jpg", move="pull", focus="45% 50%", src="Ảnh phối cảnh CĐT (CafeF)", foot=R, enter="DIS",
-  callouts=[{"x": 560, "y": 1150, "lx": 0, "ly": -380, "align": "c", "big": "SÁNG ĐÈN", "text": "dãy shophouse đại lộ 25 m", "color": "yel", "t": 0.3, "d": 2.6}])
+  callouts=[{"x": 560, "y": 1150, "lx": 0, "ly": -130, "align": "c", "big": "SÁNG ĐÈN", "text": "dãy shophouse đại lộ 25 m", "color": "yel", "t": 0.3, "d": 2.6}])
 S(id="h06", start=253.3, dur=4.14, kind="map", fx=["M4", "M5", "F3"], src="Bản đồ + vệ tinh Esri", enter="T5", exit="none",
   keys=[[0, 10.9666, 106.6985, 15.4], [4.14, 10.9666, 106.6985, 15.8]], tilt=[0, 1.5, 0, 38],
   layers=[SITEL("h06-site")], draw=[{"id": "h06-site", "t": 0, "d": 1.0}], show=[{"id": "h06-site-fill", "t": 0.9, "d": .5}],
   ground=[{"at": "oneera", "text": "ONE ERA", "t": 1.0, "d": 3.1}],
-  kw=[{"t": 0.2, "d": 3.9, "lines": ["TỪ TRÊN GIẤY", "*ĐẾN *NGƯỜI *THẬT *SỐNG"], "pos": "high", "accent": "#2FD3E0"}])
+  kw=[{"t": 0.2, "d": 3.9, "lines": ["TỪ TRÊN GIẤY", "*ĐẾN *NGƯỜI", "*THẬT *SỐNG"], "pos": "high", "accent": "#2FD3E0"}])
 # ===== cân lại tỉ lệ bản đồ / footage / thẻ =====
 def R_(id, **k):
     i = next(n for n, x in enumerate(sh) if x["id"] == id); keep = {q: sh[i][q] for q in ("id", "start", "dur")}; sh[i] = dict(keep, **k)
@@ -250,7 +250,7 @@ R_("a05", kind="map", fx=["D4"], src="Bản đồ + vệ tinh Esri", foot=CBRE, 
    keys=[[0, 10.86, 106.80, 9.15], [3.05, 10.86, 106.80, 9.35]], layers=[lay("prov:TPHCM_moi", "adm", "a05-moi", 5, True, False)], show=[{"id": "a05-moi", "t": 0, "d": .3, "to": .55}],
    stack={"t": 0.0, "top": 700, "rows": [{"t": 0.1, "num": 6573, "unit": "căn hộ", "label": "mở bán mới"}, {"t": 0.5, "num": 1934, "unit": "nhà liền thổ", "label": "mở bán mới"}]})
 U_("b07", fx=["M3", "M5", "D3"], kw=[], ground=[{"at": "oneera", "text": "ONE ERA", "t": 0.25, "d": 4.2}],
-   labels=[{"at": "site_s", "lx": 0, "ly": 260, "align": "c", "big": "AI ĐỨNG SAU?", "color": "proj", "t": 2.6, "d": 2.0}])
+   labels=[{"at": "site_n", "lx": 0, "ly": -300, "align": "c", "big": "AI ĐỨNG SAU?", "color": "proj", "t": 2.6, "d": 2.0}])
 R_("c06", kind="map", fx=["M3", "D1"], src="Bản đồ + vệ tinh Esri", foot=OES, enter="T3",
    keys=[[0, 10.9666, 106.6985, 15.7], [3.95, 10.9666, 106.6985, 16.0]], tilt=[0, 1.4, 0, 42], orbit=[0, 3.95, 14, -4],
    layers=[SITEL("c06-site")], draw=[{"id": "c06-site", "t": 0.1, "d": 0.8}], show=[{"id": "c06-site-fill", "t": 0.8, "d": .4}],
@@ -263,13 +263,13 @@ R_("d11", kind="map", fx=["D2"], src="Bản đồ + vệ tinh Esri", foot="Tính
 R_("f04", kind="map", fx=["M3", "D3"], src="Bản đồ + vệ tinh Esri", foot=OES, enter="T3",
    keys=[[0, 10.9666, 106.6985, 15.9], [3.8, 10.9666, 106.6985, 16.15]], tilt=[0, 1.0, 15, 38], orbit=[0, 3.8, 10, -10],
    layers=[SITEL("f04-site")], draw=[{"id": "f04-site", "t": 0, "d": .5}], show=[{"id": "f04-site-fill", "t": 0.3, "d": .3, "to": .7}],
-   labels=[{"at": "site_s", "lx": 0, "ly": 260, "align": "c", "big": "KHÔNG CHỈ", "text": "đứng nhìn sa bàn", "color": "yel", "t": 1.4, "d": 2.2}])
+   labels=[{"at": "site_n", "lx": 0, "ly": -300, "align": "c", "big": "KHÔNG CHỈ", "text": "đứng nhìn sa bàn", "color": "yel", "t": 1.4, "d": 2.2}])
 U_("g04", fx=["M9"])
 U_("e07", fx=["M7"], tilt=None)
 R_("g05", kind="map", fx=["D1", "M3", "D3"], src="Bản đồ + vệ tinh Esri", foot=OES, enter="T5", busy=True,
    keys=[[0, 10.9680, 106.7010, 16.2], [5.15, 10.9672, 106.7000, 15.8]], tilt=[0, 1.2, 0, 36],
    layers=[SITEL("g05-site"), lay("lines:canal", "water", "g05-c", 7)], show=[{"id": "g05-site", "t": 0, "d": .1}], draw=[{"id": "g05-c", "t": 0.2, "d": 1.6}, {"id": "g05-site", "t": 0, "d": .2}],
-   labels=[{"at": "l_canal", "lx": 120, "ly": -160, "big": "DẠO BỘ", "text": "đạp xe ven kênh", "color": "proj", "t": 0.3, "d": 3.1}],
+   labels=[{"at": "l_canal", "lx": -120, "ly": -170, "big": "DẠO BỘ", "text": "đạp xe ven kênh", "color": "proj", "t": 0.3, "d": 3.1}],
    big={"t": 3.7, "d": 1.3, "num": 2.6, "dec": 1, "unit": "km", "label": "dọc hai bờ kênh (khoảng)", "accent": "#2FD3E0", "pos": "high"})
 for x in sh:
     x["fx"] = ["C1" if (f == "D3" and x["kind"] == "foot") else f for f in x["fx"]]
@@ -282,9 +282,9 @@ U_("c01", kw=[], fx=["M3", "M4", "M5"], ground=[{"at": "oneera", "text": "QUY M�
 KW("d03")["kw"] = [{"t": 0.7, "d": 3.1, "lines": ["KUMAGAI GUMI", "*NTT *URBAN"], "pos": "mid"}]
 KW("g06")["kw"] = [{"t": 0.4, "d": 2.6, "lines": ["SHOPHOUSE", "*+ *TẦNG *LỬNG"], "pos": "high"}]
 U_("d08", kw=[], fx=["C1", "F1"], callouts=[{"x": 560, "y": 1000, "lx": 0, "ly": -300, "align": "c", "big": "LONGFOR", "text": "phát triển bất động sản từ 1993", "color": "adm", "t": 0.3, "d": 2.2}])
-U_("e01", kw=[], fx=["C1", "F1"], callouts=[{"x": 540, "y": 1050, "lx": 0, "ly": -330, "align": "c", "big": "VỊ TRÍ", "text": "một nửa câu chuyện còn lại", "color": "route", "t": 1.6, "d": 2.2}])
+U_("e01", kw=[], fx=["C1", "F1"], callouts=[{"x": 540, "y": 1050, "lx": 0, "ly": -330, "align": "c", "big": "VỊ TRÍ", "text": "một nửa câu chuyện còn lại", "color": "w", "t": 1.6, "d": 2.2}])
 U_("f01", kw=[], fx=["C1", "F1"], callouts=[{"x": 540, "y": 1050, "lx": 0, "ly": -330, "align": "c", "big": "TIỆN ÍCH", "text": "có tên, có thương hiệu", "color": "yel", "t": 0.3, "d": 2.4}])
-U_("h04", kw=[], fx=["C1", "F1"], callouts=[{"x": 540, "y": 1080, "lx": 0, "ly": -360, "align": "c", "big": "CƯ DÂN ĐẦU TIÊN", "text": "sẽ trả lời câu hỏi", "color": "proj", "t": 0.6, "d": 2.8}])
+U_("h04", kw=[], fx=["C1", "F1"], callouts=[{"x": 540, "y": 1080, "lx": 0, "ly": -360, "align": "c", "big": "CƯ DÂN ĐẦU TIÊN", "text": "sẽ trả lời câu hỏi", "color": "w", "t": 0.6, "d": 2.8}])
 U_("g02", kw=[], fx=["C1", "F2"], callouts=[{"x": 540, "y": 1100, "lx": 0, "ly": -380, "align": "c", "big": "PHÂN KHU THẤP TẦNG", "text": "đầu tiên của One Era", "color": "proj", "t": 0.3, "d": 3.3}])
 U_("f03", kw=[], fx=["C1", "F2"], callouts=[{"x": 540, "y": 1150, "lx": 0, "ly": -400, "align": "c", "big": "TTTM", "text": "văn phòng hạng A", "color": "yel", "t": 0.6, "d": 2.6}])
 U_("e04", kw=[], fx=["C1", "F1"], callouts=[{"x": 540, "y": 1100, "lx": 0, "ly": -380, "align": "c", "big": "2 TUYẾN METRO", "text": "theo quy hoạch", "color": "route", "t": 1.0, "d": 2.1}])
