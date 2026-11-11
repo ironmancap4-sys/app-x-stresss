@@ -42,10 +42,12 @@ def write_wav(path, x):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("voice"); ap.add_argument("events"); ap.add_argument("out")
-    ap.add_argument("--sfx-below", type=float, default=14.0)
+    ap.add_argument("--sfx-below", type=float, default=12.0)
     ap.add_argument("--lufs", type=float, default=-14.0)
     ap.add_argument("--tp", type=float, default=-1.0)
     ap.add_argument("--duration", type=float, default=None, help="độ dài video (s); mặc định = giọng đọc")
+    ap.add_argument("--music", default=None, help="nhạc nền (wav/mp3); tự ducking khi có giọng")
+    ap.add_argument("--music-below", type=float, default=18.0, help="nhạc thấp hơn giọng bao nhiêu dB (mặc định 18)")
     a = ap.parse_args()
 
     vo = decode(a.voice)
@@ -68,6 +70,17 @@ def main():
         if i < len(mix):
             mix[i:j] += s[: j - i] * g
     mix = mix[:n] if a.duration else mix
+    if a.music:
+        mu = decode(a.music)[: len(mix)]
+        if len(mu) < len(mix): mu = np.concatenate([mu, np.zeros((len(mix) - len(mu), 2), np.float32)])
+        Lm = lufs_of(mu); mu *= 10 ** ((L_vo - a.music_below - Lm) / 20)
+        # ducking: giảm thêm 6 dB khi giọng đang nói (bao RMS 60 ms, nhả 300 ms)
+        v = np.abs(np.pad(vo, ((0, max(0, len(mix) - len(vo))), (0, 0)))[: len(mix)]).mean(1)
+        w = int(0.06 * SR); envv = np.convolve(v, np.ones(w) / w, "same")
+        talk = (envv > 0.02).astype(np.float32); rel = int(0.3 * SR)
+        talk = np.convolve(talk, np.ones(rel) / rel, "same").clip(0, 1)
+        mix += mu * (1 - 0.5 * talk)[:, None]
+        print(f"nhạc nền: {Lm:.1f} LUFS -> {L_vo - a.music_below:.1f} LUFS, ducking -6 dB khi có giọng")
     tmp = a.out + ".pre.wav"
     write_wav(tmp, mix / max(1.0, float(np.max(np.abs(mix)))))
 

@@ -35,6 +35,14 @@ Template đã kiểm chứng: `templates/kinh-te-dia-phuong/` (đọc `TEMPLATE.
    - render → `python scripts/qa_frames.py out.mp4` (vùng chết, mây/mảng trắng, khung tối/nhoè, đứng yên > 6 s) và `python scripts/style_check.py out.mp4` (contact sheet 1 khung/giây có tô đỏ vùng TikTok che + quét màu vàng). Mọi cờ phải xem ảnh và giải thích; sai → sửa, render lại.
    - Nén giao: `ffmpeg -i out.mp4 -c:v libx264 -b:v 5000k -maxrate 6500k -bufsize 10000k -pix_fmt yuv420p -movflags +faststart -c:a aac -b:a 192k final.mp4`, rồi giải mã thử toàn bộ (`ffmpeg -v error -i final.mp4 -f null -`) trước khi gửi. Không để hai tiến trình ghi cùng một file.
 
+## Phong cách B: "bản đồ + footage" điện ảnh, nhịp nhanh
+
+Khi người dùng muốn nhịp nhanh, thư viện hiệu ứng bản đồ (bay xuyên mây, zoom nhoè, nghiêng 3D, ranh phát sáng, tuyến có xe chạy,
+vòng bán kính, ghim) xen footage full-bleed, màu theo nghĩa: đọc `references/motion-library.md`. Dựng bằng
+`python scripts/motion.py shots.json <project>` (sinh composition + `SHOTLIST.md` + bộ kiểm luật nhịp/lặp/tỉ lệ). Project cần
+`fonts.css`, `motion.css` (design/), `vmap2.js`, `geo.json`, nền vệ tinh (`sat_tiles.py` → `sat_declouds.py`). Ví dụ đầy đủ:
+`templates/one-era-motion/` (68 shot, 257 s). Luật 3 (1 màu nhấn) của phong cách A được thay bằng bảng màu theo nghĩa.
+
 ## Học phong cách từ video mẫu (khi người dùng đưa video tham khảo)
 
 `python scripts/analyze_refs.py "<thư mục video mẫu>" --out phan-tich` → `SUMMARY.md`, `STYLE_DRAFT.md`, contact sheet, đồ thị tốc độ camera; số đo của 5 video mẫu gốc nằm trong `references/style-mau.md` (camera chạy ≥ 85% thời gian, cảnh 2,5–4 s, transition zoom-blur…). Dùng chính script này để đo lại video của mình.
@@ -44,6 +52,7 @@ Template đã kiểm chứng: `templates/kinh-te-dia-phuong/` (đọc `TEMPLATE.
 | Template | Dùng cho |
 | --- | --- |
 | `templates/kinh-te-dia-phuong/` (**mặc định**) | giải thích kinh tế – địa phương từ giọng đọc: bản đồ vector + footage + bảng số + tài liệu gốc + Google Earth |
+| `templates/one-era-motion/` | phong cách B: `mk_shots.py` → shots.json (68 shot, đủ M1–M10/T1–T5/F1–F3/D1–D6), `mk_sfx.py`, ảnh Google Earth `earth-shots/` |
 | `templates/one-era/` | ví dụ dựng bằng `scenegen.py`: dự án BĐS (nguồn cung CBRE → vị trí → quy mô → đối tác → giao thông → tiện ích → sản phẩm → lộ trình) |
 | `templates/map-dive-parallax/` | video BĐS dọc kiểu bay vào bản đồ, rig camera 3D parallax (tuyến neon, ghim, thẻ dự án) |
 | `templates/ngang-parallax/` | bản 16:9: skyline nhiều lớp, nhãn giá gắn toà nhà, biểu đồ camera bay dọc |
@@ -53,6 +62,7 @@ Template đã kiểm chứng: `templates/kinh-te-dia-phuong/` (đọc `TEMPLATE.
 | Cần | Đọc |
 | --- | --- |
 | 8 nhóm quy tắc chuyên gia + cách kiểm | `references/quy-tac-chuyen-gia.md` |
+| Phong cách B: thư viện hiệu ứng, màu theo nghĩa, nhịp, SFX theo sự kiện | `references/motion-library.md` |
 | Hệ thiết kế, vùng an toàn TikTok, độ rõ tối thiểu | `references/he-thiet-ke.md`, `design/` |
 | Rig camera 3D, parallax, Google Earth, nối take | `references/camera-rig.md` |
 | Phong cách đo từ video mẫu | `references/style-mau.md`, `references/analysis.md` |
@@ -69,6 +79,9 @@ Template đã kiểm chứng: `templates/kinh-te-dia-phuong/` (đọc `TEMPLATE.
 | `vmap.js` | bản đồ vector tổng quát (lớp tỉnh/đường/kênh/ảnh vệ tinh theo toạ độ, nối điểm, vòng sóng, nhãn A/B, camera Hermite) |
 | `vector_map.js/.css` | bản đồ vector của template Vĩnh Long; `.css` dùng chung |
 | `earth_capture.js`, `earth_encode.sh` | quay Google Earth web từng khung, ghép 30 fps |
-| `make_sfx.py`, `mix_audio.py` | SFX tổng hợp; trộn + chuẩn hoá loudness có kiểm chứng |
+| `make_sfx.py`, `mix_audio.py` | SFX tổng hợp; trộn giọng + SFX + nhạc (ducking) + chuẩn hoá loudness có kiểm chứng |
+| `make_music.py` | nhạc nền có phách rõ + `beats.json` để cắt theo phách |
+| `motion.py`, `vmap2.js`, `design/motion.css` | phong cách B: shots.json → project + SHOTLIST.md + kiểm luật |
+| `sat_tiles.py`, `sat_declouds.py` | ghép ảnh vệ tinh Esri theo mức zoom; xoá mây + chỉnh màu nền |
 | `qa_frames.py`, `style_check.py` | kiểm lỗi render; contact sheet + vùng TikTok + màu cấm |
 | `analyze_refs.py` | đo video mẫu / video của mình |
