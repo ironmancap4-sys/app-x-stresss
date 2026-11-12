@@ -43,6 +43,14 @@ vòng bán kính, ghim) xen footage full-bleed, màu theo nghĩa: đọc `refere
 `fonts.css`, `motion.css` (design/), `vmap2.js`, `geo.json`, nền vệ tinh (`sat_tiles.py` → `sat_declouds.py`). Ví dụ đầy đủ:
 `templates/one-era-motion/` (68 shot, 257 s). Luật 3 (1 màu nhấn) của phong cách A được thay bằng bảng màu theo nghĩa.
 
+## Phong cách C: một camera, một bản đồ sống (Animated Map Infographic)
+
+Khi người dùng muốn MỘT chuyến bay liên tục, không cắt cảnh, thông tin mọc lên từ bản đồ (vẽ ranh, khối 3D, vòng bán kính,
+tuyến có xe chạy, ghim, tô màu, mốc thời gian…): đọc `references/flight-style.md`, dựng bằng
+`python scripts/flight.py flight.json <project>` (vmap3.js, design/flight.css). Tự kiểm: ≤ 3 cắt cứng, camera không đứng yên
+> 1 s, footage ≤ 3 s/lần và ≤ 20%, không hai chương liền nhau cùng kiểu V1–V10, mỗi kiểu ≤ 20%; sinh `CAMLOG.md`.
+Ví dụ: `templates/one-era-flight/`.
+
 ## Học phong cách từ video mẫu (khi người dùng đưa video tham khảo)
 
 `python scripts/analyze_refs.py "<thư mục video mẫu>" --out phan-tich` → `SUMMARY.md`, `STYLE_DRAFT.md`, contact sheet, đồ thị tốc độ camera; số đo của 5 video mẫu gốc nằm trong `references/style-mau.md` (camera chạy ≥ 85% thời gian, cảnh 2,5–4 s, transition zoom-blur…). Dùng chính script này để đo lại video của mình.
@@ -52,6 +60,7 @@ vòng bán kính, ghim) xen footage full-bleed, màu theo nghĩa: đọc `refere
 | Template | Dùng cho |
 | --- | --- |
 | `templates/kinh-te-dia-phuong/` (**mặc định**) | giải thích kinh tế – địa phương từ giọng đọc: bản đồ vector + footage + bảng số + tài liệu gốc + Google Earth |
+| `templates/one-era-flight/` | phong cách C: `mk_flight.py` → flight.json (một camera 71 keyframe, 15 chương V1–V10), `prep_geo.py`, `mk_sfx3.py` |
 | `templates/one-era-motion/` | phong cách B: `mk_shots.py` → shots.json (68 shot, đủ M1–M10/T1–T5/F1–F3/D1–D6), `mk_sfx.py`, ảnh Google Earth `earth-shots/` |
 | `templates/one-era/` | ví dụ dựng bằng `scenegen.py`: dự án BĐS (nguồn cung CBRE → vị trí → quy mô → đối tác → giao thông → tiện ích → sản phẩm → lộ trình) |
 | `templates/map-dive-parallax/` | video BĐS dọc kiểu bay vào bản đồ, rig camera 3D parallax (tuyến neon, ghim, thẻ dự án) |
@@ -63,6 +72,7 @@ vòng bán kính, ghim) xen footage full-bleed, màu theo nghĩa: đọc `refere
 | --- | --- |
 | 8 nhóm quy tắc chuyên gia + cách kiểm | `references/quy-tac-chuyen-gia.md` |
 | Phong cách B: thư viện hiệu ứng, màu theo nghĩa, nhịp, SFX theo sự kiện | `references/motion-library.md` |
+| Phong cách C: một camera liên tục, lớp trên bản đồ, V1–V10, zoom-through | `references/flight-style.md` |
 | Hệ thiết kế, vùng an toàn TikTok, độ rõ tối thiểu | `references/he-thiet-ke.md`, `design/` |
 | Rig camera 3D, parallax, Google Earth, nối take | `references/camera-rig.md` |
 | Phong cách đo từ video mẫu | `references/style-mau.md`, `references/analysis.md` |
@@ -82,6 +92,7 @@ vòng bán kính, ghim) xen footage full-bleed, màu theo nghĩa: đọc `refere
 | `make_sfx.py`, `mix_audio.py` | SFX tổng hợp; trộn giọng + SFX + nhạc (ducking) + chuẩn hoá loudness có kiểm chứng |
 | `make_music.py` | nhạc nền có phách rõ + `beats.json` để cắt theo phách |
 | `motion.py`, `vmap2.js`, `design/motion.css` | phong cách B: shots.json → project + SHOTLIST.md + kiểm luật |
+| `flight.py`, `vmap3.js`, `design/flight.css` | phong cách C: flight.json → một composition bản đồ + HUD + footage + CAMLOG.md + kiểm luật |
 | `sat_tiles.py`, `sat_declouds.py` | ghép ảnh vệ tinh Esri theo mức zoom; xoá mây + chỉnh màu nền |
 | `qa_frames.py`, `style_check.py` | kiểm lỗi render; contact sheet + vùng TikTok + màu cấm |
 | `analyze_refs.py` | đo video mẫu / video của mình |
