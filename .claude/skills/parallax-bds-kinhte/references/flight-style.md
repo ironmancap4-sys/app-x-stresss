@@ -67,3 +67,34 @@ lớp trên bản đồ, footage + bảng keyframe). Rồi `npx hyperframes chec
 
 Bẫy đã gặp: `#root` của motion.css có nền navy — composition HUD/footage phải để nền trong suốt; đồng hồ camera chạy trước
 các tween trong GSAP khi seek, nên tween đổi dữ liệu (chiều cao khối) phải tự gọi lại `frame()`.
+
+## 8. Bản v2 — ổn định, minh hoạ, tài sản thật (áp dụng từ video "Vành đai 3 · QL13 · metro")
+
+**Chống rung** (`flight.py` tự kiểm, tính trên từng khung 30 fps):
+- Tốc độ mặt đất ≤ 25 px/khung (lia + zoom + quay + nghiêng quy đổi ra px ở nửa bề ngang khung). Đường xa → bay cung ở độ cao lớn.
+- Mỗi đoạn giữ khung (≥ 1 s, < 6 px/khung) chỉ có MỘT kiểu trôi đơn điệu, đổi chiều ≤ 10 lần/5 s; trôi < 1,5 px/khung quá 1,2 s là lỗi
+  (gây lăn tăn mái nhà trên điện thoại) → khoá hẳn camera (`allow_lock: true`, keyframe trùng nhau) và để lớp phủ chuyển động.
+  Mẹo: viết chương dạng khoá → MỘT cú máy rõ → khoá; tránh keyframe trung gian lệch nhẹ (Hermite sinh cực trị → bò chậm).
+- Nghiêng > 35° tối đa 4 s liên tục (khoảnh khắc "hero"); đọc số liệu ở 0–35°.
+- Nền vệ tinh làm mềm Gaussian 0,8 px trước khi dùng; không bao giờ làm nét.
+- Mờ chuyển động: `"motion_blur": {"shutter": 180}` — vmap3.js tự tính theo vận tốc camera (σ = nửa quãng đi/khung ÷ √12,
+  theo trục bản đồ; zoom/quay thành vệt đều). Thuộc tính `data-motion-blur` của HyperFrames KHÔNG thấy camera vẽ bằng thuộc tính
+  SVG `transform` (check báo `motion_blur_no_movers`) nên không dùng.
+- Đo `CAMLOG.md`: bảng "Các đoạn giữ khung" (từ–đến, kiểu trôi lia/zoom/quay/nghiêng/khoá, px/khung, số lần đổi chiều).
+
+**Hệ icon** — một họ duy nhất: Material Symbols Rounded (fill), npm `@material-symbols/svg-400` (Apache-2.0); chép SVG cần dùng
+vào `proj/icons/<tên>.svg`. Nhãn `icon:"<tên>"` → huy hiệu tròn 84–96 px, glyph trắng trên màu lớp, viền trắng, glow; bật 0 → 110% → 100%
+trong 0,35 s. Mọi con số có icon (diện tích→landscape, tiền→payments, căn→apartment, ngày→calendar_month, cự ly/thời gian→route/schedule,
+tiến độ→construction, xong→check_circle, chờ→hourglass_top, người→groups, metro→subway, ô tô→directions_car, máy bay→flight).
+Chú giải dùng huy hiệu (`items: [[màu, chữ, icon]]`), không ô màu nhỏ. Kiểm: khoảng trống icon > 6 s, ảnh > 20 s.
+
+**Thẻ logo tổ chức** — `logo:"assets/logo/x.svg"` (thẻ trắng bo góc, logo 66% bề rộng, tên + vai trò). Thứ tự tìm: trang chính thức →
+press kit → Wikimedia Commons → ảnh đại diện mạng xã hội chính thức. Không vẽ lại, không AI, không chụp màn hình có nền. Không tải được
+sau mọi bước → `logo:"", mono:"ABC"` (huy hiệu chữ) và GHI vào `assets` + báo người dùng. Không lách giới hạn tải (Wikimedia 429 → chờ, thử lại thưa, rồi bỏ).
+
+**Cửa sổ ảnh** — `photo:"assets/img/x.jpg"` (+ `w,h`, `text:"Ảnh: <nguồn>"`): thẻ bo góc trượt lên từ ghim, ảnh đẩy chậm 12%, bản đồ
+vẫn thấy xung quanh, 1,5–3 s. Ảnh báo < 1080 px chỉ dùng ở cửa sổ, không full-bleed. Đặt thẻ PHÍA TRÊN neo khi camera nghiêng
+(phần dưới khung bị phối cảnh phóng to và đè dòng nguồn ở y≈1396).
+
+**Nhật ký tài sản** — khai `assets: [{name,url,res,used,note}]` trong flight.json → bảng "Tài sản tải về" trong CAMLOG.md.
+Chữ tối thiểu 36 px (trừ dòng nguồn 19 px).

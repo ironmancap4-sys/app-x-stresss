@@ -49,7 +49,7 @@ Khi người dùng muốn MỘT chuyến bay liên tục, không cắt cảnh, t
 tuyến có xe chạy, ghim, tô màu, mốc thời gian…): đọc `references/flight-style.md`, dựng bằng
 `python scripts/flight.py flight.json <project>` (vmap3.js, design/flight.css). Tự kiểm: ≤ 3 cắt cứng, camera không đứng yên
 > 1 s, footage ≤ 3 s/lần và ≤ 20%, không hai chương liền nhau cùng kiểu V1–V10, mỗi kiểu ≤ 20%; sinh `CAMLOG.md`.
-Ví dụ: `templates/one-era-flight/`.
+Ví dụ: `templates/one-era-flight/`, `templates/ha-tang-flight/` (bản v2: chống rung đo theo khung, mờ chuyển động theo vận tốc, huy hiệu icon Material Symbols, thẻ logo, cửa sổ ảnh, nhật ký tài sản).
 
 ## Học phong cách từ video mẫu (khi người dùng đưa video tham khảo)
 

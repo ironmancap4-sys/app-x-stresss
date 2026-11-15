@@ -29,19 +29,43 @@ def vn(v, dec=0):
 PIN = '<svg class="pi" viewBox="0 0 44 60"><path d="M22 58 C22 58 4 34 4 20 a18 18 0 0 1 36 0 c0 14-18 38-18 38z" fill="#FACC15" stroke="#0E1A2B" stroke-width="3"/><circle cx="22" cy="20" r="7" fill="#0E1A2B"/></svg>'
 PAD = [1100, 2800]
 
+ICONS = {}   # tên icon -> SVG (Material Symbols Rounded, fill) — nạp trong main() từ thư mục `icons`
+def icon_svg(name):
+    if name not in ICONS: raise SystemExit(f"thiếu icon '{name}' trong thư mục icons/")
+    return ICONS[name]
+
+def badge(name, color, cls=""):
+    """Huy hiệu icon tròn: glyph trắng trên màu của lớp, viền trắng mảnh, glow (một họ icon duy nhất)."""
+    return f'<span class="bdg {cls}" style="--bc:{COL.get(color, color)}">{icon_svg(name)}</span>'
+
+COL = {"adm": "#F28C28", "proj": "#2FD3E0", "green": "#4ADE80", "route": "#E04BD6", "yel": "#FACC15", "w": "#2FD3E0"}
+
 def la_html(l, i):
     lx, ly = l.get("lx", 0), l.get("ly", -120)
     al = l.get("align") or ("l" if lx >= 0 else "r")
     gx = 12 if al == "l" else -12 if al == "r" else 0
     tr = {"l": "translate(0,-50%)", "r": "translate(-100%,-50%)", "c": "translate(-50%,-100%)" if ly < 0 else "translate(-50%,0)"}[al]
     ta = {"l": "left", "r": "right", "c": "center"}[al]
+    lead = (f'<span class="lead" style="width:{math.hypot(lx, ly):.0f}px;transform:rotate({math.atan2(ly, lx):.4f}rad)"></span><span class="dot"></span>'
+            if l.get("lead", True) else "")
+    head = f'<div id="la{i}" class="la c-{l.get("color","w")} mlab" data-at="{l["at"]}">{lead}'
+    pos = f'left:{lx + gx}px;top:{ly}px;transform:{tr};text-align:{ta}'
+    if l.get("photo"):   # cửa sổ ảnh neo cạnh ghim (bản đồ vẫn thấy xung quanh)
+        w, h = l.get("w", 600), l.get("h", 400)
+        return (head + f'<span class="tx pwin" style="{pos};width:{w}px"><span class="pimg" style="height:{h}px">'
+                f'<img id="la{i}-img" src="{l["photo"]}" alt="" style="object-position:{l.get("focus","50% 50%")}" /></span>'
+                + (f'<span class="pcap">{esc(l["text"])}</span>' if l.get("text") else "") + '</span></div>')
+    if l.get("logo") is not None:   # thẻ logo tổ chức: ảnh logo chính thức, hoặc huy hiệu chữ khi không có logo
+        inner = (f'<img src="{l["logo"]}" alt="" />' if l["logo"] else f'<span class="mono">{esc(l.get("mono",""))}</span>')
+        return (head + f'<span class="tx lcard" style="{pos}"><span class="lg">{inner}</span><span class="nm">{esc(l.get("big",""))}</span>'
+                f'<span class="rl">{esc(l.get("text",""))}</span></span></div>')
     big = ""
     if l.get("big") is not None:
         big = f'<b class="{"xl" if l.get("xl") else ""}"><span class="cnt" id="la{i}-n">{esc(l["big"])}</span>{f"<u>{esc(l["unit"])}</u>" if l.get("unit") else ""}</b>'
     small = f'<small>{esc(l["small"])}</small>' if l.get("small") else ""
-    return (f'<div id="la{i}" class="la c-{l.get("color","w")} mlab" data-at="{l["at"]}">'
-            f'<span class="lead" style="width:{math.hypot(lx, ly):.0f}px;transform:rotate({math.atan2(ly, lx):.4f}rad)"></span><span class="dot"></span>'
-            f'<span class="tx" style="left:{lx + gx}px;top:{ly}px;transform:{tr};text-align:{ta}">{big}{esc(l.get("text",""))}{small}</span></div>')
+    ic = badge(l["icon"], l.get("color", "w"), "xl" if l.get("xl") else "") if l.get("icon") else ""
+    body = f'<span class="tb">{big}{esc(l.get("text",""))}{small}</span>'
+    return head + f'<span class="tx {"wi" if ic else ""}" style="{pos}">{ic}{body}</span></div>'
 
 def build_map(F, P, tl):
     body = [f'<div class="zw" id="zw"><div class="plane" id="pl">',
@@ -52,6 +76,11 @@ def build_map(F, P, tl):
         body.append(la_html(l, i))
         end = min(l["t"] + l.get("d", D), D - 0.05)
         tl.append(f'tl.fromTo("#la{i} > *", {{opacity:0}}, {{opacity:1, duration:.35}}, {l["t"]}); tl.to("#la{i} > *", {{opacity:0, duration:.35}}, {end});')
+        if l.get("icon"):   # huy hiệu bật vào: 0 -> 110% -> 100% trong 0,35 s
+            tl.append(f'tl.fromTo("#la{i} .bdg", {{scale:0}}, {{scale:1.1, duration:.22, ease:"power2.out"}}, {l["t"]}); tl.to("#la{i} .bdg", {{scale:1, duration:.13, ease:"power1.inOut"}}, {l["t"] + .22});')
+        if l.get("photo") or l.get("logo") is not None:   # cửa sổ ảnh / thẻ logo trượt lên từ ghim
+            tl.append(f'tl.fromTo("#la{i} .tx", {{y:70, scale:.85}}, {{y:0, scale:1, duration:.5, ease:"power3.out"}}, {l["t"]});')
+            if l.get("photo"): tl.append(f'tl.fromTo("#la{i}-img", {{scale:1.0}}, {{scale:1.12, duration:{max(.5, end - l["t"])}, ease:"none"}}, {l["t"]});')
         if l.get("count") is not None:
             c = l["count"]; dec = c.get("dec", 0)
             tl.append(f'(() => {{ const e = document.querySelector("#la{i}-n"), o = {{v:{c["from"]}}}; '
@@ -82,7 +111,8 @@ def build_map(F, P, tl):
             tl.append(f'tl.to(".blk.g-{e["id"]}", {{"--a":{e.get("to",.35)}, duration:{d}}}, {t});')
     opts = {"svg": "#mapsvg", "labels": ".mlab", "sat": F["sat"], "pad": PAD, "keys": F["cam"], "blockHost": "#blkhost",
             "layers": F.get("layers", []), "links": F.get("links", []), "circles": F.get("circles", []), "rings": F.get("rings", []),
-            "movers": F.get("movers", []), "blocks": F.get("_blocks", []), "blockH": F.get("blockH", {})}
+            "movers": F.get("movers", []), "blocks": F.get("_blocks", []), "blockH": F.get("blockH", {}),
+            "motionBlur": F.get("motion_blur"), "fps": F.get("fps", 30)}
     pre = (f"const GEO = {open(P + '/geo.json').read()};\nObject.assign(GEO.lab, {json.dumps(F['_pts'])});\n{open(P + '/vmap3.js').read()}\n"
            f"const BHo = {json.dumps({g: 0 for g in F.get('blockH', {})})}; window.BH = Object.assign({{}}, BHo);\n"
            f"const map = makeMap3({json.dumps(opts, ensure_ascii=False)});\nconst pl = document.querySelector('#pl');\n"
@@ -104,8 +134,8 @@ def build_hud(F, tl):
             body.append(f'<div class="cloud hcl" style="left:{x}px;top:{y}px;width:{w}px;height:{int(w*.55)}px"></div>')
         tl.append(f'tl.fromTo(".hcl", {{opacity:1, scale:1}}, {{opacity:0, scale:3.6, duration:{c1-c0}, stagger:.04, ease:"power2.in"}}, {c0});')
     for i, lg in enumerate(h.get("legend", [])):
-        items = "".join(f'<div class="li"><i style="background:{c}"></i>{esc(t)}</div>' for c, t in lg["items"])
-        body.append(f'<div class="legend" id="lg{i}">{items}</div>')
+        items = "".join(f'<div class="li">{badge(it[2], it[0], "sm") if len(it) > 2 else f"<i style=\'background:{it[0]}\'></i>"}{esc(it[1])}</div>' for it in lg["items"])
+        body.append(f'<div class="legend" id="lg{i}" style="top:{lg.get("top", 1180)}px">{items}</div>')
         tl.append(f'tl.fromTo("#lg{i}", {{opacity:0, y:20}}, {{opacity:1, y:0, duration:.4}}, {lg["t"]}); tl.to("#lg{i}", {{opacity:0, duration:.4}}, {min(lg["t"]+lg["d"], D-.05)});')
     for i, s in enumerate(h.get("src", [])):
         body.append(f'<p class="src" id="src{i}">{esc(s["text"])}</p>')
@@ -128,13 +158,13 @@ def build_foot(f, i, tl):
     return [f'<div id="fw{i}" style="position:absolute;inset:0;overflow:hidden"><div id="fm{i}" style="position:absolute;inset:0">{media}</div>'
             f'<div class="gtop"></div></div>']
 
-def comp(cid, body, pre, tl, css, bg=True):
+def comp(cid, body, pre, tl, css, bg=True, blur=None):
     return f"""<template>
   <style>
 {css}
     #root {{ position: absolute; inset: 0; overflow: hidden; {"" if bg else "background: transparent;"} }}
   </style>
-  <div id="root" data-composition-id="{cid}" data-width="1080" data-height="1920">
+  <div id="root" data-composition-id="{cid}" data-width="1080" data-height="1920"{blur or ""}>
 {chr(10).join(body)}
   </div>
   <script>
@@ -188,7 +218,7 @@ def validate(F, js_sample=None):
     for a, b in zip(K, K[1:]):
         if abs((b[5] if len(b) > 5 else 0) - (a[5] if len(a) > 5 else 0)) > 90: msg.append(f"quay > 90° giữa {a[0]}–{b[0]} s")
         same = all(abs(x - y) < 1e-9 for x, y in zip(a[1:], b[1:]))
-        if same and b[0] - a[0] > 1: msg.append(f"camera đứng yên {a[0]}–{b[0]} s")
+        if same and b[0] - a[0] > 1 and not F.get("allow_lock"): msg.append(f"camera đứng yên {a[0]}–{b[0]} s")
     # camera không đứng yên quá 1 s: mọi cửa sổ 1 s phải đổi Z ≥ 0,004 (~0,3% tỉ lệ) hoặc nghiêng/quay ≥ 0,15° hoặc lia ≥ 1,5 px
     at = cam_sampler(K); still = []
     t = F["cam"][0][0]
@@ -197,19 +227,73 @@ def validate(F, js_sample=None):
         moving = abs(b[2] - a[2]) >= .004 or abs(b[3] - a[3]) >= .15 or abs(b[4] - a[4]) >= .15 or math.hypot(b[0] - a[0], b[1] - a[1]) * sc >= 1.5
         if not moving: still.append(round(t, 1))
         t += 0.25
-    if still: msg.append(f"camera gần như đứng yên > 1 s quanh {still[:6]}")
+    if still and not F.get("allow_lock"): msg.append(f"camera gần như đứng yên > 1 s quanh {still[:6]}")
+    # ---- ổn định (chống rung): tốc độ mặt đất từng khung, giữ khung đơn điệu, nghiêng có thời hạn
+    fps = F.get("fps", 30); N = int(D * fps); R = 540   # R: đo tốc độ zoom/quay tại nửa bề ngang khung (540 px)
+    hidden = [(f["t"] + .6, f["t"] + f["d"] - .6) for f in F.get("foot", [])]
+    def spd(t0, t1):
+        a, b = at(t0), at(t1); sc = 2 ** ((a[2] + b[2]) / 2 - 8)
+        return (math.hypot(b[0] - a[0], b[1] - a[1]) * sc + abs(b[2] - a[2]) * math.log(2) * R
+                + abs(b[4] - a[4]) * math.pi / 180 * R + abs(b[3] - a[3]) * math.pi / 180 * 900), [b[i] - a[i] for i in range(5)]
+    sp = [spd(i / fps, (i + 1) / fps) for i in range(N)]
+    fast = [round(i / fps, 2) for i, (v, _) in enumerate(sp) if v > F.get("max_px_frame", 25) and not any(h0 <= i / fps <= h1 for h0, h1 in hidden)]
+    if fast: msg.append(f"camera nhanh hơn {F.get('max_px_frame', 25)} px/khung ở {len(fast)} khung, từ {fast[0]} s (tối đa {max(v for v, _ in sp):.1f})")
+    holds = []; i = 0
+    while i < N:
+        if sp[i][0] < 6:
+            j = i
+            while j < N and sp[j][0] < 6: j += 1
+            if (j - i) / fps >= 1.0:
+                seg = sp[i:j]; med = sorted(v for v, _ in seg)[len(seg) // 2]
+                flips = sum(1 for c in range(5) for k in range(1, len(seg)) if seg[k][1][c] * seg[k - 1][1][c] < 0 and abs(seg[k][1][c]) > 1e-7)
+                tot = [sum(d[c] for _, d in seg) for c in range(5)]; sc = 2 ** (at(i / fps)[2] - 8)
+                parts = {"lia": math.hypot(tot[0], tot[1]) * sc, "zoom": abs(tot[2]) * math.log(2) * R, "quay": abs(tot[4]) * math.pi / 180 * R, "nghiêng": abs(tot[3]) * math.pi / 180 * 900}
+                kind = "khoá" if med < .05 else max(parts, key=parts.get)
+                holds.append((i / fps, j / fps, kind, med, flips))
+                per5 = flips / max(1e-6, (j - i) / fps) * 5
+                if per5 > 10: msg.append(f"giữ {i/fps:.1f}–{j/fps:.1f} s: đổi chiều {flips} lần (> 10 / 5 s)")
+                crawl = sum(1 for v, _ in seg if .05 <= v < 1.5) / fps   # bò dưới 1,5 px/khung (trừ đoạn khoá hẳn)
+                if crawl > 1.2: msg.append(f"giữ {i/fps:.1f}–{j/fps:.1f} s có {crawl:.1f} s trôi < 1,5 px/khung → tăng trôi hoặc khoá hẳn")
+            i = j
+        else: i += 1
+    F["_holds"] = holds
+    run = 0; t0 = None
+    for i in range(N):
+        p_ = at(i / fps)[3]
+        if p_ > 35.5:
+            run += 1; t0 = t0 if t0 is not None else i / fps
+        else:
+            if run / fps > 4.05: msg.append(f"nghiêng > 35° kéo dài {run/fps:.1f} s từ {t0:.1f} s (tối đa 4 s)")
+            run = 0; t0 = None
+    # ---- mật độ minh hoạ: icon mỗi 4–6 s, ảnh mỗi 15–20 s
+    ic = sorted([l["t"] for l in F.get("labels", []) if l.get("icon") or l.get("logo") is not None or l.get("photo")] + [p["t"] for p in F.get("pins", [])])
+    gaps = [(a, b) for a, b in zip([1.0] + ic, ic + [D - 1]) if b - a > F.get("icon_gap", 6.0)]
+    if gaps: msg.append("khoảng trống icon > 6 s: " + ", ".join(f"{a:.1f}–{b:.1f}" for a, b in gaps[:6]))
+    im = sorted([l["t"] for l in F.get("labels", []) if l.get("photo")] + [f["t"] for f in F.get("foot", [])])
+    gaps = [(a, b) for a, b in zip([0.0] + im, im + [D]) if b - a > F.get("img_gap", 20.0)]
+    if gaps: msg.append("khoảng trống ảnh > 20 s: " + ", ".join(f"{a:.1f}–{b:.1f}" for a, b in gaps[:6]))
+    imgs = sum(min(l.get("d", 3), 3) for l in F.get("labels", []) if l.get("photo")) + ft
+    if imgs > 0.2 * D: msg.append(f"ảnh/footage tổng {imgs:.1f} s > 20%")
     return msg, share, ft
 
 def main():
     F = json.load(open(sys.argv[1], encoding="utf-8")); P = sys.argv[2]
+    if os.path.isdir(f"{P}/icons"):
+        import re as _re
+        for fn in os.listdir(f"{P}/icons"):
+            if fn.endswith(".svg"):
+                ICONS[fn[:-4]] = _re.sub(r'<svg[^>]*?viewBox="([^"]+)"[^>]*>', r'<svg viewBox="\1">', open(f"{P}/icons/{fn}").read()).replace("<path", '<path fill="#fff"')
     F["_pts"] = {k: [round(wx(v[0]), 3), round(wy(v[1]), 3)] for k, v in F.get("points", {}).items()}
     if F.get("blocks"): F["_blocks"] = json.load(open(F["blocks"])) if isinstance(F["blocks"], str) else F["blocks"]
     css = open(f"{P}/fonts.css").read() + open(f"{P}/motion.css").read() + open(f"{P}/flight.css").read()
     os.makedirs(f"{P}/compositions", exist_ok=True); D = F["duration"]
     tl = []; body, pre = build_map(F, P, tl)
+    mb = F.get("motion_blur")   # {"shutter":180,"samples":16} -> mờ chuyển động khi render
+    mbattr = ""   # mờ chuyển động do vmap3.js tự tính theo vận tốc camera (blur có sẵn của HyperFrames không thấy camera vẽ bằng thuộc tính SVG)
     open(f"{P}/compositions/map.html", "w").write(comp("map", body, pre, tl, css))
     tl = []; body = build_hud(F, tl)
-    open(f"{P}/compositions/hud.html", "w").write(comp("hud", body, "", tl, css, bg=False))
+    # HUD (nguồn, chú giải) cố định trên màn hình: không mờ chuyển động
+    open(f"{P}/compositions/hud.html", "w").write(comp("hud", body, "", tl, css, bg=False, blur=None))
     hosts = [f'<div id="map" data-composition-id="map" data-composition-src="compositions/map.html" data-start="0" data-duration="{D}" data-track-index="1" data-width="1080" data-height="1920" style="z-index:1"></div>']
     for i, f in enumerate(F.get("foot", [])):
         tl = []; body = build_foot(f, i, tl)
@@ -223,7 +307,7 @@ def main():
     <style>* {{ margin: 0; padding: 0; box-sizing: border-box; }} html, body {{ width: 1080px; height: 1920px; overflow: hidden; background: #0E1A2B; }}</style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="{D}" data-width="1080" data-height="1920">
+    <div id="root" data-composition-id="main" data-start="0" data-duration="{D}" data-width="1080" data-height="1920"{mbattr}>
       {chr(10).join("      " + h for h in hosts)}
       <audio id="mix" class="clip" src="{F.get('audio','assets/mix.wav')}" data-start="0" data-duration="{D}" data-track-index="30" data-volume="1"></audio>
     </div>
@@ -241,6 +325,11 @@ def main():
         rows.append(f"| {tc(a['t'])}–{tc(b['t'])} | {esc(a['name'])} | {a['V']} | {esc(a.get('cam',''))} | {esc(a.get('layers',''))} | {esc(foot) or '—'} |")
     rows += ["", "## Keyframe camera", "", "| t (s) | lat | lng | Z | pitch | bearing |", "|---|---|---|---|---|---|"]
     rows += [f"| {k[0]} | {k[1]:.4f} | {k[2]:.4f} | {k[3]:.2f} | {k[4] if len(k)>4 else 0} | {k[5] if len(k)>5 else 0} |" for k in F["cam"]]
+    rows += ["", "## Các đoạn giữ khung (≥ 1 s, < 6 px/khung)", "", "| Từ | Đến | Kiểu trôi | Tốc độ trung vị (px/khung) | Đổi chiều |", "|---|---|---|---|---|"]
+    rows += [f"| {tc(a)} | {tc(b)} | {k} | {m:.2f} | {fl} |" for a, b, k, m, fl in F.get("_holds", [])]
+    if F.get("assets"):
+        rows += ["", "## Tài sản tải về", "", "| Tên | Nguồn (URL) | Độ phân giải | Dùng lúc | Ghi chú |", "|---|---|---|---|---|"]
+        rows += [f"| {a['name']} | {a['url']} | {a.get('res','')} | {a.get('used','')} | {esc(a.get('note',''))} |" for a in F["assets"]]
     rows += ["", "## Tỉ lệ kiểu trực quan hoá (chương)", ""] + [f"- {v}: {d:.1f} s ({d/D*100:.0f}%)" for v, d in sorted(share.items())]
     rows += ["", "## Kiểm luật", ""] + ([f"- {m}" for m in msg] or ["- Đạt: ≤ 3 cắt cứng, footage ≤ 3 s/lần & ≤ 20%, không chương liền nhau trùng kiểu, mỗi kiểu ≤ 20%, không quay > 90°/lần."])
     open(f"{P}/CAMLOG.md", "w").write("\n".join(rows))

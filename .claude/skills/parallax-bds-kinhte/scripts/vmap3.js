@@ -26,7 +26,7 @@ function makeMap3(opts) {
     return `M${a[0]} ${a[1]} Q ${mx_ - dy * bend} ${my_ + dx * bend}, ${b[0]} ${b[1]}`; };
   const addLine = (d, ly) => {
     const kind = ly.kind || "adm", w = ly.w || 5, id = ly.id || "";
-    const g = el("g", { id, class: "lyr k-" + kind, opacity: ly.op ?? 0 });
+    const g = el("g", { id, class: "lyr k-" + kind + (ly.cls ? " " + ly.cls : ""), opacity: ly.op ?? 0 });
     if (ly.fill) S(el("path", { d, class: "fill", id: id + "-fill", style: "opacity:0" }, g), 0);
     const ga = { d, class: "glow", id: id + "-glow" }, ca = { d, class: "core", id: id + "-core" };
     if (ly.len) { ga.pathLength = 100; ca.pathLength = 100; ga.class += " len"; ca.class += " len"; }
@@ -43,6 +43,7 @@ function makeMap3(opts) {
     host0().appendChild(e); discs.push({ e, p, R }); });
   const ICON = {
     car: '<rect x="-14" y="-8" width="28" height="16" rx="5" fill="#fff"/><rect x="-7" y="-6" width="11" height="12" rx="2" fill="#E04BD6"/>',
+    train: '<rect x="-17" y="-9" width="34" height="18" rx="8" fill="#fff"/><rect x="-11" y="-5" width="8" height="7" rx="1.5" fill="#E04BD6"/><rect x="2" y="-5" width="8" height="7" rx="1.5" fill="#E04BD6"/>',
     bike: '<circle r="13" fill="#fff"/><path d="M-7 3 L-2 -5 L5 3 M-2 -5 L3 -5" stroke="#2FD3E0" stroke-width="2.6" fill="none" stroke-linecap="round"/><circle cx="-7" cy="3" r="3.2" fill="none" stroke="#2FD3E0" stroke-width="2"/><circle cx="6" cy="3" r="3.2" fill="none" stroke="#2FD3E0" stroke-width="2"/>',
     plane: '<path d="M14 0 L-6 -12 L-3 -2 L-12 -2 L-15 -7 L-17 -7 L-15 0 L-17 7 L-15 7 L-12 2 L-3 2 L-6 12 Z" fill="#fff"/>',
     dot: '<circle r="9" fill="#fff"/><circle r="16" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>',
@@ -82,7 +83,24 @@ function makeMap3(opts) {
       o[c] = (2 * s3 - 3 * s2 + 1) * vs[i] + (s3 - 2 * s2 + s) * h * m[i] + (-2 * s3 + 3 * s2) * vs[i + 1] + (s3 - s2) * h * m[i + 1]; });
     return o; };
   const labels = [...document.querySelectorAll(opts.labels)].map((n) => ({ n, p: L[n.dataset.at] }));
+  // ---- mờ chuyển động theo vận tốc camera (màn trập 180° = nửa quãng đi trong 1 khung), lọc trên chính SVG bản đồ
+  const MB = opts.motionBlur, fps = opts.fps || 30;
+  let mbf = null;
+  if (MB) { mbf = el("filter", { id: "mbf", x: "-2%", y: "-2%", width: "104%", height: "104%", "color-interpolation-filters": "sRGB" }, defs);
+    mbf.innerHTML = '<feGaussianBlur id="mbg" stdDeviation="0 0" edgeMode="duplicate"/>'; }
+  const mbg = () => svg.querySelector("#mbg");
+  function blurAt(t) {
+    if (!MB) return;
+    const a = sample(t - 0.5 / fps), b = sample(t + 0.5 / fps), s = 2 ** ((a.Z + b.Z) / 2 - Z0);
+    const sh = (MB.shutter || 180) / 360;                                  // phần khung màn trập mở
+    const zx = Math.abs(b.Z - a.Z) * Math.LN2 * 540, rot = Math.abs(b.b - a.b) * Math.PI / 180 * 540;
+    const dx = Math.abs(b.x - a.x) * s + (zx + rot) * 0.5, dy = Math.abs(b.y - a.y) * s + (zx + rot) * 0.5;
+    const sx = dx * sh / 3.46, sy = dy * sh / 3.46;                       // độ dài vệt L ≈ σ·√12
+    if (sx < 0.15 && sy < 0.15) { svg.style.filter = ""; return; }
+    mbg().setAttribute("stdDeviation", `${sx.toFixed(2)} ${sy.toFixed(2)}`); svg.style.filter = "url(#mbf)";
+  }
   function apply(t) {
+    blurAt(t);
     const c = sample(t), s = 2 ** (c.Z - Z0), tx = W / 2 - c.x * s, ty = H / 2 - c.y * s;
     world.setAttribute("transform", `translate(${(tx + PL).toFixed(2)} ${(ty + PT).toFixed(2)}) scale(${s.toFixed(6)})`);
     stroked.forEach(([e, w]) => w && e.setAttribute("stroke-width", (w / s).toFixed(5)));
