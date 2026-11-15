@@ -51,21 +51,21 @@ def la(at, t, d, big=None, text="", small="", color="w", lx=0, ly=-260, align="c
     lab.append({k: v for k, v in dict(at=at, t=t, d=d, big=big, text=text, small=small, color=color, lx=lx, ly=ly, align=align, xl=xl, unit=unit, count=count, icon=icon, **kw).items() if v not in (None, "", False) or k == "logo"})
 # 1 · V10
 la("east_mid", 0.6, 7.0, "99", "17 km cầu cạn phía Đông", color="route", ly=-330, xl=True, unit="%", icon="construction", count={"from": 90, "to": 99})
-la("east_mid", 4.2, 2.5, photo="assets/img/vd3_caucan.jpg", text="Ảnh: Dân trí", lx=-250, ly=60, w=480, h=300, lead=False)
+la("east_mid", 4.2, 2.5, photo="assets/img/vd3_caucan.jpg", text="Ảnh: Dân trí", lx=-250, ly=-60, w=480, h=300, lead=False)
 la("tanvan", 7.9, 3.6, "1%", "phần việc còn lại", color="yel", lx=-60, ly=-250, icon="hourglass_top")
 la("nhontrach", 10.5, 2.6, "30/11", "mốc thông xe", color="yel", lx=-40, ly=-240, icon="calendar_month")
 la("east_s", 13.3, 2.1, "THIẾU NHỰA · ĐÁ", "chất lượng cao", color="adm", lx=-60, ly=-220, icon="warning")
 # 2 · V2
 la("hcm_lab", 16.2, 3.4, "ĐÔNG BẮC TP.HCM", "", color="adm", lx=220, ly=-200, icon="location_city")
 la("map_note", 19.5, 5.4, "TRÊN BẢN ĐỒ", "tuyến nào cũng đã vẽ xong", color="route", lx=0, ly=-150, icon="route")
-la("hcm_lab", 20.6, 2.5, photo="assets/img/vd3_aerial.jpg", text="Ảnh: Thanh Niên", lx=-150, ly=120, w=480, h=300, lead=False)
+la("hcm_lab", 20.6, 2.5, photo="assets/img/vd3_aerial.jpg", text="Ảnh: Thanh Niên", lx=-260, ly=-80, w=480, h=300, lead=False)
 la("tanvan", 22.6, 2.4, "NGOÀI THỰC ĐỊA", "mỗi tuyến một vạch", color="adm", lx=-80, ly=180, icon="construction")
 # 3 · V1
 la("ql13_lab", 28.3, 6.0, "QL13", "", color="route", lx=-120, ly=-170, align="r", icon="add_road")
 la("vd3_lab", 29.1, 2.3, "VÀNH ĐAI 3", "", color="route", lx=-20, ly=-320, align="c", icon="add_road")
 la("site_n", 31.5, 3.0, "ĐI TỚI ĐÂU?", "bao giờ người dân dùng được", color="w", ly=-430, icon="help")
 # 4 · V5
-la("hcm_lab", 37.0, 2.5, photo="assets/img/vd3_tanvan2.jpg", text="Ảnh: Dân trí · Vành đai 3", lx=0, ly=60, w=480, h=300, lead=False)
+la("hcm_lab", 37.0, 2.5, photo="assets/img/vd3_tanvan2.jpg", text="Ảnh: Dân trí · Vành đai 3", lx=-230, ly=-260, w=480, h=300, lead=False)
 la("hcm_lab", 35.6, 1.9, "76", "chiều dài toàn tuyến", color="route", lx=0, ly=-520, xl=True, unit="km", icon="route", count={"from": 0, "to": 76})
 la("hcm_lab", 37.6, 2.1, "> 75.300", "tỷ đồng · tổng mức đầu tư", color="w", lx=0, ly=-520, xl=True, unit="tỷ", icon="payments")
 la("hcm_lab", 39.8, 4.6, "81%", "giá trị hợp đồng (10/2026)", color="route", lx=0, ly=-520, xl=True, icon="construction")
@@ -82,7 +82,7 @@ la("tanvan", 57.6, 2.6, "TÂN VẠN", "điểm xuất phát", color="route", lx=
 la("ql13_lab", 66.6, 2.6, "QUỐC LỘ 13", "", color="route", lx=0, ly=-260, icon="add_road")
 # 6 · V8
 la("ql13_mid", 69.2, 2.3, "> 9 KM · 8 LÀN", "Ông Bố → Nguyễn Thị Minh Khai", color="route", lx=0, ly=-300, align="c", icon="swap_horiz")
-la("ql13_mid", 71.6, 2.5, photo="assets/img/ql13.jpg", text="Ảnh: Dân trí", lx=0, ly=-120, w=480, h=280, lead=False)
+la("ql13_mid", 72.4, 2.5, photo="assets/img/ql13.jpg", text="Ảnh: Dân trí", lx=-40, ly=-160, w=480, h=280, lead=False)
 la("ql13_mid", 75.4, 4.6, "Sở Xây dựng TP.HCM", "dự án qua Bình Dương cũ cơ bản hoàn thành", logo="", mono="SXD", lx=0, ly=-120)
 la("todo_mid", 80.9, 5.6, "≈ 6 KM", "phía cầu Bình Triệu · chờ khởi công", color="yel", lx=0, ly=-280, align="c", icon="hourglass_top")
 # 7 · V9
@@ -105,7 +105,7 @@ la("oneera", 120.3, 2.0, "METRO", "cuối thập kỷ", color="yel", lx=0, ly=-4
 la("site_n", 126.1, 4.4, "LĂN BÁNH NĂM NÀO?", "câu hỏi nên hỏi thêm", color="w", lx=70, ly=-300, icon="help")
 pins = [{"at": "st_tg", "text": "Thuận Giao", "t": 96.3, "d": 4.0}, {"at": "st_ap", "text": "An Phú", "t": 97.2, "d": 3.1}, {"at": "st_da", "text": "Dĩ An", "t": 98.0, "d": 2.3},
         {"at": "suoitien", "text": "Suối Tiên", "t": 99.8, "d": 0.9, "left": True}, {"at": "binhtrieu", "text": "Cầu Bình Triệu", "t": 82.1, "d": 4.3},
-        {"at": "ongbo", "text": "Ông Bố", "t": 70.6, "d": 4.6, "left": True}, {"at": "ntmk_j", "text": "Nguyễn Thị Minh Khai", "t": 71.6, "d": 9.0}]
+        {"at": "ongbo", "text": "Ông Bố", "t": 70.0, "d": 2.3, "left": True}, {"at": "ntmk_j", "text": "Nguyễn Thị Minh Khai", "t": 70.4, "d": 1.9}]
 ground = [{"at": "oneera", "text": "ONE ERA", "t": 30.6, "d": 3.8, "size": 100}, {"at": "oneera", "text": "ONE ERA", "t": 127.2, "d": 3.3, "size": 92}]
 ev = []
 E = lambda t, act, id, d=.6, **k: ev.append(dict(t=t, act=act, id=id, d=d, **k))

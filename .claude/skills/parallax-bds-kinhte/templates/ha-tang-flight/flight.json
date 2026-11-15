@@ -733,7 +733,7 @@
    "text": "Ảnh: Dân trí",
    "color": "w",
    "lx": -250,
-   "ly": 60,
+   "ly": -60,
    "align": "c",
    "photo": "assets/img/vd3_caucan.jpg",
    "w": 480,
@@ -803,8 +803,8 @@
    "d": 2.5,
    "text": "Ảnh: Thanh Niên",
    "color": "w",
-   "lx": -150,
-   "ly": 120,
+   "lx": -260,
+   "ly": -80,
    "align": "c",
    "photo": "assets/img/vd3_aerial.jpg",
    "w": 480,
@@ -861,7 +861,8 @@
    "d": 2.5,
    "text": "Ảnh: Dân trí · Vành đai 3",
    "color": "w",
-   "ly": 60,
+   "lx": -230,
+   "ly": -260,
    "align": "c",
    "photo": "assets/img/vd3_tanvan2.jpg",
    "w": 480,
@@ -1041,11 +1042,12 @@
   },
   {
    "at": "ql13_mid",
-   "t": 71.6,
+   "t": 72.4,
    "d": 2.5,
    "text": "Ảnh: Dân trí",
    "color": "w",
-   "ly": -120,
+   "lx": -40,
+   "ly": -160,
    "align": "c",
    "photo": "assets/img/ql13.jpg",
    "w": 480,
@@ -1280,15 +1282,15 @@
   {
    "at": "ongbo",
    "text": "Ông Bố",
-   "t": 70.6,
-   "d": 4.6,
+   "t": 70.0,
+   "d": 2.3,
    "left": true
   },
   {
    "at": "ntmk_j",
    "text": "Nguyễn Thị Minh Khai",
-   "t": 71.6,
-   "d": 9.0
+   "t": 70.4,
+   "d": 1.9
   }
  ],
  "ground": [
@@ -1997,7 +1999,7 @@
    "note": "OSM (ODbL); đoạn phía Đông dò trên ảnh vệ tinh; phần còn lại gần đúng"
   }
  ],
- "motion_blur": {
+ "motion_blur_post": {
   "shutter": 180,
   "samples": 16
  }
