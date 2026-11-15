@@ -77,10 +77,11 @@ các tween trong GSAP khi seek, nên tween đổi dữ liệu (chiều cao khố
   Mẹo: viết chương dạng khoá → MỘT cú máy rõ → khoá; tránh keyframe trung gian lệch nhẹ (Hermite sinh cực trị → bò chậm).
 - Nghiêng > 35° tối đa 4 s liên tục (khoảnh khắc "hero"); đọc số liệu ở 0–35°.
 - Nền vệ tinh làm mềm Gaussian 0,8 px trước khi dùng; không bao giờ làm nét.
-- Mờ chuyển động: `"motion_blur": {"shutter": 180, "min": 2}` — vmap3.js tự tính theo vận tốc camera (σ = nửa quãng đi/khung ÷ √12,
-  quy về trục màn hình theo bearing; zoom/quay thành vệt đều), lọc trên khung nhìn #zw 1080×1920 và chỉ bật khi vệt ≥ 2 px — lọc cả SVG
-  bản đồ khổng lồ làm render chậm 100 lần (14 s/khung). Thuộc tính `data-motion-blur` của HyperFrames KHÔNG thấy camera vẽ bằng thuộc tính
-  SVG `transform` (check báo `motion_blur_no_movers`) nên không dùng.
+- Mờ chuyển động: render KHÔNG lọc trong trình duyệt, rồi `python scripts/mb_post.py flight.json raw.mp4 out.mp4 --shutter 180`
+  — mỗi khung lấy vận tốc camera từ đúng đường Hermite, kernel đường thẳng ≥ 16 mẫu theo hướng chuyển động trên màn hình,
+  vệt L = vận tốc × 180/360; L < 2 px giữ nguyên (khung giữ/trôi chậm sắc nét); dòng nguồn và đoạn footage giữ sắc; 30 fps không đổi.
+  Đã thử: `data-motion-blur` của HyperFrames không thấy camera vẽ bằng thuộc tính SVG (`motion_blur_no_movers`); lọc feGaussianBlur
+  trong trang trên cảnh 3D làm render chậm ~7 lần (6 s video mất 985 s). Mờ sau render chỉ mất ~0,1 s/khung.
 - Đo `CAMLOG.md`: bảng "Các đoạn giữ khung" (từ–đến, kiểu trôi lia/zoom/quay/nghiêng/khoá, px/khung, số lần đổi chiều).
 
 **Hệ icon** — một họ duy nhất: Material Symbols Rounded (fill), npm `@material-symbols/svg-400` (Apache-2.0); chép SVG cần dùng

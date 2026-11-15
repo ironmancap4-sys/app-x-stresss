@@ -92,6 +92,7 @@ Ví dụ: `templates/one-era-flight/`, `templates/ha-tang-flight/` (bản v2: ch
 | `make_sfx.py`, `mix_audio.py` | SFX tổng hợp; trộn giọng + SFX + nhạc (ducking) + chuẩn hoá loudness có kiểm chứng |
 | `make_music.py` | nhạc nền có phách rõ + `beats.json` để cắt theo phách |
 | `motion.py`, `vmap2.js`, `design/motion.css` | phong cách B: shots.json → project + SHOTLIST.md + kiểm luật |
+| `mb_post.py` | phong cách C: mờ chuyển động theo vận tốc camera sau render (màn trập 180°) |
 | `flight.py`, `vmap3.js`, `design/flight.css` | phong cách C: flight.json → một composition bản đồ + HUD + footage + CAMLOG.md + kiểm luật |
 | `sat_tiles.py`, `sat_declouds.py` | ghép ảnh vệ tinh Esri theo mức zoom; xoá mây + chỉnh màu nền |
 | `qa_frames.py`, `style_check.py` | kiểm lỗi render; contact sheet + vùng TikTok + màu cấm |
