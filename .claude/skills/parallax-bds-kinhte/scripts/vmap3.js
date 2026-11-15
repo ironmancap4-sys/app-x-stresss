@@ -83,21 +83,23 @@ function makeMap3(opts) {
       o[c] = (2 * s3 - 3 * s2 + 1) * vs[i] + (s3 - 2 * s2 + s) * h * m[i] + (-2 * s3 + 3 * s2) * vs[i + 1] + (s3 - s2) * h * m[i + 1]; });
     return o; };
   const labels = [...document.querySelectorAll(opts.labels)].map((n) => ({ n, p: L[n.dataset.at] }));
-  // ---- mờ chuyển động theo vận tốc camera (màn trập 180° = nửa quãng đi trong 1 khung), lọc trên chính SVG bản đồ
+  // ---- mờ chuyển động theo vận tốc camera (màn trập 180° = nửa quãng đi trong 1 khung)
+  // Lọc trên khung nhìn 1080×1920 (opts.blurHost), không lọc cả SVG khổng lồ; chỉ bật khi vệt ≥ 2 px (dưới đó mắt không thấy).
   const MB = opts.motionBlur, fps = opts.fps || 30;
-  let mbf = null;
-  if (MB) { mbf = el("filter", { id: "mbf", x: "-2%", y: "-2%", width: "104%", height: "104%", "color-interpolation-filters": "sRGB" }, defs);
-    mbf.innerHTML = '<feGaussianBlur id="mbg" stdDeviation="0 0" edgeMode="duplicate"/>'; }
-  const mbg = () => svg.querySelector("#mbg");
+  let host = null, fe = null;
+  if (MB) { host = document.querySelector(opts.blurHost);
+    const ns = document.createElementNS(NS, "svg"); ns.setAttribute("width", 0); ns.setAttribute("height", 0); ns.style.position = "absolute";
+    ns.innerHTML = '<filter id="mbf" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feGaussianBlur id="mbg" stdDeviation="0 0" edgeMode="duplicate"/></filter>';
+    document.body.appendChild(ns); fe = ns.querySelector("#mbg"); }
   function blurAt(t) {
     if (!MB) return;
-    const a = sample(t - 0.5 / fps), b = sample(t + 0.5 / fps), s = 2 ** ((a.Z + b.Z) / 2 - Z0);
-    const sh = (MB.shutter || 180) / 360;                                  // phần khung màn trập mở
-    const zx = Math.abs(b.Z - a.Z) * Math.LN2 * 540, rot = Math.abs(b.b - a.b) * Math.PI / 180 * 540;
-    const dx = Math.abs(b.x - a.x) * s + (zx + rot) * 0.5, dy = Math.abs(b.y - a.y) * s + (zx + rot) * 0.5;
-    const sx = dx * sh / 3.46, sy = dy * sh / 3.46;                       // độ dài vệt L ≈ σ·√12
-    if (sx < 0.15 && sy < 0.15) { svg.style.filter = ""; return; }
-    mbg().setAttribute("stdDeviation", `${sx.toFixed(2)} ${sy.toFixed(2)}`); svg.style.filter = "url(#mbf)";
+    const a = sample(t - 0.5 / fps), b = sample(t + 0.5 / fps), s = 2 ** ((a.Z + b.Z) / 2 - Z0), sh = (MB.shutter || 180) / 360;
+    const br = ((a.b + b.b) / 2) * Math.PI / 180, mx_ = (b.x - a.x) * s, my_ = (b.y - a.y) * s;
+    const vx = Math.abs(mx_ * Math.cos(br) - my_ * Math.sin(br)), vy = Math.abs(mx_ * Math.sin(br) + my_ * Math.cos(br)) * (1 + a.p / 90);
+    const rad = (Math.abs(b.Z - a.Z) * Math.LN2 * 540 + Math.abs(b.b - a.b) * Math.PI / 180 * 540) * 0.5;
+    const Lx = (vx + rad) * sh, Ly = (vy + rad) * sh;                      // độ dài vệt (px)
+    if (Math.max(Lx, Ly) < (MB.min || 2)) { host.style.filter = ""; return; }
+    fe.setAttribute("stdDeviation", `${(Lx / 3.46).toFixed(2)} ${(Ly / 3.46).toFixed(2)}`); host.style.filter = "url(#mbf)";
   }
   function apply(t) {
     blurAt(t);

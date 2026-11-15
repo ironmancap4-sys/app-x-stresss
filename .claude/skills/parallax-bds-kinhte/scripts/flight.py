@@ -112,7 +112,7 @@ def build_map(F, P, tl):
     opts = {"svg": "#mapsvg", "labels": ".mlab", "sat": F["sat"], "pad": PAD, "keys": F["cam"], "blockHost": "#blkhost",
             "layers": F.get("layers", []), "links": F.get("links", []), "circles": F.get("circles", []), "rings": F.get("rings", []),
             "movers": F.get("movers", []), "blocks": F.get("_blocks", []), "blockH": F.get("blockH", {}),
-            "motionBlur": F.get("motion_blur"), "fps": F.get("fps", 30)}
+            "motionBlur": F.get("motion_blur"), "fps": F.get("fps", 30), "blurHost": "#zw"}
     pre = (f"const GEO = {open(P + '/geo.json').read()};\nObject.assign(GEO.lab, {json.dumps(F['_pts'])});\n{open(P + '/vmap3.js').read()}\n"
            f"const BHo = {json.dumps({g: 0 for g in F.get('blockH', {})})}; window.BH = Object.assign({{}}, BHo);\n"
            f"const map = makeMap3({json.dumps(opts, ensure_ascii=False)});\nconst pl = document.querySelector('#pl');\n"

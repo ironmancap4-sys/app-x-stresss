@@ -77,8 +77,9 @@ các tween trong GSAP khi seek, nên tween đổi dữ liệu (chiều cao khố
   Mẹo: viết chương dạng khoá → MỘT cú máy rõ → khoá; tránh keyframe trung gian lệch nhẹ (Hermite sinh cực trị → bò chậm).
 - Nghiêng > 35° tối đa 4 s liên tục (khoảnh khắc "hero"); đọc số liệu ở 0–35°.
 - Nền vệ tinh làm mềm Gaussian 0,8 px trước khi dùng; không bao giờ làm nét.
-- Mờ chuyển động: `"motion_blur": {"shutter": 180}` — vmap3.js tự tính theo vận tốc camera (σ = nửa quãng đi/khung ÷ √12,
-  theo trục bản đồ; zoom/quay thành vệt đều). Thuộc tính `data-motion-blur` của HyperFrames KHÔNG thấy camera vẽ bằng thuộc tính
+- Mờ chuyển động: `"motion_blur": {"shutter": 180, "min": 2}` — vmap3.js tự tính theo vận tốc camera (σ = nửa quãng đi/khung ÷ √12,
+  quy về trục màn hình theo bearing; zoom/quay thành vệt đều), lọc trên khung nhìn #zw 1080×1920 và chỉ bật khi vệt ≥ 2 px — lọc cả SVG
+  bản đồ khổng lồ làm render chậm 100 lần (14 s/khung). Thuộc tính `data-motion-blur` của HyperFrames KHÔNG thấy camera vẽ bằng thuộc tính
   SVG `transform` (check báo `motion_blur_no_movers`) nên không dùng.
 - Đo `CAMLOG.md`: bảng "Các đoạn giữ khung" (từ–đến, kiểu trôi lia/zoom/quay/nghiêng/khoá, px/khung, số lần đổi chiều).
 
