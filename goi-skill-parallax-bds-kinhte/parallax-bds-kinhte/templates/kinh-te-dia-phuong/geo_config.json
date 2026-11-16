@@ -1,0 +1,127 @@
+{
+ "country": "VNM",
+ "merge": {
+  "Vĩnh Long": [
+   "Vĩnh Long",
+   "Bến Tre",
+   "Trà Vinh"
+  ],
+  "Cần Thơ": [
+   "Can Tho",
+   "Sóc Trăng",
+   "Hau Giang"
+  ],
+  "TP.HCM": [
+   "Hồ Chí Minh city",
+   "Bình Dương",
+   "Bà Rịa - Vũng Tàu"
+  ],
+  "Đồng Tháp": [
+   "Ðong Tháp",
+   "Tiền Giang"
+  ],
+  "An Giang": [
+   "An Giang",
+   "Kiên Giang"
+  ],
+  "Cà Mau": [
+   "Cà Mau",
+   "Bạc Liêu"
+  ],
+  "Tây Ninh": [
+   "Tây Ninh",
+   "Long An"
+  ]
+ },
+ "focus": "Vĩnh Long",
+ "compare": [
+  "TP.HCM",
+  "Cần Thơ"
+ ],
+ "region": [
+  "Vĩnh Long",
+  "Cần Thơ",
+  "An Giang",
+  "Đồng Tháp",
+  "Cà Mau"
+ ],
+ "points": {
+  "pt_hcm": [
+   106.7009,
+   10.7769
+  ],
+  "pt_ct": [
+   105.7469,
+   10.0452
+  ],
+  "pt_vl": [
+   105.9722,
+   10.2537
+  ],
+  "region": [
+   105.55,
+   9.85
+  ]
+ },
+ "label_points": {
+  "rv_tien": [
+   106.33,
+   10.335
+  ],
+  "rv_hau": [
+   105.6,
+   10.25
+  ]
+ },
+ "rivers": {
+  "tien": {
+   "ne_name": "Mekong",
+   "ne_end": [
+    106.118663,
+    10.237576
+   ],
+   "cut_at": [
+    105.9105,
+    10.2764
+   ],
+   "trace_to": [
+    106.78,
+    10.215
+   ]
+  },
+  "hau": {
+   "ne_name": "Mekong",
+   "ne_end": [
+    105.837983,
+    10.004991
+   ],
+   "trace_from": [
+    105.838,
+    10.005
+   ],
+   "trace_to": [
+    106.36,
+    9.57
+   ]
+  }
+ },
+ "coast_axis": [
+  [
+   106.8,
+   10.24
+  ],
+  [
+   106.33,
+   9.56
+  ]
+ ],
+ "satellite": {
+  "z": 10,
+  "bbox": [
+   104.4,
+   8.6,
+   107.8,
+   12.0
+  ]
+ }
+}

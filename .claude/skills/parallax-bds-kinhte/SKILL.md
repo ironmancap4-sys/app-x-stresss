@@ -1,12 +1,22 @@
 ---
 name: parallax-bds-kinhte
-description: Dựng video dọc 9:16 (TikTok/Reels/Shorts) về kinh tế, bất động sản, địa phương trong HyperFrames — từ một file giọng đọc có sẵn ra video hoàn chỉnh: bản đồ vector định vị tỉnh, sông, kết nối; cảnh quay thật; bảng số liệu tích luỹ có nguồn báo chính thống; ảnh tài liệu gốc; Google Earth 3D; camera chuyển động liên tục và parallax; hệ thiết kế báo chí kinh tế; vùng an toàn TikTok; âm thanh −14 LUFS. Dùng khi dựng/sửa video giải thích kinh tế – địa phương, giá nhà, dự án, quy hoạch, hạ tầng, hoặc phân tích video mẫu để học phong cách. Vietnamese economic / real-estate explainer videos with continuous camera and parallax.
+description: Dựng video dọc 9:16 (TikTok/Reels/Shorts) về kinh tế, bất động sản, địa phương trong HyperFrames — từ một file giọng đọc có sẵn ra video hoàn chỉnh: bản đồ vector định vị tỉnh, sông, kết nối; cảnh quay thật; bảng số liệu tích luỹ có nguồn báo chính thống; ảnh tài liệu gốc; Google Earth 3D; camera chuyển động liên tục và parallax; 3 phong cách (giải thích chậm · bản đồ + footage nhịp nhanh · một camera bay liên tục trên bản đồ sống với icon, thẻ logo, cửa sổ ảnh, chống rung, mờ chuyển động); hệ thiết kế báo chí kinh tế; vùng an toàn TikTok; âm thanh −14 LUFS. Dùng khi dựng/sửa video giải thích kinh tế – địa phương, giá nhà, dự án, quy hoạch, hạ tầng, hoặc phân tích video mẫu để học phong cách. Vietnamese economic / real-estate explainer videos with continuous camera and parallax.
 ---
 
 # Video kinh tế – bất động sản – địa phương (HyperFrames, dọc 9:16)
 
 Skill này nằm trên skill chính thức `/hyperframes` (luật render, CLI). Chưa có thì người dùng tự cài: `npx skills add heygen-com/hyperframes`.
 Mục tiêu: **mọi câu thoại được CHỨNG MINH bằng hình**, trình bày theo một hệ thiết kế báo chí kinh tế, xem tốt trên TikTok.
+
+## Chọn phong cách trước khi dựng
+
+| Phong cách | Khi nào | Công cụ | Đọc |
+|---|---|---|---|
+| A — giải thích chậm (mặc định) | video kinh tế – địa phương kể chuyện bằng bản đồ + bảng số + tài liệu | `scenegen.py` / template `kinh-te-dia-phuong` | phần dưới |
+| B — bản đồ + footage điện ảnh | nhịp nhanh 2,5–4 s/shot, nhiều hiệu ứng M/T/F/D, màu theo nghĩa | `motion.py` | `references/motion-library.md` |
+| C — một camera, một bản đồ sống | bay liên tục không cắt cảnh, thông tin mọc lên từ bản đồ, icon, logo, cửa sổ ảnh | `flight.py` + `mb_post.py` | `references/flight-style.md` |
+
+Người dùng đưa một đặc tả phong cách (role/prompt dài) → đối chiếu với bảng trên, chọn phong cách gần nhất rồi áp đúng các luật kiểm của nó.
 
 ## Luật cốt lõi (chi tiết + cách kiểm trong `references/`)
 

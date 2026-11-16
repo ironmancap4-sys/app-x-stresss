@@ -1,0 +1,35 @@
+<template>
+  <style>
+    /*DESIGN*/
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    .nw { position: absolute; inset: 0; transform-origin: 540px 960px; }
+    .nw video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+  </style>
+  <div id="root" data-composition-id="end" data-width="1080" data-height="1920">
+    <div id="nw1" class="nw"><video id="nv1" class="clip" src="/*E1SRC*/" muted playsinline data-start="0" data-duration="4.94" data-media-start="/*E1MS*/" data-track-index="1"></video></div>
+    <div id="nw2" class="nw"><video id="nv2" class="clip" src="/*E2SRC*/" muted playsinline data-start="4.94" data-duration="5.36" data-media-start="/*E2MS*/" data-track-index="1"></video></div>
+    <div class="gtop" data-layout-allow-occlusion></div>
+    <div class="gbot" data-layout-allow-occlusion></div>
+    <div id="n-seg" class="seg clip" data-start="0.2" data-duration="10.1" data-track-index="2" data-layout-allow-occlusion><span id="n-seg-t">Bài toán phía trước</span></div>
+    <h2 id="na1" class="anchor low clip" data-start="1.65" data-duration="1.45" data-track-index="3"><span class="ln"><span class="w">Tái</span> <span class="w">cấu</span> <span class="w">trúc</span></span><span class="ln"><em><span class="w">đô</span> <span class="w">thị</span></em></span></h2>
+    <h2 id="na2" class="anchor low clip" data-start="3.45" data-duration="1.3" data-track-index="3"><span class="ln"><span class="w">Giải</span> <span class="w">toả</span></span><span class="ln"><em><span class="w">nút</span> <span class="w">giao</span> <span class="w">thông</span></em></span></h2>
+    <h2 id="nf" class="anchor low clip" data-start="5.05" data-duration="5.25" data-track-index="3">
+      <span class="ln"><span class="w">Chuyển</span> <span class="w">hoá</span> <span class="w">nội</span> <span class="w">lực</span></span>
+      <span class="ln"><span class="w">thành</span> <em><span class="w">giá</span> <span class="w">trị</span> <span class="w">thực</span></em></span>
+    </h2>
+    <p id="n-foot" class="foot clip" data-start="0.2" data-duration="10.1" data-track-index="4" data-layout-ignore><span id="n-foot-t">/*ESRC*/</span></p>
+  </div>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#nw1", { scale: 1.4, filter: "blur(10px)" }, { scale: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" }, 0);
+      tl.fromTo(["#n-seg-t", "#n-foot-t"], { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.2);
+      const aIn = (sel, at, gap = 0.09) => tl.fromTo(`${sel} .w`, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.25, ease: "expo.out", stagger: gap }, at);
+      const aOut = (sel, at) => tl.to(`${sel} .w`, { opacity: 0, duration: 0.15, ease: "power1.in" }, at);
+      aIn("#na1", 1.68); aOut("#na1", 2.95);
+      aIn("#na2", 3.48); aOut("#na2", 4.6);   // tắt trước điểm cắt 4.94
+      aIn("#nf", 5.1, 0.14);
+      window.__timelines["end"] = tl;
+    })();
+  </script>
+</template>

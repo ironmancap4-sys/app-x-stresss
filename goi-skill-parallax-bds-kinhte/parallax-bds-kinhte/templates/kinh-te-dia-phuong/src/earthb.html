@@ -1,0 +1,34 @@
+<template>
+  <style>
+    /*DESIGN*/
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #ew { position: absolute; inset: 0; transform-origin: 540px 960px; }
+    #ew video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+  </style>
+  <div id="root" data-composition-id="earthb" data-width="1080" data-height="1920">
+    <div id="ew"><video id="ebv" class="clip" src="assets/earth/s4g.mp4" muted playsinline data-start="0" data-duration="4" data-media-start="0.6" data-track-index="1"></video></div>
+    <div class="gtop" data-layout-allow-occlusion></div>
+    <div class="gbot" data-layout-allow-occlusion></div>
+    <div id="e-seg" class="seg clip" data-start="0.2" data-duration="3.4" data-track-index="2" data-layout-allow-occlusion><span id="e-seg-t">Hạ tầng kết nối</span></div>
+    <!-- Kiểu A: chấm đặt đúng trên cầu Mỹ Thuận trong khung -->
+    <div id="e-la" class="la clip" data-start="0.3" data-duration="3.3" data-track-index="3" style="transform: translate(560px, 800px)">
+      <span class="lead" style="width: 190px; transform: rotate(-0.85rad)"></span><span class="dot"></span>
+      <span class="tx" style="left: 134px; top: -132px; transform: translate(0,-50%)">Cầu Mỹ Thuận 1 &amp; 2</span>
+    </div>
+    <h2 id="ea" class="anchor low clip" data-start="1.8" data-duration="1.85" data-track-index="4"><span class="ln"><span class="w">Vận</span> <span class="w">hội</span></span><span class="ln"><em><span class="w">chưa</span> <span class="w">từng</span> <span class="w">có</span></em></span></h2>
+    <p id="e-foot" class="foot clip" data-start="0.2" data-duration="3.4" data-track-index="5" data-layout-ignore><span id="e-foot-t">Hình ảnh 3D: Google Earth</span></p>
+  </div>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      const DUR = 4.0; // 74.3 -> 78.3
+      tl.fromTo("#ew", { scale: 1.4, filter: "blur(10px)" }, { scale: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" }, 0);
+      tl.fromTo(["#e-seg-t", "#e-foot-t"], { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.2);
+      tl.fromTo("#e-la > *", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.3);
+      tl.fromTo("#ea .w", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.25, ease: "expo.out", stagger: 0.08 }, 1.85);
+      tl.to(["#e-la > *", "#ea .w", "#e-seg-t", "#e-foot-t"], { opacity: 0, duration: 0.2, ease: "power1.in" }, DUR - 0.4);
+      tl.fromTo("#ew", { scale: 1, filter: "blur(0px)" }, { scale: 1.35, filter: "blur(10px)", duration: 0.17, ease: "power3.in", immediateRender: false }, DUR - 0.17);
+      window.__timelines["earthb"] = tl;
+    })();
+  </script>
+</template>

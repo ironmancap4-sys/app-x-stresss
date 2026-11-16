@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0E1A2B; }
+      #ground { position: absolute; inset: 0; background: #0E1A2B; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="88.6" data-width="1080" data-height="1920">
+      <div id="ground"></div>
+      <!--HOSTS-->
+      <div id="geo" data-composition-id="geo" data-composition-src="compositions/geo.html" data-start="0" data-duration="28.4" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div id="foot" data-composition-id="foot" data-composition-src="compositions/foot.html" data-start="28" data-duration="9.3" data-track-index="2" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div id="board" data-composition-id="board" data-composition-src="compositions/board.html" data-start="37.3" data-duration="29.44" data-track-index="3" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div id="doc" data-composition-id="doc" data-composition-src="compositions/doc.html" data-start="66.74" data-duration="7.56" data-track-index="4" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div id="earthb" data-composition-id="earthb" data-composition-src="compositions/earthb.html" data-start="74.3" data-duration="4" data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div id="end" data-composition-id="end" data-composition-src="compositions/end.html" data-start="78.3" data-duration="10.3" data-track-index="6" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <audio id="mix" class="clip" src="assets/mix.wav" data-start="0" data-duration="88.6" data-track-index="20" data-volume="1"></audio>
+    </div>
+    <script>
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>

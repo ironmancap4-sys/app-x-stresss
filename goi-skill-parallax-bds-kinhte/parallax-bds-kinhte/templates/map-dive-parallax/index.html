@@ -1,0 +1,74 @@
+<!doctype html>
+<html
+  lang="vi"
+  data-composition-variables='[
+    {"id":"color-ground","type":"color","label":"Nền","default":"#101210"},
+    {"id":"color-ink","type":"color","label":"Chữ","default":"#ffffff"},
+    {"id":"color-accent","type":"color","label":"Nhấn (vàng)","default":"#ffd23f"},
+    {"id":"color-route","type":"color","label":"Tuyến đường (cam)","default":"#ff7a1a"},
+    {"id":"color-pill","type":"color","label":"Nhãn đầu trang","default":"#2f5bd3"},
+    {"id":"color-zone","type":"color","label":"Vùng khu vực","default":"#3ccf7a"},
+    {"id":"font-display","type":"string","label":"Font tiêu đề","default":"Montserrat"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --color-ground: #101210;
+        --color-ink: #ffffff;
+        --color-accent: #ffd23f;
+        --color-route: #ff7a1a;
+        --color-pill: #2f5bd3;
+        --color-zone: #3ccf7a;
+        --font-display: "Montserrat";
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--color-ground);
+      }
+      #ground {
+        position: absolute;
+        inset: 0;
+        background: var(--color-ground);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="20"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div id="ground"></div>
+      <!-- Một take = một cú máy liền. Nối nhiều take: references/camera-rig.md §6 (cinematic-zoom / match-move). -->
+      <div
+        id="dive"
+        data-composition-id="dive"
+        data-composition-src="compositions/dive.html"
+        data-start="0"
+        data-duration="20"
+        data-track-index="1"
+        data-track-kind="graphics"
+        data-width="1080"
+        data-height="1920"
+      ></div>
+    </div>
+    <script>
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+<template>
+  <style>
+    /*DESIGN*/
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #f-all { position: absolute; inset: 0; }
+    .fw { position: absolute; inset: 0; transform-origin: 540px 960px; }
+    .fw video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+  </style>
+  <div id="root" data-composition-id="foot" data-width="1080" data-height="1920">
+    <div id="f-all">
+      <div id="fw1" class="fw"><video id="fv1" class="clip" src="/*F1SRC*/" muted playsinline data-start="0" data-duration="5" data-media-start="/*F1MS*/" data-track-index="1"></video></div>
+      <div id="fw2" class="fw"><video id="fv2" class="clip" src="/*F2SRC*/" muted playsinline data-start="5" data-duration="4.3" data-media-start="/*F2MS*/" data-track-index="1"></video></div>
+      <div class="gtop" data-layout-allow-occlusion></div>
+      <div class="gbot" data-layout-allow-occlusion></div>
+    </div>
+    <div id="f-seg" class="seg clip" data-start="0.45" data-duration="8.5" data-track-index="2" data-layout-allow-occlusion><span id="f-seg-t">Kinh tế vùng châu thổ</span></div>
+    <h2 id="fa1" class="anchor low clip" data-start="1.3" data-duration="3.5" data-track-index="3"><span class="ln"><span class="w">Chỉ</span> <span class="w">số</span> <span class="w">kinh</span> <span class="w">tế</span></span><span class="ln"><em><span class="w">mới</span> <span class="w">nhất</span></em></span></h2>
+    <h2 id="fa2" class="anchor low clip" data-start="6.5" data-duration="2.5" data-track-index="3"><span class="ln"><span class="w">Tốc</span> <span class="w">độ</span></span><span class="ln"><em><span class="w">đáng</span> <span class="w">kinh</span> <span class="w">ngạc</span></em></span></h2>
+    <p id="f-foot" class="foot clip" data-start="0.45" data-duration="8.5" data-track-index="4" data-layout-ignore><span id="f-foot-t">/*FSRC*/</span></p>
+  </div>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      const DUR = 9.3;
+      // hoà từ bản đồ (đang zoom xuyên vào tỉnh) sang cảnh quay trong 12 khung
+      tl.fromTo("#f-all", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "none" }, 0);
+      tl.fromTo("#fw1", { scale: 1.12 }, { scale: 1, duration: 1.2, ease: "power2.out" }, 0);
+      const fade = (sel, at, d = 0.3) => tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: d, ease: "power2.out" }, at);
+      const out = (sel, at, d = 0.2) => tl.to(sel, { opacity: 0, duration: d, ease: "power1.in" }, at);
+      const anchorIn = (sel, at) => tl.fromTo(`${sel} .w`, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.3, ease: "expo.out", stagger: 0.1 }, at);
+      fade("#f-seg-t", 0.45); fade("#f-foot-t", 0.5);
+      anchorIn("#fa1", 1.3); out("#fa1 .w", 4.65);
+      // cắt thẳng ở 5.0; chữ đã tắt trước đó
+      anchorIn("#fa2", 6.5);
+      out(["#fa2 .w", "#f-seg-t", "#f-foot-t"], DUR - 0.45);
+      tl.fromTo("#fw2", { scale: 1, filter: "blur(0px)" }, { scale: 1.35, filter: "blur(10px)", duration: 0.17, ease: "power3.in", immediateRender: false }, DUR - 0.17);
+      window.__timelines["foot"] = tl;
+    })();
+  </script>
+</template>
