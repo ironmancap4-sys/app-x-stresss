@@ -41,3 +41,12 @@ Mỗi công cụ tự kiểm luật (nhịp, lặp hiệu ứng, tốc độ cam
 - Số liệu trên màn hình phải theo bài báo gốc, không theo bản chép lời; lệch thì báo người dùng.
 - Không lách giới hạn tải (Wikimedia 429…), không vẽ lại logo. Không tải được logo chính thức → huy hiệu chữ và ghi rõ trong nhật ký.
 - Phần minh hoạ (hướng tuyến gần đúng, vị trí ghim, khối nhà) phải ghi "minh hoạ" trên màn hình.
+
+## Bản cập nhật (17/11/2026) — đã gộp mọi chỉnh sửa làm cùng nhau
+
+- `references/bai-hoc.md` (MỚI): toàn bộ lỗi đã gặp thật qua các video Vĩnh Long, One Era, hạ tầng Đông Bắc và cách sửa — số liệu theo nguồn chứ không theo lời đọc, ảnh/logo bị chặn tải, mây và mép ảnh vệ tinh, camera bò chậm, thẻ ảnh đè dòng nguồn, khối 3D che thẻ, render quá 2 giờ, AAC vọt đỉnh, OSM sập…
+- `SKILL.md`: luật cốt lõi ghi rõ luật nào chỉ của phong cách A (1 màu cam) và B/C dùng màu theo nghĩa; thêm luật 8 "đọc bai-hoc.md trước khi giao"; bảng chọn phong cách.
+- `scripts/render_segments.sh` (MỚI): render chia đoạn, ghép, mux âm thanh có limiter, đo mối nối.
+- `scripts/sat_grid.py` (MỚI): dò tuyến đường trên ảnh vệ tinh có lưới toạ độ khi OSM không phản hồi.
+- `flight.py`: CAMLOG.md có thêm "Mốc cần snapshot" (mọi lúc cửa sổ ảnh/thẻ logo/số lớn hiện) vì bộ kiểm HyperFrames không thấy chồng chéo giữa bản đồ và HUD.
+- Sửa lỗi template: cờ `lead=False` và `logo=""` không bị lọc mất.

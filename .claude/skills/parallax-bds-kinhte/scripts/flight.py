@@ -330,6 +330,9 @@ def main():
     if F.get("assets"):
         rows += ["", "## Tài sản tải về", "", "| Tên | Nguồn (URL) | Độ phân giải | Dùng lúc | Ghi chú |", "|---|---|---|---|---|"]
         rows += [f"| {a['name']} | {a['url']} | {a.get('res','')} | {a.get('used','')} | {esc(a.get('note',''))} |" for a in F["assets"]]
+    snaps = sorted({round(l["t"] + min(1.2, l.get("d", 2) / 2), 1) for l in F.get("labels", []) if l.get("photo") or l.get("logo") is not None or l.get("xl")})
+    rows += ["", "## Mốc cần snapshot (bộ kiểm không thấy chồng chéo giữa bản đồ và HUD)", "",
+             "`npx hyperframes snapshot --no-end --at " + ",".join(str(t) for t in snaps) + "` — đáy mọi thẻ ≤ y 1380, không chạm mép, không bị khối 3D/ghim che."]
     rows += ["", "## Tỉ lệ kiểu trực quan hoá (chương)", ""] + [f"- {v}: {d:.1f} s ({d/D*100:.0f}%)" for v, d in sorted(share.items())]
     rows += ["", "## Kiểm luật", ""] + ([f"- {m}" for m in msg] or ["- Đạt: ≤ 3 cắt cứng, footage ≤ 3 s/lần & ≤ 20%, không chương liền nhau trùng kiểu, mỗi kiểu ≤ 20%, không quay > 90°/lần."])
     open(f"{P}/CAMLOG.md", "w").write("\n".join(rows))

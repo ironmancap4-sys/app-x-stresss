@@ -1,8 +1,8 @@
 # SKILL TRỌN GÓI: parallax-bds-kinhte
 
-Một file duy nhất chứa toàn bộ skill để đưa cho bất kỳ AI nào. Thứ tự: SKILL.md (quy trình + chọn phong cách) → references (luật và cách kiểm) → design (CSS) → scripts (mã nguồn) → templates. Muốn dùng lại: tạo đúng các file theo đường dẫn ghi trên mỗi khối mã.
+Một file chứa toàn bộ skill để đưa cho AI khác. Thứ tự: SKILL.md (chọn phong cách + quy trình) → references/bai-hoc.md (LỖI ĐÃ GẶP — đọc kỹ) → các references khác → design (CSS) → scripts → templates. Tạo lại file theo đúng đường dẫn ở mỗi tiêu đề.
 
-Bỏ ra khỏi file này (có trong bản zip/thư mục): phông chữ .woff2 (tải lại bằng `design/install_fonts.sh`) và các file dữ liệu sinh tự động lớn (geo.json, shots.json, flight.json) — chạy lại script mk_*.py / geo_build.py để tạo.
+Không nhúng ở đây (có trong bản zip/thư mục): phông .woff2 (tải lại bằng `design/install_fonts.sh`) và các file dữ liệu sinh tự động > 20 KB (chạy lại mk_*.py / geo_build.py để tạo).
 
 ## FILE: SKILL.md
 
@@ -31,11 +31,12 @@ Người dùng đưa một đặc tả phong cách (role/prompt dài) → đối
 
 1. **Chứng minh bằng hình**, ≥ 4 chất liệu xen kẽ: bản đồ vector · cảnh quay thật · bảng số tích luỹ trên nền bản đồ · ảnh tài liệu gốc (+ Google Earth 3D minh hoạ). 10–15 s cuối là người hoặc footage thật có chuyển động. → `quy-tac-chuyen-gia.md`
 2. **Số liệu từ báo chính thống**, đọc bài gốc, ghi nguồn + ngày trên màn hình; số trên màn hình theo nguồn, không theo bản chép lời (Whisper hay nghe nhầm số) — lệch thì báo người dùng.
-3. **Hệ thiết kế**: 1 phông Be Vietnam Pro; 1 màu nhấn cam `#F28C28` trên nền navy; chỉ 2 kiểu nhãn (A gắn vật thể, B khái niệm); không phụ đề — mỗi cảnh 1 "dòng neo" ≤ 7 từ đúng lúc đọc từ khoá; không vàng, không hộp đen. → `he-thiet-ke.md`
+3. **Hệ thiết kế**: 1 phông Be Vietnam Pro. Phong cách A: 1 màu nhấn cam `#F28C28` trên nền navy; chỉ 2 kiểu nhãn (A gắn vật thể, B khái niệm); không phụ đề — mỗi cảnh 1 "dòng neo" ≤ 7 từ đúng lúc đọc từ khoá; không vàng, không hộp đen. → `he-thiet-ke.md`. Phong cách B và C thay bằng MÀU THEO NGHĨA (cam hành chính, cyan dự án + nước, xanh lá công viên, hồng tím giao thông, vàng khoảng cách/ghim) — xem `motion-library.md`.
 4. **Vùng an toàn TikTok**: không chữ/nhãn ở y < 210, y > 1440, và x > 940 khi 700 < y < 1440 (UI ứng dụng che). Chữ sát đáy sẽ bị caption/tên kênh che.
 5. **Không mờ**: chữ ≥ 72% trắng có bóng; nét vẽ ≥ 2 px, đủ sáng trên nền navy.
-6. **Camera liên tục, parallax thật**: camera không đứng chết; bản đồ nội suy Hermite (vận tốc liên tục); Google Earth/footage là chuyển động thật; chuyển cảnh = whip zoom ngắn (luôn phóng to, không bao giờ thu nhỏ lộ viền) hoặc cắt thẳng ở khoảng lặng; bản đồ → ảnh: zoom xuyên + hoà 12 khung. Mọi chữ tắt trước điểm chuyển. → `camera-rig.md`
-7. **Âm thanh**: −14 LUFS, true peak ≤ −1 dBTP; SFX whoosh/pop/riser thấp hơn giọng ≥ 12 dB.
+6. **Camera liên tục, parallax thật**: camera không đứng chết; bản đồ nội suy Hermite (vận tốc liên tục); Google Earth/footage là chuyển động thật; chuyển cảnh = whip zoom ngắn (luôn phóng to, không bao giờ thu nhỏ lộ viền) hoặc cắt thẳng ở khoảng lặng; bản đồ → ảnh: zoom xuyên + hoà 12 khung. Mọi chữ tắt trước điểm chuyển. → `camera-rig.md`. Phong cách C: không cắt, một camera; luật chống rung riêng trong `flight-style.md`.
+7. **Âm thanh**: −14 LUFS, true peak ≤ −1 dBTP; SFX whoosh/pop/riser thấp hơn giọng ≥ 12 dB. Nén AAC làm vọt đỉnh: mux `mix.wav` qua `alimiter=limit=0.80` rồi đo lại.
+8. **Trước khi giao, đọc `references/bai-hoc.md`** — danh sách lỗi đã gặp thật và cách sửa; mỗi mục là một bước kiểm.
 
 ## Quy trình: từ giọng đọc tới video
 
@@ -92,6 +93,7 @@ Ví dụ: `templates/one-era-flight/`, `templates/ha-tang-flight/` (bản v2: ch
 | 8 nhóm quy tắc chuyên gia + cách kiểm | `references/quy-tac-chuyen-gia.md` |
 | Phong cách B: thư viện hiệu ứng, màu theo nghĩa, nhịp, SFX theo sự kiện | `references/motion-library.md` |
 | Phong cách C: một camera liên tục, lớp trên bản đồ, V1–V10, zoom-through | `references/flight-style.md` |
+| **Lỗi đã gặp + cách sửa (đọc trước khi giao)** | `references/bai-hoc.md` |
 | Hệ thiết kế, vùng an toàn TikTok, độ rõ tối thiểu | `references/he-thiet-ke.md`, `design/` |
 | Rig camera 3D, parallax, Google Earth, nối take | `references/camera-rig.md` |
 | Phong cách đo từ video mẫu | `references/style-mau.md`, `references/analysis.md` |
@@ -111,11 +113,77 @@ Ví dụ: `templates/one-era-flight/`, `templates/ha-tang-flight/` (bản v2: ch
 | `make_sfx.py`, `mix_audio.py` | SFX tổng hợp; trộn giọng + SFX + nhạc (ducking) + chuẩn hoá loudness có kiểm chứng |
 | `make_music.py` | nhạc nền có phách rõ + `beats.json` để cắt theo phách |
 | `motion.py`, `vmap2.js`, `design/motion.css` | phong cách B: shots.json → project + SHOTLIST.md + kiểm luật |
+| `render_segments.sh` | render chia đoạn (tránh giới hạn thời gian), ghép, mux âm thanh có limiter, kiểm mối nối |
+| `sat_grid.py` | cắt ảnh vệ tinh có lưới toạ độ để dò tuyến đường khi OSM/Overpass không phản hồi |
 | `mb_post.py` | phong cách C: mờ chuyển động theo vận tốc camera sau render (màn trập 180°) |
 | `flight.py`, `vmap3.js`, `design/flight.css` | phong cách C: flight.json → một composition bản đồ + HUD + footage + CAMLOG.md + kiểm luật |
 | `sat_tiles.py`, `sat_declouds.py` | ghép ảnh vệ tinh Esri theo mức zoom; xoá mây + chỉnh màu nền |
 | `qa_frames.py`, `style_check.py` | kiểm lỗi render; contact sheet + vùng TikTok + màu cấm |
 | `analyze_refs.py` | đo video mẫu / video của mình |
+```
+
+## FILE: references/bai-hoc.md
+
+```markdown
+# Bài học đã sửa — lỗi gặp thật khi dựng và cách xử lý
+
+Mỗi mục là lỗi đã xảy ra trong các video Vĩnh Long, One Era (A/B/C) và hạ tầng Đông Bắc. Trước khi giao, đi hết danh sách.
+
+## 1. Số liệu và nguồn
+
+- Whisper nghe nhầm số và tên ("phét tính", "Quán Era", "VRS", "2-park"). Số và tên trên màn hình lấy từ bài báo gốc, không từ bản chép lời.
+- Lời đọc khác nguồn (75.000 tỷ vs 75.300 tỷ, 32,8 km vs 30,66 km, "hơn 10 triệu lượt" không có nguồn): màn hình ghi theo nguồn, báo người dùng trong phần giao.
+- Không tìm được nguồn cho một con số → KHÔNG đưa lên màn hình, ghi trong nhật ký.
+- WebFetch có thể bị chặn dù host đã cho phép; dùng `curl -L --compressed` (trang nén) rồi bóc chữ bằng Python.
+- Host bị proxy chặn (403/ENOTFOUND) → xin thêm host qua cài đặt mạng của môi trường; không dùng trang trung gian.
+
+## 2. Tư liệu
+
+- Wikimedia trả 429, Pexels/Pixabay chặn tải tự động: không đổi User-Agent, không lách; thử lại thưa rồi bỏ, ghi vào nhật ký.
+- Logo: trang chính thức → press kit → Wikimedia → mạng xã hội chính thức. Không có → huy hiệu chữ (`logo:"", mono:"ABC"`) và báo người dùng. Không vẽ lại.
+- Ảnh báo < 1080 px chỉ dùng trong cửa sổ ảnh, không phóng toàn khung. Ảnh 602 px quá nhỏ cho mọi chỗ.
+- Mỗi ảnh mượn ghi "Ảnh: <nguồn>" trên màn hình; không dùng ảnh nơi khác giả làm địa điểm thật.
+
+## 3. Bản đồ và nền vệ tinh
+
+- Overpass/OSM hay sập (504, reset): chỉ truy vấn nhỏ (một relation, một tuyến); không có → `scripts/sat_grid.py` cắt ảnh vệ tinh có lưới lat/lng, dò tuyến bằng mắt, vẽ kiểm lên ảnh, ghi "minh hoạ".
+- Mây trên khu vực đang nói: `sat_declouds.py` (nhân bản kết cấu); inpaint Telea để lại vệt xám — không dùng.
+- Lộ hình chữ nhật navy/ảnh: mỗi mức zoom phải ghép rộng hơn khung lớn nhất ở mức đó, tính cả khi nghiêng và khi đang chuyển mức (`show:[Za,Zb]` lùi muộn hơn hoặc ghép rộng hơn).
+- Nghiêng 3D lộ mép mặt phẳng: SVG nới rộng + sương chân trời (flight.py/motion.py đã làm). Quay (bearing) giữ ≤ 30°.
+- Nền vệ tinh: làm mềm 0,8 px, tối 20%, giảm bão hoà 15% — cùng một chỉnh màu cho mọi mức.
+
+## 4. Camera (phong cách C)
+
+- Keyframe trung gian lệch nhẹ → Hermite sinh cực trị → camera bò < 1,5 px/khung (lăn tăn mái nhà trên điện thoại). Viết chương: khoá → MỘT cú máy rõ → khoá.
+- Tốc độ mặt đất ≤ 25 px/khung; đường xa đi bằng cung bay cao. `flight.py` báo nếu vượt.
+- Mờ chuyển động: KHÔNG lọc trong trình duyệt (render chậm 7–100 lần); dùng `mb_post.py` sau render. `data-motion-blur` của HyperFrames không thấy camera vẽ bằng thuộc tính SVG.
+
+## 5. Chữ, nhãn, thẻ — bộ kiểm KHÔNG bắt hết
+
+- `hyperframes check` không thấy chồng chéo giữa hai composition (bản đồ vs HUD dòng nguồn). Phải snapshot ĐÚNG lúc mỗi cửa sổ ảnh/thẻ logo hiện (CAMLOG.md có mục "Mốc cần snapshot") và nhìn bằng mắt.
+- Đáy mọi thẻ ≤ y 1380 (dòng nguồn ở 1396, vùng TikTok che từ 1440). Camera nghiêng thì phần dưới khung bị phóng to: đặt thẻ PHÍA TRÊN neo (ly âm).
+- Thẻ không chạm mép trái/phải: tâm thẻ cách mép ≥ nửa bề rộng + 60 px.
+- Khối 3D vẽ đè lên thẻ HTML: đặt thẻ cao hơn đỉnh khối, hoặc cho thẻ hiện trước khi khối mọc.
+- Ghim và thẻ cùng chỗ → ghim tắt trước khi thẻ hiện.
+- Hai nhãn cùng neo cùng lúc → đổi neo/ly hoặc tách thời điểm; tiêu đề mặt đất dài → giảm `size`.
+- Chữ động phải giữ ≥ 0,5 s + 0,3 s/từ (check báo `line_unread`).
+- Nhãn đặt sau khi lọc `if v not in (None,"",False)` sẽ làm mất cờ `lead=False`/`logo=""` — giữ lại các khoá này khi lọc.
+
+## 6. HyperFrames
+
+- CDN bị chặn khi render → chép `gsap.min.js` vào `assets/lib`.
+- Composition HUD/footage phải nền trong suốt (motion.css đặt nền navy cho `#root`).
+- Tween `letterSpacing` bị lint báo lỗi → chỉ dùng transform/opacity.
+- Đồng hồ camera chạy trước tween khi seek → tween đổi dữ liệu (chiều cao khối) phải tự gọi `frame()`.
+- Tên biến trùng trong script nhúng (vd `host`) làm cả bản đồ trắng; luôn chạy `npx hyperframes lint` và xem một khung TRƯỚC khi render dài. Render "quá nhanh" bất thường = cảnh trắng.
+
+## 7. Render và xuất
+
+- Lệnh nền bị dừng sau 2 giờ; một render chỉ chạy một lúc (khoá theo tài khoản). Video dài/nặng → `scripts/render_segments.sh` (chia đoạn ≤ 65 s, chạy nối tiếp, ghép `-c copy`, mux âm thanh đầy đủ), rồi kiểm mối nối.
+- Cảnh cận Z ≥ 14 nghiêng 3D với ảnh vệ tinh lớn là chậm nhất (~6 khung/phút); tính trước thời gian.
+- AAC làm đỉnh vọt từ −1,3 lên −0,4 dBFS → mux `mix.wav` qua `alimiter=limit=0.80`, đo lại ≤ −1 dBTP.
+- Không cho hai tiến trình ghi cùng một file; giải mã thử toàn bộ (`ffmpeg -v error -i out.mp4 -f null -`) trước khi gửi.
+- Gửi kèm nhật ký: giữ khung, kiểu trực quan, tài sản tải về (tên, URL, độ phân giải, thời điểm dùng — lấy thời điểm từ flight.json, không gõ tay).
 ```
 
 ## FILE: references/analysis.md
@@ -431,6 +499,9 @@ vẫn thấy xung quanh, 1,5–3 s. Ảnh báo < 1080 px chỉ dùng ở cửa s
 
 **Nhật ký tài sản** — khai `assets: [{name,url,res,used,note}]` trong flight.json → bảng "Tài sản tải về" trong CAMLOG.md.
 Chữ tối thiểu 36 px (trừ dòng nguồn 19 px).
+
+
+Lỗi đã gặp thật khi dựng phong cách C (thẻ đè dòng nguồn, khối 3D che thẻ, render quá 2 giờ, AAC vọt đỉnh, OSM sập…): xem `references/bai-hoc.md`.
 ```
 
 ## FILE: references/genre-grammar.md
@@ -1969,6 +2040,9 @@ def main():
     if F.get("assets"):
         rows += ["", "## Tài sản tải về", "", "| Tên | Nguồn (URL) | Độ phân giải | Dùng lúc | Ghi chú |", "|---|---|---|---|---|"]
         rows += [f"| {a['name']} | {a['url']} | {a.get('res','')} | {a.get('used','')} | {esc(a.get('note',''))} |" for a in F["assets"]]
+    snaps = sorted({round(l["t"] + min(1.2, l.get("d", 2) / 2), 1) for l in F.get("labels", []) if l.get("photo") or l.get("logo") is not None or l.get("xl")})
+    rows += ["", "## Mốc cần snapshot (bộ kiểm không thấy chồng chéo giữa bản đồ và HUD)", "",
+             "`npx hyperframes snapshot --no-end --at " + ",".join(str(t) for t in snaps) + "` — đáy mọi thẻ ≤ y 1380, không chạm mép, không bị khối 3D/ghim che."]
     rows += ["", "## Tỉ lệ kiểu trực quan hoá (chương)", ""] + [f"- {v}: {d:.1f} s ({d/D*100:.0f}%)" for v, d in sorted(share.items())]
     rows += ["", "## Kiểm luật", ""] + ([f"- {m}" for m in msg] or ["- Đạt: ≤ 3 cắt cứng, footage ≤ 3 s/lần & ≤ 20%, không chương liền nhau trùng kiểu, mỗi kiểu ≤ 20%, không quay > 90°/lần."])
     open(f"{P}/CAMLOG.md", "w").write("\n".join(rows))
@@ -2862,6 +2936,39 @@ if __name__ == "__main__":
     main()
 ```
 
+## FILE: scripts/render_segments.sh
+
+```bash
+#!/bin/bash
+# render_segments.sh <project> <out.mp4> <duration_s> [seg_s=65]
+# Render chia đoạn nối tiếp (một render chạy một lúc; lệnh nền bị dừng sau ~2 giờ), ghép không nén lại,
+# mux âm thanh đầy đủ assets/mix.wav qua limiter (AAC làm vọt đỉnh), giải mã thử và in độ chênh ở mối nối.
+set -e
+P="$1"; OUT="$2"; DUR="$3"; SEG="${4:-65}"
+cd "$P"; mkdir -p out/seg; : > out/seg/list.txt
+i=0; s=0
+while python3 -c "import sys; sys.exit(0 if $s < $DUR - 0.01 else 1)"; do
+  e=$(python3 -c "print(min($s + $SEG, $DUR))")
+  f="out/seg/s$i.mp4"
+  if [ ! -s "$f" ]; then npx -y hyperframes@0.9.28 render . -o "$f" --fps 30 --start "$s" --end "$e" > "out/seg/s$i.log" 2>&1; fi
+  echo "file 's$i.mp4'" >> out/seg/list.txt; echo "đoạn $i: $s–$e s xong"
+  s=$e; i=$((i+1))
+done
+ffmpeg -v error -y -f concat -safe 0 -i out/seg/list.txt -an -c:v copy out/seg/video.mp4
+ffmpeg -v error -y -i out/seg/video.mp4 -i assets/mix.wav -map 0:v -map 1:a -c:v copy -af "alimiter=limit=0.80:level=disabled" -c:a aac -b:a 192k -shortest "$OUT"
+ffmpeg -v error -i "$OUT" -f null - && echo "giải mã OK: $OUT"
+ffmpeg -hide_banner -i "$OUT" -af ebur128=peak=true -f null - 2>&1 | grep -E "I:|Peak:" | tail -2
+python3 - "$OUT" "$SEG" "$DUR" <<'PY'
+import subprocess, sys, numpy as np
+o, seg, dur = sys.argv[1], float(sys.argv[2]), float(sys.argv[3])
+fr = lambda t: np.frombuffer(subprocess.run(["ffmpeg","-v","error","-ss",str(t),"-i",o,"-frames:v","1","-vf","scale=270:480","-f","rawvideo","-pix_fmt","gray","-"],capture_output=True).stdout,np.uint8).astype(float)
+j = seg
+while j < dur - 0.1:
+    a, b, c = fr(j - .1), fr(j - .033), fr(j + .02)
+    print(f"mối nối {j:.0f}s: trong đoạn {abs(b-a).mean():.1f} · qua mối nối {abs(c-b).mean():.1f} (qua mối nối phải ≲ trong đoạn)"); j += seg
+PY
+```
+
 ## FILE: scripts/sat_declouds.py
 
 ```python
@@ -2920,6 +3027,41 @@ p = Image.fromarray(cv2.cvtColor(im, cv2.COLOR_BGR2RGB))
 p = ImageEnhance.Color(p).enhance(.55); p = ImageEnhance.Brightness(p).enhance(.62); p = ImageEnhance.Contrast(p).enhance(1.12)
 Image.blend(p, Image.new("RGB", p.size, (14, 26, 43)), .15).save(base + "_g.jpg", quality=86)
 print("->", base + "_g.jpg")
+```
+
+## FILE: scripts/sat_grid.py
+
+```python
+#!/usr/bin/env python3
+"""sat_grid.py — cắt ảnh vệ tinh (sat_tiles.py) kèm lưới lat/lng để DÒ tuyến đường khi OSM/Overpass không phản hồi.
+
+  python sat_grid.py sat13.jpg sat13.json out.jpg <lat0> <lat1> <lng0> <lng1> [--step 0.01] [--scale 1.6] [--line lines.json]
+
+lines.json: [[[lat,lng],[lat,lng],...], ...] — vẽ thử tuyến đã dò (hồng) để so với đường trên ảnh rồi chỉnh.
+Tuyến dò tay phải ghi "hướng tuyến minh hoạ" trên màn hình nếu không chắc."""
+import argparse, json, math
+from PIL import Image, ImageDraw, ImageFont
+Image.MAX_IMAGE_PIXELS = None
+ap = argparse.ArgumentParser(); ap.add_argument("img"); ap.add_argument("meta"); ap.add_argument("out")
+for k in ("lat0", "lat1", "lng0", "lng1"): ap.add_argument(k, type=float)
+ap.add_argument("--step", type=float, default=0.01); ap.add_argument("--scale", type=float, default=1.6); ap.add_argument("--line")
+a = ap.parse_args(); m = json.load(open(a.meta)); IM = Image.open(a.img)
+def px(lat, lng):
+    n = 2 ** m["z"] * 256; x = (lng + 180) / 360 * n
+    y = (1 - math.log(math.tan(math.radians(lat)) + 1 / math.cos(math.radians(lat))) / math.pi) / 2 * n
+    return x - m["x0"], y - m["y0"]
+x0, y1 = px(a.lat0, a.lng0); x1, y0 = px(a.lat1, a.lng1); k = a.scale
+im = IM.crop((int(x0), int(y0), int(x1), int(y1))).convert("RGB"); im = im.resize((int(im.width * k), int(im.height * k)))
+d = ImageDraw.Draw(im); f = ImageFont.load_default()
+lat = math.ceil(a.lat0 / a.step) * a.step
+while lat < a.lat1:
+    _, y = px(lat, a.lng0); d.line([(0, (y - y0) * k), (im.width, (y - y0) * k)], fill=(255, 255, 0)); d.text((3, (y - y0) * k + 2), f"{lat:.3f}", fill=(255, 255, 0), font=f); lat += a.step
+lng = math.ceil(a.lng0 / a.step) * a.step
+while lng < a.lng1:
+    x, _ = px(a.lat0, lng); d.line([((x - x0) * k, 0), ((x - x0) * k, im.height)], fill=(0, 255, 255)); d.text(((x - x0) * k + 2, 3), f"{lng:.3f}", fill=(0, 255, 255), font=f); lng += a.step
+for line in (json.load(open(a.line)) if a.line else []):
+    d.line([((px(p[0], p[1])[0] - x0) * k, (px(p[0], p[1])[1] - y0) * k) for p in line], fill=(255, 0, 255), width=3)
+im.save(a.out, quality=88); print(a.out, im.size)
 ```
 
 ## FILE: scripts/sat_tiles.py
@@ -3846,7 +3988,8 @@ Icon dùng (Material Symbols Rounded, fill): add_road, calendar_month, check_cir
 1. `python prep_geo4.py <scratch>` — thêm tuyến (VĐ3 phía Đông dò trên ảnh vệ tinh, đoạn gần Tân Vạn từ OSM, phần còn lại gần đúng), QL13 xong/chờ, metro.
 2. `python mk_flight4.py` → proj/flight.json; `python flight.py proj/flight.json proj` → hết "!" (đọc bảng giữ khung + tài sản trong CAMLOG.md).
 3. `python mk_sfx3.py proj/flight.json proj/sfx/events.json`; `make_music.py ../music.wav --dur 130.7 --bpm 92`; `mix_audio.py ... --music`.
-4. `npx hyperframes check` → snapshot → render (≈ 35 phút, chậm nhất ở cảnh cận One Era nghiêng 3D) → `mb_post.py flight.json raw.mp4 mb.mp4` → mux `mix.wav` qua `alimiter=limit=0.80` (AAC làm vọt đỉnh).
+4. `npx hyperframes check` → `snapshot` đúng các mốc trong CAMLOG.md "Mốc cần snapshot" → `scripts/render_segments.sh proj out/raw.mp4 130.6` (chia đoạn, mux âm thanh có limiter, kiểm mối nối) → `scripts/mb_post.py flight.json out/raw.mp4 out/final.mp4`.
+5. Đọc `references/bai-hoc.md` trước khi giao.
 ```
 
 ## FILE: templates/ha-tang-flight/mk_flight4.py
@@ -3902,7 +4045,7 @@ rings = [{"id": "rg_wave", "pt": "oneera", "lat": 10.967, "t": 116.0, "km": [1.6
 movers = [{"path": "flow", "t": 58.6, "d": 7.4, "icon": "car", "out": 67.5}, {"path": "bdst", "t": 90.6, "d": 8.6, "icon": "train", "out": 104.6}]
 lab = []
 def la(at, t, d, big=None, text="", small="", color="w", lx=0, ly=-260, align="c", xl=False, unit=None, count=None, icon=None, **kw):
-    lab.append({k: v for k, v in dict(at=at, t=t, d=d, big=big, text=text, small=small, color=color, lx=lx, ly=ly, align=align, xl=xl, unit=unit, count=count, icon=icon, **kw).items() if v not in (None, "", False) or k == "logo"})
+    lab.append({k: v for k, v in dict(at=at, t=t, d=d, big=big, text=text, small=small, color=color, lx=lx, ly=ly, align=align, xl=xl, unit=unit, count=count, icon=icon, **kw).items() if v not in (None, "", False) or k in ("logo", "lead")})
 # 1 · V10
 la("east_mid", 0.6, 7.0, "99", "17 km cầu cạn phía Đông", color="route", ly=-330, xl=True, unit="%", icon="construction", count={"from": 90, "to": 99})
 la("east_mid", 4.2, 2.5, photo="assets/img/vd3_caucan.jpg", text="Ảnh: Dân trí", lx=-250, ly=-60, w=480, h=300, lead=False)
@@ -6361,7 +6504,7 @@ movers = [{"path": "canal", "t": 91.9, "d": 6.6, "icon": "bike", "out": 104.0}, 
           {"path": "lk_sg", "t": 217.6, "d": 2.0, "icon": "plane", "out": 223.0}]
 lab = []
 def la(at, t, d, big=None, text="", small="", color="w", lx=0, ly=-260, align="c", xl=False, unit=None, count=None):
-    lab.append({k: v for k, v in dict(at=at, t=t, d=d, big=big, text=text, small=small, color=color, lx=lx, ly=ly, align=align, xl=xl, unit=unit, count=count).items() if v not in (None, "", False)})
+    lab.append({k: v for k, v in dict(at=at, t=t, d=d, big=big, text=text, small=small, color=color, lx=lx, ly=ly, align=align, xl=xl, unit=unit, count=count).items() if v not in (None, "", False) or k in ("logo", "lead")})
 # 1
 la("hcm", 3.9, 3.6, "TP.HCM", "sau sáp nhập", color="adm", ly=-280)
 # 2

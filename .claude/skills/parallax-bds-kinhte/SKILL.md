@@ -22,11 +22,12 @@ Người dùng đưa một đặc tả phong cách (role/prompt dài) → đối
 
 1. **Chứng minh bằng hình**, ≥ 4 chất liệu xen kẽ: bản đồ vector · cảnh quay thật · bảng số tích luỹ trên nền bản đồ · ảnh tài liệu gốc (+ Google Earth 3D minh hoạ). 10–15 s cuối là người hoặc footage thật có chuyển động. → `quy-tac-chuyen-gia.md`
 2. **Số liệu từ báo chính thống**, đọc bài gốc, ghi nguồn + ngày trên màn hình; số trên màn hình theo nguồn, không theo bản chép lời (Whisper hay nghe nhầm số) — lệch thì báo người dùng.
-3. **Hệ thiết kế**: 1 phông Be Vietnam Pro; 1 màu nhấn cam `#F28C28` trên nền navy; chỉ 2 kiểu nhãn (A gắn vật thể, B khái niệm); không phụ đề — mỗi cảnh 1 "dòng neo" ≤ 7 từ đúng lúc đọc từ khoá; không vàng, không hộp đen. → `he-thiet-ke.md`
+3. **Hệ thiết kế**: 1 phông Be Vietnam Pro. Phong cách A: 1 màu nhấn cam `#F28C28` trên nền navy; chỉ 2 kiểu nhãn (A gắn vật thể, B khái niệm); không phụ đề — mỗi cảnh 1 "dòng neo" ≤ 7 từ đúng lúc đọc từ khoá; không vàng, không hộp đen. → `he-thiet-ke.md`. Phong cách B và C thay bằng MÀU THEO NGHĨA (cam hành chính, cyan dự án + nước, xanh lá công viên, hồng tím giao thông, vàng khoảng cách/ghim) — xem `motion-library.md`.
 4. **Vùng an toàn TikTok**: không chữ/nhãn ở y < 210, y > 1440, và x > 940 khi 700 < y < 1440 (UI ứng dụng che). Chữ sát đáy sẽ bị caption/tên kênh che.
 5. **Không mờ**: chữ ≥ 72% trắng có bóng; nét vẽ ≥ 2 px, đủ sáng trên nền navy.
-6. **Camera liên tục, parallax thật**: camera không đứng chết; bản đồ nội suy Hermite (vận tốc liên tục); Google Earth/footage là chuyển động thật; chuyển cảnh = whip zoom ngắn (luôn phóng to, không bao giờ thu nhỏ lộ viền) hoặc cắt thẳng ở khoảng lặng; bản đồ → ảnh: zoom xuyên + hoà 12 khung. Mọi chữ tắt trước điểm chuyển. → `camera-rig.md`
-7. **Âm thanh**: −14 LUFS, true peak ≤ −1 dBTP; SFX whoosh/pop/riser thấp hơn giọng ≥ 12 dB.
+6. **Camera liên tục, parallax thật**: camera không đứng chết; bản đồ nội suy Hermite (vận tốc liên tục); Google Earth/footage là chuyển động thật; chuyển cảnh = whip zoom ngắn (luôn phóng to, không bao giờ thu nhỏ lộ viền) hoặc cắt thẳng ở khoảng lặng; bản đồ → ảnh: zoom xuyên + hoà 12 khung. Mọi chữ tắt trước điểm chuyển. → `camera-rig.md`. Phong cách C: không cắt, một camera; luật chống rung riêng trong `flight-style.md`.
+7. **Âm thanh**: −14 LUFS, true peak ≤ −1 dBTP; SFX whoosh/pop/riser thấp hơn giọng ≥ 12 dB. Nén AAC làm vọt đỉnh: mux `mix.wav` qua `alimiter=limit=0.80` rồi đo lại.
+8. **Trước khi giao, đọc `references/bai-hoc.md`** — danh sách lỗi đã gặp thật và cách sửa; mỗi mục là một bước kiểm.
 
 ## Quy trình: từ giọng đọc tới video
 
@@ -83,6 +84,7 @@ Ví dụ: `templates/one-era-flight/`, `templates/ha-tang-flight/` (bản v2: ch
 | 8 nhóm quy tắc chuyên gia + cách kiểm | `references/quy-tac-chuyen-gia.md` |
 | Phong cách B: thư viện hiệu ứng, màu theo nghĩa, nhịp, SFX theo sự kiện | `references/motion-library.md` |
 | Phong cách C: một camera liên tục, lớp trên bản đồ, V1–V10, zoom-through | `references/flight-style.md` |
+| **Lỗi đã gặp + cách sửa (đọc trước khi giao)** | `references/bai-hoc.md` |
 | Hệ thiết kế, vùng an toàn TikTok, độ rõ tối thiểu | `references/he-thiet-ke.md`, `design/` |
 | Rig camera 3D, parallax, Google Earth, nối take | `references/camera-rig.md` |
 | Phong cách đo từ video mẫu | `references/style-mau.md`, `references/analysis.md` |
@@ -102,6 +104,8 @@ Ví dụ: `templates/one-era-flight/`, `templates/ha-tang-flight/` (bản v2: ch
 | `make_sfx.py`, `mix_audio.py` | SFX tổng hợp; trộn giọng + SFX + nhạc (ducking) + chuẩn hoá loudness có kiểm chứng |
 | `make_music.py` | nhạc nền có phách rõ + `beats.json` để cắt theo phách |
 | `motion.py`, `vmap2.js`, `design/motion.css` | phong cách B: shots.json → project + SHOTLIST.md + kiểm luật |
+| `render_segments.sh` | render chia đoạn (tránh giới hạn thời gian), ghép, mux âm thanh có limiter, kiểm mối nối |
+| `sat_grid.py` | cắt ảnh vệ tinh có lưới toạ độ để dò tuyến đường khi OSM/Overpass không phản hồi |
 | `mb_post.py` | phong cách C: mờ chuyển động theo vận tốc camera sau render (màn trập 180°) |
 | `flight.py`, `vmap3.js`, `design/flight.css` | phong cách C: flight.json → một composition bản đồ + HUD + footage + CAMLOG.md + kiểm luật |
 | `sat_tiles.py`, `sat_declouds.py` | ghép ảnh vệ tinh Esri theo mức zoom; xoá mây + chỉnh màu nền |

@@ -100,3 +100,6 @@ vẫn thấy xung quanh, 1,5–3 s. Ảnh báo < 1080 px chỉ dùng ở cửa s
 
 **Nhật ký tài sản** — khai `assets: [{name,url,res,used,note}]` trong flight.json → bảng "Tài sản tải về" trong CAMLOG.md.
 Chữ tối thiểu 36 px (trừ dòng nguồn 19 px).
+
+
+Lỗi đã gặp thật khi dựng phong cách C (thẻ đè dòng nguồn, khối 3D che thẻ, render quá 2 giờ, AAC vọt đỉnh, OSM sập…): xem `references/bai-hoc.md`.

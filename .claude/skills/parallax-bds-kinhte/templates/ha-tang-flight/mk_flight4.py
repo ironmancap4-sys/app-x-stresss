@@ -48,7 +48,7 @@ rings = [{"id": "rg_wave", "pt": "oneera", "lat": 10.967, "t": 116.0, "km": [1.6
 movers = [{"path": "flow", "t": 58.6, "d": 7.4, "icon": "car", "out": 67.5}, {"path": "bdst", "t": 90.6, "d": 8.6, "icon": "train", "out": 104.6}]
 lab = []
 def la(at, t, d, big=None, text="", small="", color="w", lx=0, ly=-260, align="c", xl=False, unit=None, count=None, icon=None, **kw):
-    lab.append({k: v for k, v in dict(at=at, t=t, d=d, big=big, text=text, small=small, color=color, lx=lx, ly=ly, align=align, xl=xl, unit=unit, count=count, icon=icon, **kw).items() if v not in (None, "", False) or k == "logo"})
+    lab.append({k: v for k, v in dict(at=at, t=t, d=d, big=big, text=text, small=small, color=color, lx=lx, ly=ly, align=align, xl=xl, unit=unit, count=count, icon=icon, **kw).items() if v not in (None, "", False) or k in ("logo", "lead")})
 # 1 · V10
 la("east_mid", 0.6, 7.0, "99", "17 km cầu cạn phía Đông", color="route", ly=-330, xl=True, unit="%", icon="construction", count={"from": 90, "to": 99})
 la("east_mid", 4.2, 2.5, photo="assets/img/vd3_caucan.jpg", text="Ảnh: Dân trí", lx=-250, ly=-60, w=480, h=300, lead=False)

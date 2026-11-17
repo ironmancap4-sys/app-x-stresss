@@ -67,7 +67,7 @@ movers = [{"path": "canal", "t": 91.9, "d": 6.6, "icon": "bike", "out": 104.0}, 
           {"path": "lk_sg", "t": 217.6, "d": 2.0, "icon": "plane", "out": 223.0}]
 lab = []
 def la(at, t, d, big=None, text="", small="", color="w", lx=0, ly=-260, align="c", xl=False, unit=None, count=None):
-    lab.append({k: v for k, v in dict(at=at, t=t, d=d, big=big, text=text, small=small, color=color, lx=lx, ly=ly, align=align, xl=xl, unit=unit, count=count).items() if v not in (None, "", False)})
+    lab.append({k: v for k, v in dict(at=at, t=t, d=d, big=big, text=text, small=small, color=color, lx=lx, ly=ly, align=align, xl=xl, unit=unit, count=count).items() if v not in (None, "", False) or k in ("logo", "lead")})
 # 1
 la("hcm", 3.9, 3.6, "TP.HCM", "sau sáp nhập", color="adm", ly=-280)
 # 2
