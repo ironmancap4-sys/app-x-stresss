@@ -8,6 +8,14 @@ description: Dựng video dọc 9:16 (TikTok/Reels/Shorts) về kinh tế, bất
 Skill này nằm trên skill chính thức `/hyperframes` (luật render, CLI). Chưa có thì người dùng tự cài: `npx skills add heygen-com/hyperframes`.
 Mục tiêu: **mọi câu thoại được CHỨNG MINH bằng hình**, trình bày theo một hệ thiết kế báo chí kinh tế, xem tốt trên TikTok.
 
+## Bước 0 trên MÁY MỚI (bắt buộc, một lần)
+
+Video làm trên máy khác chỉ giống video mẫu khi công cụ, phiên bản và đầu vào giống. Trước video đầu tiên trên máy mới:
+`pip install -r requirements.txt` rồi `bash examples/ha-tang-one-era/build.sh <thư mục thử>` — tự kiểm môi trường
+(`scripts/doctor.py`), tải lại đầu vào và đối chiếu hash điểm ảnh, dựng lại video mẫu, so 20 khung với khung chuẩn
+(`scripts/verify_golden.py`, SSIM ≥ 0,97). Chưa đạt 20/20 thì sửa môi trường trước, chưa làm video mới. Chi tiết: `examples/ha-tang-one-era/README.md`.
+Khi làm video mới: ghim đúng `npx hyperframes@0.9.28`, GSAP 3.15.0, phông trong skill; ghi URL + hash mọi đầu vào vào nhật ký như `inputs.json`.
+
 ## Chọn phong cách trước khi dựng
 
 | Phong cách | Khi nào | Công cụ | Đọc |
@@ -106,6 +114,7 @@ Ví dụ: `templates/one-era-flight/`, `templates/ha-tang-flight/` (bản v2: ch
 | `motion.py`, `vmap2.js`, `design/motion.css` | phong cách B: shots.json → project + SHOTLIST.md + kiểm luật |
 | `render_segments.sh` | render chia đoạn (tránh giới hạn thời gian), ghép, mux âm thanh có limiter, kiểm mối nối |
 | `sat_grid.py` | cắt ảnh vệ tinh có lưới toạ độ để dò tuyến đường khi OSM/Overpass không phản hồi |
+| `doctor.py`, `verify_golden.py` | kiểm môi trường máy mới; so khung dựng với khung chuẩn của video mẫu |
 | `mb_post.py` | phong cách C: mờ chuyển động theo vận tốc camera sau render (màn trập 180°) |
 | `flight.py`, `vmap3.js`, `design/flight.css` | phong cách C: flight.json → một composition bản đồ + HUD + footage + CAMLOG.md + kiểm luật |
 | `sat_tiles.py`, `sat_declouds.py` | ghép ảnh vệ tinh Esri theo mức zoom; xoá mây + chỉnh màu nền |

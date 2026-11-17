@@ -1,8 +1,8 @@
 # SKILL TRỌN GÓI: parallax-bds-kinhte
 
-Một file chứa toàn bộ skill để đưa cho AI khác. Thứ tự: SKILL.md (chọn phong cách + quy trình) → references/bai-hoc.md (LỖI ĐÃ GẶP — đọc kỹ) → các references khác → design (CSS) → scripts → templates. Tạo lại file theo đúng đường dẫn ở mỗi tiêu đề.
+Một file chứa toàn bộ skill để đưa cho AI khác. Thứ tự: SKILL.md (Bước 0 máy mới, chọn phong cách, quy trình) → references/bai-hoc.md (lỗi đã gặp) → references → design → scripts → examples (video mẫu chuẩn để kiểm máy) → templates.
 
-Không nhúng ở đây (có trong bản zip/thư mục): phông .woff2 (tải lại bằng `design/install_fonts.sh`) và các file dữ liệu sinh tự động > 20 KB (chạy lại mk_*.py / geo_build.py để tạo).
+Không nhúng ở đây (chỉ có trong bản zip/thư mục): phông .woff2, khung chuẩn golden/*.jpg, âm thanh .wav/.mp3, icon .svg và file dữ liệu sinh tự động > 20 KB. Muốn kiểm máy mới bằng video mẫu thì cần bản zip.
 
 ## FILE: SKILL.md
 
@@ -16,6 +16,14 @@ description: Dựng video dọc 9:16 (TikTok/Reels/Shorts) về kinh tế, bất
 
 Skill này nằm trên skill chính thức `/hyperframes` (luật render, CLI). Chưa có thì người dùng tự cài: `npx skills add heygen-com/hyperframes`.
 Mục tiêu: **mọi câu thoại được CHỨNG MINH bằng hình**, trình bày theo một hệ thiết kế báo chí kinh tế, xem tốt trên TikTok.
+
+## Bước 0 trên MÁY MỚI (bắt buộc, một lần)
+
+Video làm trên máy khác chỉ giống video mẫu khi công cụ, phiên bản và đầu vào giống. Trước video đầu tiên trên máy mới:
+`pip install -r requirements.txt` rồi `bash examples/ha-tang-one-era/build.sh <thư mục thử>` — tự kiểm môi trường
+(`scripts/doctor.py`), tải lại đầu vào và đối chiếu hash điểm ảnh, dựng lại video mẫu, so 20 khung với khung chuẩn
+(`scripts/verify_golden.py`, SSIM ≥ 0,97). Chưa đạt 20/20 thì sửa môi trường trước, chưa làm video mới. Chi tiết: `examples/ha-tang-one-era/README.md`.
+Khi làm video mới: ghim đúng `npx hyperframes@0.9.28`, GSAP 3.15.0, phông trong skill; ghi URL + hash mọi đầu vào vào nhật ký như `inputs.json`.
 
 ## Chọn phong cách trước khi dựng
 
@@ -115,6 +123,7 @@ Ví dụ: `templates/one-era-flight/`, `templates/ha-tang-flight/` (bản v2: ch
 | `motion.py`, `vmap2.js`, `design/motion.css` | phong cách B: shots.json → project + SHOTLIST.md + kiểm luật |
 | `render_segments.sh` | render chia đoạn (tránh giới hạn thời gian), ghép, mux âm thanh có limiter, kiểm mối nối |
 | `sat_grid.py` | cắt ảnh vệ tinh có lưới toạ độ để dò tuyến đường khi OSM/Overpass không phản hồi |
+| `doctor.py`, `verify_golden.py` | kiểm môi trường máy mới; so khung dựng với khung chuẩn của video mẫu |
 | `mb_post.py` | phong cách C: mờ chuyển động theo vận tốc camera sau render (màn trập 180°) |
 | `flight.py`, `vmap3.js`, `design/flight.css` | phong cách C: flight.json → một composition bản đồ + HUD + footage + CAMLOG.md + kiểm luật |
 | `sat_tiles.py`, `sat_declouds.py` | ghép ảnh vệ tinh Esri theo mức zoom; xoá mây + chỉnh màu nền |
@@ -1638,6 +1647,33 @@ const [, , URL, TITLE, P1, P2, P3] = process.argv;
   require('fs').writeFileSync('article.json', JSON.stringify({ ...info, clipTop: top }, null, 1));
   await b.close();
 })().catch(e => { console.error(e); process.exit(1); });
+```
+
+## FILE: scripts/doctor.py
+
+```python
+#!/usr/bin/env python3
+"""doctor.py — kiểm môi trường dựng có giống máy đã làm video mẫu không (phiên bản ghim trong requirements.txt)."""
+import importlib, os, re, shutil, subprocess, sys
+SK = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+want = dict(l.split("==") for l in open(f"{SK}/requirements.txt") if "==" in l and not l.startswith("#"))
+mod = {"numpy": "numpy", "pillow": "PIL", "opencv-python-headless": "cv2", "shapely": "shapely", "faster-whisper": "faster_whisper"}
+bad = 0
+def line(ok, name, have, need):
+    global bad; bad += 0 if ok else 1; print(f"{'OK ' if ok else '!! '} {name:24} {have:14} (cần {need})")
+for pkg, ver in want.items():
+    ver = ver.strip()
+    try: m = importlib.import_module(mod[pkg]); have = getattr(m, "__version__", "?")
+    except Exception: have = "chưa cài"
+    line(have == ver or (pkg == "opencv-python-headless" and have.startswith(ver.rsplit(".", 1)[0])), pkg, have, ver)
+line(sys.version_info >= (3, 10), "python", sys.version.split()[0], ">= 3.10")
+def cmd(c):
+    try: return subprocess.run(c, capture_output=True, text=True, timeout=60).stdout
+    except Exception: return ""
+ff = re.search(r"ffmpeg version (\S+)", cmd(["ffmpeg", "-version"])); line(bool(ff), "ffmpeg", ff.group(1) if ff else "không có", "6.x")
+nv = cmd(["node", "-v"]).strip(); line(nv.startswith("v2") and int(nv[1:3]) >= 18, "node", nv or "không có", ">= 18 (đã dùng v22)")
+line(bool(shutil.which("npx")), "npx", "có" if shutil.which("npx") else "không có", "có")
+print("\n" + ("Môi trường khớp." if not bad else f"{bad} mục lệch — pip install -r requirements.txt; khác phiên bản có thể làm khung hình lệch nhẹ (bước so khung chuẩn sẽ cho biết)."))
 ```
 
 ## FILE: scripts/earth_capture.js
@@ -3577,6 +3613,63 @@ function makeMap(opts) {
 }
 ```
 
+## FILE: scripts/verify_golden.py
+
+```python
+#!/usr/bin/env python3
+"""verify_golden.py — so khung hình dựng trên máy này với khung chuẩn (golden) của video mẫu.
+
+  python verify_golden.py make   <project> <golden_dir> --at 2,5.5,...   # (chỉ máy gốc) chụp khung chuẩn
+  python verify_golden.py check  <project> <golden_dir> [--min-ssim 0.97] # máy khác: chụp cùng mốc rồi so
+
+Chụp bằng `npx hyperframes@0.9.28 snapshot` (seek đúng thời điểm, cùng engine với render). So SSIM toàn khung (thang xám,
+cửa sổ 7 px) + PSNR + tỉ lệ điểm ảnh lệch > 24 mức. Ghi report.md + ảnh so sánh cạnh nhau cho mốc không đạt.
+Đạt khi mọi mốc SSIM ≥ min-ssim. Khác font hệ thống/Chromium thường cho SSIM 0,97–0,99 ở mốc nhiều chữ; < 0,95 là sai thật.
+"""
+import argparse, json, os, subprocess, sys, shutil
+import numpy as np, cv2
+
+def snap(project, times, out):
+    if os.path.isdir(out): shutil.rmtree(out)
+    r = subprocess.run(["npx", "-y", "hyperframes@0.9.28", "snapshot", "--no-end", "--at", ",".join(str(t) for t in times), "-o", out, "."],
+                       cwd=project, capture_output=True, text=True)
+    if r.returncode: print(r.stdout[-2000:], r.stderr[-2000:]); sys.exit("snapshot lỗi")
+    files = sorted(f for f in os.listdir(out) if f.startswith("frame-") and f.endswith(".png"))
+    if len(files) != len(times): sys.exit(f"snapshot ra {len(files)} khung, cần {len(times)}")
+    return [os.path.join(out, f) for f in files]
+
+def ssim(a, b):
+    a = a.astype(np.float64); b = b.astype(np.float64); C1, C2 = (0.01 * 255) ** 2, (0.03 * 255) ** 2
+    mu1, mu2 = cv2.GaussianBlur(a, (7, 7), 1.5), cv2.GaussianBlur(b, (7, 7), 1.5)
+    s1 = cv2.GaussianBlur(a * a, (7, 7), 1.5) - mu1 ** 2; s2 = cv2.GaussianBlur(b * b, (7, 7), 1.5) - mu2 ** 2; s12 = cv2.GaussianBlur(a * b, (7, 7), 1.5) - mu1 * mu2
+    return float((((2 * mu1 * mu2 + C1) * (2 * s12 + C2)) / ((mu1 ** 2 + mu2 ** 2 + C1) * (s1 + s2 + C2))).mean())
+
+ap = argparse.ArgumentParser(); ap.add_argument("mode", choices=["make", "check"]); ap.add_argument("project"); ap.add_argument("golden")
+ap.add_argument("--at"); ap.add_argument("--min-ssim", type=float, default=0.97); a = ap.parse_args()
+project, golden = os.path.abspath(a.project), os.path.abspath(a.golden)
+if a.mode == "make":
+    times = [float(x) for x in a.at.split(",")]; os.makedirs(golden, exist_ok=True)
+    frames = snap(project, times, os.path.join(golden, "_snap")); meta = []
+    for t, f in zip(times, frames):
+        name = f"g{t:07.2f}.jpg"; cv2.imwrite(os.path.join(golden, name), cv2.imread(f), [cv2.IMWRITE_JPEG_QUALITY, 92]); meta.append({"t": t, "file": name})
+    shutil.rmtree(os.path.join(golden, "_snap")); json.dump({"frames": meta, "size": [1080, 1920]}, open(os.path.join(golden, "golden.json"), "w"), indent=1)
+    print(f"{len(meta)} khung chuẩn -> {golden}"); sys.exit(0)
+G = json.load(open(os.path.join(golden, "golden.json"))); times = [f["t"] for f in G["frames"]]
+out = os.path.join(project, "out", "verify"); frames = snap(project, times, os.path.join(out, "snap"))
+rows, fail = [], 0
+for g, f in zip(G["frames"], frames):
+    A = cv2.imread(os.path.join(golden, g["file"])); B = cv2.imread(f)
+    if A.shape != B.shape: B = cv2.resize(B, (A.shape[1], A.shape[0]))
+    s = ssim(cv2.cvtColor(A, cv2.COLOR_BGR2GRAY), cv2.cvtColor(B, cv2.COLOR_BGR2GRAY))
+    psnr = cv2.PSNR(A, B); off = float((np.abs(A.astype(int) - B.astype(int)).max(2) > 24).mean() * 100)
+    ok = s >= a.min_ssim; fail += not ok
+    if not ok: cv2.imwrite(os.path.join(out, f"KHAC_{g['t']}.jpg"), np.hstack([A, B]), [cv2.IMWRITE_JPEG_QUALITY, 80])
+    rows.append(f"| {g['t']:.2f} | {s:.4f} | {psnr:.1f} | {off:.2f}% | {'ĐẠT' if ok else 'KHÔNG ĐẠT'} |")
+rep = ["# So với khung chuẩn", "", f"Ngưỡng SSIM ≥ {a.min_ssim}", "", "| t (s) | SSIM | PSNR (dB) | điểm ảnh lệch > 24 | Kết quả |", "|---|---|---|---|---|"] + rows
+rep += ["", f"**{len(rows) - fail}/{len(rows)} mốc đạt.**" + ("" if not fail else " Mốc không đạt: xem ảnh KHAC_*.jpg (trái = chuẩn, phải = máy này).")]
+open(os.path.join(out, "report.md"), "w").write("\n".join(rep)); print("\n".join(rep)); sys.exit(1 if fail else 0)
+```
+
 ## FILE: scripts/vmap.js
 
 ```javascript
@@ -3893,6 +3986,639 @@ function makeMap3(opts) {
     return { pan: Math.hypot(b.x - a.x, b.y - a.y) * s / 0.1, Z: Math.abs(b.Z - a.Z) / 0.1, p: Math.abs(b.p - a.p) / 0.1, b: Math.abs(b.b - a.b) / 0.1 }; };
   return { apply, sample, speed };
 }
+```
+
+## FILE: examples/ha-tang-one-era/README.md
+
+````markdown
+# Video mẫu chuẩn: "99% vẫn chưa thông xe" (hạ tầng quanh One Era) — kiểm máy mới
+
+Đây là video cuối cùng đã giao (phong cách C, 130,6 s). Thư mục này cho phép MỘT MÁY KHÁC dựng lại đúng video đó và
+CHỨNG MINH kết quả giống bản gốc, trước khi dùng máy đó làm video mới.
+
+```bash
+pip install -r ../../requirements.txt
+bash build.sh ~/dung-thu              # ~15 phút: kiểm môi trường, tải đầu vào, sinh project, âm thanh, check, so 20 khung chuẩn
+bash build.sh ~/dung-thu --render     # thêm render đầy đủ (~70 phút) + mờ chuyển động -> ~/dung-thu/out/final.mp4
+```
+
+| Bước | Kiểm gì | Đạt khi |
+|---|---|---|
+| doctor.py | Python, numpy, Pillow, OpenCV, shapely, ffmpeg, node đúng phiên bản ghim | "Môi trường khớp." |
+| fetch_inputs.py | 7 ảnh vệ tinh (tải Esri + xoá mây + chỉnh màu), 9 ảnh báo, GSAP 3.15.0, phông | mọi dòng "KHỚP" (hash điểm ảnh) |
+| music.wav | nhạc nền sinh từ seed cố định | "KHỚP" |
+| mix_audio | giọng + 91 SFX + nhạc | −14,1 LUFS, đỉnh −1,3 dBTP |
+| hyperframes check | lint, layout, runtime | "Check passed" |
+| verify_golden.py | 20 khung tại mọi chương (mây, nghiêng 3D, cửa sổ ảnh, thẻ logo, cột 3D, zoom-through) so với `golden/` | 20/20 SSIM ≥ 0,97 |
+
+Kết quả trên máy sạch (17/11/2026): 18/18 đầu vào khớp từng điểm ảnh, nhạc khớp, 20/20 khung đạt (SSIM 0,985–0,996).
+Thử dịch một nhãn số 80 px → khung đó SSIM 0,949, KHÔNG ĐẠT: bộ so đủ nhạy để bắt lệch bố cục.
+Khung chuẩn so với video đã giao (sau nén 5 Mbps) ở các đoạn giữ khung: SSIM ≈ 0,975.
+
+## Khi không đạt
+
+- Đầu vào KHÁC kèm "ẢNH NGUỒN đã đổi": báo/Esri đã thay ảnh — video vẫn đúng bố cục, chỉ khác ảnh đó.
+- Đầu vào KHÁC mà nguồn khớp, hoặc nhạc KHÁC: lệch phiên bản thư viện → `pip install -r requirements.txt`.
+- Không tải được: mở mạng cho các host trong `inputs.json` (cdnphoto.dantri.com.vn, image.sggp.org.vn, images2.thanhnien.vn,
+  i.ex-cdn.com, server.arcgisonline.com, registry.npmjs.org).
+- Khung KHÔNG ĐẠT: mở `out/verify/KHAC_<t>.jpg` (trái = chuẩn, phải = máy này). Lệch chữ toàn bộ = thiếu phông/khác Chromium
+  (hyperframes@0.9.28 tự tải trình duyệt riêng; xoá cache `~/.cache/hyperframes` rồi chạy lại).
+
+`vo.mp3` là giọng đọc gốc của video mẫu, chỉ dùng để kiểm máy. Muốn gửi skill mà không kèm giọng đọc: xoá file này; bước
+âm thanh sẽ lỗi nhưng bước so khung (chỉ hình) vẫn chạy được nếu tạo `assets/mix.wav` im lặng
+(`ffmpeg -f lavfi -i anullsrc=r=48000:cl=stereo -t 130.6 assets/mix.wav`).
+````
+
+## FILE: examples/ha-tang-one-era/build.sh
+
+```bash
+#!/bin/bash
+# build.sh <thư mục dựng> [--render]
+# Dựng LẠI video mẫu "hạ tầng quanh One Era" từ đầu trên máy bất kỳ và chứng minh nó giống bản gốc:
+#   1) kiểm môi trường  2) tải + xử lý đầu vào (kiểm hash điểm ảnh)  3) sinh project  4) âm thanh
+#   5) hyperframes check  6) so 20 khung chuẩn (SSIM ≥ 0,97)  7) (--render) render chia đoạn + mờ chuyển động
+set -e
+HERE="$(cd "$(dirname "$0")" && pwd)"; SKILL="$(cd "$HERE/../.." && pwd)"
+B="$(mkdir -p "$1" && cd "$1" && pwd)"; PY=${PYTHON:-python3}
+echo "== 1. môi trường"; $PY "$SKILL/scripts/doctor.py"
+echo "== 2. đầu vào"; $PY "$HERE/fetch_inputs.py" "$B" || echo "!! có đầu vào KHÁC — vẫn dựng tiếp, xem bước 6"
+echo "== 3. project"
+cp "$HERE"/project/*.json "$HERE/project/fonts.css" "$B/"; cp -r "$HERE/project/icons" "$HERE/project/sfx" "$B/"
+cp "$HERE/project/vo.mp3" "$B/assets/vo.mp3"
+cp "$SKILL/design/motion.css" "$SKILL/design/flight.css" "$SKILL/scripts/vmap3.js" "$B/"
+$PY "$SKILL/scripts/flight.py" "$B/flight.json" "$B"
+echo "== 4. âm thanh"
+$PY "$SKILL/templates/ha-tang-flight/mk_sfx3.py" "$B/flight.json" "$B/sfx/events.json"
+(cd "$B" && $PY "$SKILL/scripts/make_music.py" music.wav --dur 130.7 --bpm 92 >/dev/null)
+$PY - "$B/music.wav" "$HERE/inputs.json" <<'PY'
+import hashlib, json, sys
+ok = hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest() == json.load(open(sys.argv[2]))["audio"]["music"]["sha256"]
+print(("KHỚP" if ok else "KHÁC (khác phiên bản numpy?)") + "  music.wav")
+PY
+(cd "$B" && rm -f assets/mix.wav && $PY "$SKILL/scripts/mix_audio.py" assets/vo.mp3 sfx/events.json assets/mix.wav --duration 130.6 --music music.wav | tail -1)
+echo "== 5. hyperframes check"; (cd "$B" && npx -y hyperframes@0.9.28 check . 2>&1 | grep -E "Check (passed|failed)")
+echo "== 6. so khung chuẩn"; $PY "$SKILL/scripts/verify_golden.py" check "$B" "$HERE/golden"
+if [ "$2" = "--render" ]; then
+  echo "== 7. render"; bash "$SKILL/scripts/render_segments.sh" "$B" out/raw.mp4 130.6
+  (cd "$B" && $PY "$SKILL/scripts/mb_post.py" flight.json out/raw.mp4 out/mb.mp4 --shutter 180 && \
+   ffmpeg -v error -y -i out/mb.mp4 -i assets/mix.wav -map 0:v -map 1:a -c:v libx264 -b:v 5000k -maxrate 6500k -bufsize 10000k -pix_fmt yuv420p -r 30 \
+     -movflags +faststart -af "alimiter=limit=0.80:level=disabled" -c:a aac -b:a 192k -shortest out/final.mp4 && echo "video: $B/out/final.mp4")
+fi
+```
+
+## FILE: examples/ha-tang-one-era/fetch_inputs.py
+
+```python
+#!/usr/bin/env python3
+"""fetch_inputs.py — tải và xử lý LẠI đúng các đầu vào của video mẫu "hạ tầng quanh One Era", kiểm từng file bằng hash điểm ảnh.
+
+  python fetch_inputs.py <thư mục dựng>          # tạo <dựng>/assets/{maps,img,lib,fonts} theo inputs.json
+
+Mỗi đầu vào in một dòng KHỚP / KHÁC. Hash điểm ảnh = sha256(str(shape) + byte RGB) — không phụ thuộc cách nén file của CDN.
+KHÁC ở ảnh nguồn = báo/Esri đã đổi ảnh (video vẫn dựng được nhưng sẽ không giống hệt); KHÁC ở ảnh đã xử lý mà nguồn KHỚP
+= khác phiên bản Pillow/OpenCV/libjpeg — chạy scripts/doctor.py.
+"""
+import hashlib, io, json, os, shutil, subprocess, sys, tarfile, urllib.request
+import numpy as np
+from PIL import Image, ImageEnhance, ImageFilter
+Image.MAX_IMAGE_PIXELS = None
+HERE = os.path.dirname(os.path.abspath(__file__)); SKILL = os.path.abspath(os.path.join(HERE, "..", ".."))
+OUT = os.path.abspath(sys.argv[1]); M = json.load(open(os.path.join(HERE, "inputs.json")))
+pix = lambda im: hashlib.sha256(str(np.asarray(im.convert("RGB")).shape).encode() + np.asarray(im.convert("RGB")).tobytes()).hexdigest()
+bad = []
+def report(name, ok, note=""):
+    print(f"{'KHỚP' if ok else 'KHÁC'}  {name} {note}");
+    if not ok: bad.append(name)
+def get(url):
+    for i in range(4):
+        try:
+            return urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "skill-repro/1.0"}), timeout=60).read()
+        except Exception as e: err = e
+    raise err
+for d in ("maps", "img", "lib", "fonts"): os.makedirs(f"{OUT}/assets/{d}", exist_ok=True)
+work = f"{OUT}/_work"; os.makedirs(work, exist_ok=True)
+# ---- nền vệ tinh: sat_tiles.py -> (xoá mây) -> chỉnh màu -> làm mềm
+for m in M["maps"]:
+    n = m["name"]; raw = f"{work}/{n}.jpg"
+    if not os.path.exists(raw):
+        subprocess.run([sys.executable, f"{SKILL}/scripts/sat_tiles.py", n] + [str(x) for x in m["tiles"]] + ["img"], cwd=work, check=True, capture_output=True)
+    src = raw
+    if m.get("extra") and m["extra"].get("crop_w"):
+        im = Image.open(raw); im.crop((0, 0, m["extra"]["crop_w"], im.height)).save(f"{work}/{n}_c.jpg", quality=m["extra"]["crop_q"]); src = f"{work}/{n}_c.jpg"
+    if m.get("declouds"):
+        shutil.copy(raw, f"{work}/{n}_d.jpg")
+        subprocess.run([sys.executable, f"{SKILL}/scripts/sat_declouds.py", f"{work}/{n}_d.jpg", "--min-area", str(m["declouds"][0]), "--grow", str(m["declouds"][1])], check=True, capture_output=True)
+        src = f"{work}/{n}_d_dc.jpg"
+    g = m["grade"]; p = Image.open(src).convert("RGB")
+    p = ImageEnhance.Color(p).enhance(g["color"]); p = ImageEnhance.Brightness(p).enhance(g["brightness"]); p = ImageEnhance.Contrast(p).enhance(g["contrast"])
+    p.save(f"{work}/{n}_g1.jpg", quality=g["q1"])
+    Image.open(f"{work}/{n}_g1.jpg").filter(ImageFilter.GaussianBlur(g["blur"])).save(f"{OUT}/{m['final']}", quality=g["q2"])
+    report(m["final"], pix(Image.open(f"{OUT}/{m['final']}")) == m["final_pixel_sha256"])
+# ---- ảnh báo / phối cảnh
+for ph in M["photos"]:
+    try: data = get(ph["url"])
+    except Exception as e: report(ph["name"], False, f"(không tải được: {e} — thêm host vào mạng cho phép)"); continue
+    im = Image.open(io.BytesIO(data)); ok_src = pix(im) == ph["source_pixel_sha256"]
+    im.convert("RGB").save(f"{OUT}/{ph['final']}", quality=ph["quality"])
+    ok = pix(Image.open(f"{OUT}/{ph['final']}")) == ph["final_pixel_sha256"]
+    report(ph["final"], ok, "" if ok_src else "(ẢNH NGUỒN đã đổi trên báo)")
+# ---- GSAP đúng phiên bản
+g = M["lib"]["gsap"]; tgz = get(f"https://registry.npmjs.org/gsap/-/gsap-{g['npm'].split('@')[1]}.tgz")
+with tarfile.open(fileobj=io.BytesIO(tgz)) as t: js = t.extractfile("package/" + g["file"]).read()
+open(f"{OUT}/{g['dest']}", "wb").write(js); report(g["dest"], hashlib.sha256(js).hexdigest() == g["sha256"])
+# ---- phông
+shutil.copytree(f"{SKILL}/templates/kinh-te-dia-phuong/assets/fonts", f"{OUT}/assets/fonts", dirs_exist_ok=True); print("KHỚP  assets/fonts (kèm trong skill)")
+print(f"\n{'TẤT CẢ ĐẦU VÀO KHỚP' if not bad else f'{len(bad)} đầu vào KHÁC: ' + ', '.join(bad)}")
+sys.exit(1 if bad else 0)
+```
+
+## FILE: examples/ha-tang-one-era/golden/golden.json
+
+```json
+{
+ "frames": [
+  {
+   "t": 1.5,
+   "file": "g0001.50.jpg"
+  },
+  {
+   "t": 5.5,
+   "file": "g0005.50.jpg"
+  },
+  {
+   "t": 14.0,
+   "file": "g0014.00.jpg"
+  },
+  {
+   "t": 22.0,
+   "file": "g0022.00.jpg"
+  },
+  {
+   "t": 30.0,
+   "file": "g0030.00.jpg"
+  },
+  {
+   "t": 33.0,
+   "file": "g0033.00.jpg"
+  },
+  {
+   "t": 38.4,
+   "file": "g0038.40.jpg"
+  },
+  {
+   "t": 47.0,
+   "file": "g0047.00.jpg"
+  },
+  {
+   "t": 55.0,
+   "file": "g0055.00.jpg"
+  },
+  {
+   "t": 61.0,
+   "file": "g0061.00.jpg"
+  },
+  {
+   "t": 65.0,
+   "file": "g0065.00.jpg"
+  },
+  {
+   "t": 73.6,
+   "file": "g0073.60.jpg"
+  },
+  {
+   "t": 77.0,
+   "file": "g0077.00.jpg"
+  },
+  {
+   "t": 89.1,
+   "file": "g0089.10.jpg"
+  },
+  {
+   "t": 96.0,
+   "file": "g0096.00.jpg"
+  },
+  {
+   "t": 102.0,
+   "file": "g0102.00.jpg"
+  },
+  {
+   "t": 107.5,
+   "file": "g0107.50.jpg"
+  },
+  {
+   "t": 117.0,
+   "file": "g0117.00.jpg"
+  },
+  {
+   "t": 124.0,
+   "file": "g0124.00.jpg"
+  },
+  {
+   "t": 128.5,
+   "file": "g0128.50.jpg"
+  }
+ ],
+ "size": [
+  1080,
+  1920
+ ]
+}
+```
+
+## FILE: examples/ha-tang-one-era/inputs.json
+
+```json
+{
+ "pixel_hash": "sha256(str(shape) + RGB bytes)",
+ "maps": [
+  {
+   "name": "w03",
+   "tiles": [
+    3,
+    84,
+    -180,
+    -84,
+    180
+   ],
+   "declouds": null,
+   "extra": {
+    "crop_w": 2048,
+    "crop_q": 92
+   },
+   "grade": {
+    "color": 0.85,
+    "brightness": 0.8,
+    "contrast": 1.05,
+    "q1": 86,
+    "blur": 0.8,
+    "q2": 86
+   },
+   "meta": {
+    "z": 3,
+    "x0": 0,
+    "y0": 0,
+    "w": 2048,
+    "h": 2048
+   },
+   "final": "assets/maps/w03_g.jpg",
+   "final_pixel_sha256": "8d4d3606f15b2787e8f0cbef9c0f81331889e62f58d041a670d6b7c57dfd4db4"
+  },
+  {
+   "name": "a05",
+   "tiles": [
+    5,
+    47,
+    82,
+    -14,
+    140
+   ],
+   "declouds": null,
+   "extra": null,
+   "grade": {
+    "color": 0.85,
+    "brightness": 0.8,
+    "contrast": 1.05,
+    "q1": 86,
+    "blur": 0.8,
+    "q2": 86
+   },
+   "meta": {
+    "z": 5,
+    "x0": 5888,
+    "y0": 2816,
+    "w": 1536,
+    "h": 1792
+   },
+   "final": "assets/maps/a05_g.jpg",
+   "final_pixel_sha256": "438ec26949ed79efad3855d431abe118f0e7377dad5d02861d8a168ce479d634"
+  },
+  {
+   "name": "sat07",
+   "tiles": [
+    7,
+    27,
+    90,
+    -7,
+    124
+   ],
+   "declouds": null,
+   "extra": null,
+   "grade": {
+    "color": 0.85,
+    "brightness": 0.8,
+    "contrast": 1.05,
+    "q1": 86,
+    "blur": 0.8,
+    "q2": 86
+   },
+   "meta": {
+    "z": 7,
+    "x0": 24576,
+    "y0": 13824,
+    "w": 3328,
+    "h": 3328
+   },
+   "final": "assets/maps/sat07_g.jpg",
+   "final_pixel_sha256": "45d640c693aafb70895fa7777aac716a81844bfcc9e3ce2e597854b82ba51c63"
+  },
+  {
+   "name": "sat09",
+   "tiles": [
+    9,
+    16.5,
+    101.5,
+    4.5,
+    112.5
+   ],
+   "declouds": null,
+   "extra": null,
+   "grade": {
+    "color": 0.85,
+    "brightness": 0.8,
+    "contrast": 1.05,
+    "q1": 86,
+    "blur": 0.8,
+    "q2": 86
+   },
+   "meta": {
+    "z": 9,
+    "x0": 102400,
+    "y0": 59392,
+    "w": 4352,
+    "h": 4608
+   },
+   "final": "assets/maps/sat09_g.jpg",
+   "final_pixel_sha256": "1e40ee71d09a5f55990db05d04d7907ea4ccdef2e994832a44da9dafc3ba22a6"
+  },
+  {
+   "name": "sat11",
+   "tiles": [
+    11,
+    11.75,
+    106.15,
+    9.95,
+    107.4
+   ],
+   "declouds": [
+    30,
+    5
+   ],
+   "extra": null,
+   "grade": {
+    "color": 0.85,
+    "brightness": 0.8,
+    "contrast": 1.05,
+    "q1": 86,
+    "blur": 0.8,
+    "q2": 86
+   },
+   "meta": {
+    "z": 11,
+    "x0": 416512,
+    "y0": 244736,
+    "w": 2048,
+    "h": 3072
+   },
+   "final": "assets/maps/sat11_g.jpg",
+   "final_pixel_sha256": "7bbd048bb51c8589017aa8298412e7f668ed6ca7c3d9d4ccbc67eab216d09321"
+  },
+  {
+   "name": "sat13",
+   "tiles": [
+    13,
+    11.32,
+    106.42,
+    10.6,
+    106.98
+   ],
+   "declouds": [
+    60,
+    9
+   ],
+   "extra": null,
+   "grade": {
+    "color": 0.85,
+    "brightness": 0.8,
+    "contrast": 1.05,
+    "q1": 86,
+    "blur": 0.8,
+    "q2": 86
+   },
+   "meta": {
+    "z": 13,
+    "x0": 1668352,
+    "y0": 982016,
+    "w": 3584,
+    "h": 4608
+   },
+   "final": "assets/maps/sat13_g.jpg",
+   "final_pixel_sha256": "44eeaec652e347c65192e7e4cf5224d8aea616b45e45d21c15ef1d66327fda4e"
+  },
+  {
+   "name": "sat16",
+   "tiles": [
+    16,
+    11.025,
+    106.655,
+    10.905,
+    106.745
+   ],
+   "declouds": [
+    900,
+    25
+   ],
+   "extra": null,
+   "grade": {
+    "color": 0.85,
+    "brightness": 0.8,
+    "contrast": 1.05,
+    "q1": 86,
+    "blur": 0.8,
+    "q2": 86
+   },
+   "meta": {
+    "z": 16,
+    "x0": 13358848,
+    "y0": 7871488,
+    "w": 4608,
+    "h": 5888
+   },
+   "final": "assets/maps/sat16_g.jpg",
+   "final_pixel_sha256": "ce740ca191974a07d6afc48e3b9385962d6ed64692e5f860499509c71f6378bb"
+  }
+ ],
+ "photos": [
+  {
+   "name": "vd3_caucan.jpg",
+   "url": "https://cdnphoto.dantri.com.vn/3m10PVuksY8HMjdIX7qYR8-OgF0=/thumb_w/1020/2026/11/12/vanhdai3baoquyen-1790704110265-1794486191605.jpg",
+   "quality": 90,
+   "source_pixel_sha256": "2e825b2ce3d4d2cde657eecd4c22636af8d64192dfc93bfa34705ab5d6aa271e",
+   "final": "assets/img/vd3_caucan.jpg",
+   "final_pixel_sha256": "270ee81999c4f2c85eb48bd4e819183b7b045c1411aff86e868a92ac1df05205"
+  },
+  {
+   "name": "tanvan.jpg",
+   "url": "https://image.sggp.org.vn/w2000/Uploaded/2026/ycwkpcvo/2026_09_20/tvan7-2212-1980.jpg.webp",
+   "quality": 90,
+   "source_pixel_sha256": "33385157b9d9ccb905d59371650ab2bd14dc38526191c0da06d8ec8969ac0e1f",
+   "final": "assets/img/tanvan.jpg",
+   "final_pixel_sha256": "3410e2a8228457cbf60968a1de6e0ec2586e1b33f419525aeffc74500535bc50"
+  },
+  {
+   "name": "vd3_aerial.jpg",
+   "url": "https://images2.thanhnien.vn/528068263637045248/2026/8/24/edit-vanh-dai-3-di-qua-vinhome-17875581803371189682545.jpeg",
+   "quality": 90,
+   "source_pixel_sha256": "7d853be3622400ace895e71d153b1f9bb92e94e07800fdc40bf7287fa97b9e17",
+   "final": "assets/img/vd3_aerial.jpg",
+   "final_pixel_sha256": "fa0077c4e49c11d972e5ada2407ac8fbe4671f5b6e410874337d6297b231df6c"
+  },
+  {
+   "name": "ql13.jpg",
+   "url": "https://cdnphoto.dantri.com.vn/O8q_uoHwgKp-RvcLx_AaAVtsJFk=/thumb_w/1920/2026/02/13/morongquoclo13binhduongxuandoan-edited-1770988718424.jpg?watermark=true",
+   "quality": 90,
+   "source_pixel_sha256": "c90520ba2406fa7da826f5c5734eb6e92e111a22335098a1fc286515dcc8d1f3",
+   "final": "assets/img/ql13.jpg",
+   "final_pixel_sha256": "e757730635be3bea816a0e5aa8d8c3dd4839d8ec7274259507e0c4755d8cf5cf"
+  },
+  {
+   "name": "ql13b.jpg",
+   "url": "https://cdnphoto.dantri.com.vn/AL04UWPs3xTN_LLUIE581haT4gc=/thumb_w/1920/2026/02/13/morongquoclo13binhduongxuandoan-edited-1770988644048.jpg?watermark=true",
+   "quality": 90,
+   "source_pixel_sha256": "8b35b2a4db619c3067ce4f8a1d70c46286d0c5ea048e155330656a0d99489f67",
+   "final": "assets/img/ql13b.jpg",
+   "final_pixel_sha256": "48be4cc8c8332c2e9f41bd1aab52c004ba57d1e762af5614ea2ebc2f3b799ba0"
+  },
+  {
+   "name": "metro1.jpg",
+   "url": "https://image.sggp.org.vn/w2000/Uploaded/2026/ycwkpcvo/2025_12_18/18mtro-1280-5109.jpg.webp",
+   "quality": 90,
+   "source_pixel_sha256": "3ce0f90fc4a530f15ee2449d4a46e7c6838b0e351b84aa21007ddab01625e56f",
+   "final": "assets/img/metro1.jpg",
+   "final_pixel_sha256": "048636f31520c8f3fc0726c015d80321cce7158840ab55f0a35cae5de9609dec"
+  },
+  {
+   "name": "metro1_crowd.jpg",
+   "url": "https://image.sggp.org.vn/w2000/Uploaded/2026/ycwkpcvo/2025_12_18/18metro2-7063-4055.jpg.webp",
+   "quality": 90,
+   "source_pixel_sha256": "c8e4d24807a80845c0fbcc08781a7324d156d7356f3d7cc1216fd26395ab0773",
+   "final": "assets/img/metro1_crowd.jpg",
+   "final_pixel_sha256": "39b94a332f554229a1d20bb6aa01ee99fc399ebe0aecaf6a27ee8f40b830d73b"
+  },
+  {
+   "name": "vd3_tanvan2.jpg",
+   "url": "https://cdnphoto.dantri.com.vn/q2g5lStQyOdc-OY2GeDVOKJGzuM=/thumb_w/1020/2026/10/02/vanhdai3baoquyen-1790704239788-1790951935727.jpg",
+   "quality": 90,
+   "source_pixel_sha256": "9b7fe53ef27800edcb2615509801a2b8f6fff50ed57454e92993a7721a12255c",
+   "final": "assets/img/vd3_tanvan2.jpg",
+   "final_pixel_sha256": "68a493a9db8e785a202844dab86f92948cab12897a90df9a7b547f852c988a04"
+  },
+  {
+   "name": "p7.jpg",
+   "url": "https://i.ex-cdn.com/theleader.vn/files/content/2026/09/25/1-0804.png",
+   "quality": 92,
+   "source_pixel_sha256": "75a05e8a244bf5fb909a3559689228ba37d9846ab2f25d44e4ae8291ee56b59e",
+   "final": "assets/img/p7.jpg",
+   "final_pixel_sha256": "0ccf33c0ac2e5ab9040fd9e6b674de4897aef6e520d49401aedbdb8fdc507eb0"
+  }
+ ],
+ "lib": {
+  "gsap": {
+   "npm": "gsap@3.15.0",
+   "file": "dist/gsap.min.js",
+   "dest": "assets/lib/gsap.min.js",
+   "sha256": "92bb9a96476f983d212a2bc4f54c889039c1696dd4461d40a736860938570fbb"
+  }
+ },
+ "audio": {
+  "vo": {
+   "file": "vo.mp3",
+   "sha256": "e14016fe02d5bac05aaa2f6fbe5341dcdf6c4cde90b4796339006fdd28db00e0"
+  },
+  "music": {
+   "cmd": "make_music.py music.wav --dur 130.7 --bpm 92",
+   "seed": 3,
+   "sha256": "f1a265928201fec3baf3b5b1dfa9f65b0771f4525ec6dbeade1c004e39f00fde"
+  },
+  "sfx_events_from": "templates/ha-tang-flight/mk_sfx3.py",
+  "mix": {
+   "cmd": "mix_audio.py vo.mp3 sfx/events.json assets/mix.wav --duration 130.6 --music music.wav",
+   "lufs": -14.1
+  }
+ },
+ "fonts": "templates/kinh-te-dia-phuong/assets/fonts (Be Vietnam Pro, @fontsource/be-vietnam-pro@5.3.0)",
+ "icons": "@material-symbols/svg-400@0.49.0 rounded/*-fill.svg (đã kèm trong project/icons)"
+}
+```
+
+## FILE: examples/ha-tang-one-era/project/fonts.css
+
+```css
+    @font-face { font-family: 'Be Vietnam Pro'; font-style: normal; font-weight: 400; font-display: block; src: url('assets/fonts/be-vietnam-pro-vietnamese-400-normal.woff2') format('woff2'); unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB; }
+    @font-face { font-family: 'Be Vietnam Pro'; font-style: normal; font-weight: 400; font-display: block; src: url('assets/fonts/be-vietnam-pro-latin-ext-400-normal.woff2') format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+    @font-face { font-family: 'Be Vietnam Pro'; font-style: normal; font-weight: 400; font-display: block; src: url('assets/fonts/be-vietnam-pro-latin-400-normal.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+    @font-face { font-family: 'Be Vietnam Pro'; font-style: normal; font-weight: 500; font-display: block; src: url('assets/fonts/be-vietnam-pro-vietnamese-500-normal.woff2') format('woff2'); unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB; }
+    @font-face { font-family: 'Be Vietnam Pro'; font-style: normal; font-weight: 500; font-display: block; src: url('assets/fonts/be-vietnam-pro-latin-ext-500-normal.woff2') format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+    @font-face { font-family: 'Be Vietnam Pro'; font-style: normal; font-weight: 500; font-display: block; src: url('assets/fonts/be-vietnam-pro-latin-500-normal.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+    @font-face { font-family: 'Be Vietnam Pro'; font-style: normal; font-weight: 600; font-display: block; src: url('assets/fonts/be-vietnam-pro-vietnamese-600-normal.woff2') format('woff2'); unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB; }
+    @font-face { font-family: 'Be Vietnam Pro'; font-style: normal; font-weight: 600; font-display: block; src: url('assets/fonts/be-vietnam-pro-latin-ext-600-normal.woff2') format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+    @font-face { font-family: 'Be Vietnam Pro'; font-style: normal; font-weight: 600; font-display: block; src: url('assets/fonts/be-vietnam-pro-latin-600-normal.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+    @font-face { font-family: 'Be Vietnam Pro'; font-style: normal; font-weight: 800; font-display: block; src: url('assets/fonts/be-vietnam-pro-vietnamese-800-normal.woff2') format('woff2'); unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB; }
+    @font-face { font-family: 'Be Vietnam Pro'; font-style: normal; font-weight: 800; font-display: block; src: url('assets/fonts/be-vietnam-pro-latin-ext-800-normal.woff2') format('woff2'); unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+    @font-face { font-family: 'Be Vietnam Pro'; font-style: normal; font-weight: 800; font-display: block; src: url('assets/fonts/be-vietnam-pro-latin-800-normal.woff2') format('woff2'); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+```
+
+## FILE: examples/ha-tang-one-era/project/hyperframes.json
+
+```json
+{
+  "$schema": "https://hyperframes.heygen.com/schema/hyperframes.json",
+  "registry": "https://raw.githubusercontent.com/heygen-com/hyperframes/main/registry",
+  "paths": {
+    "blocks": "compositions",
+    "components": "compositions/components",
+    "assets": "assets"
+  },
+  "media": {
+    "autoProxy": true
+  }
+}
+```
+
+## FILE: examples/ha-tang-one-era/project/meta.json
+
+```json
+{
+  "id": "probe",
+  "name": "probe",
+  "createdAt": "2026-11-10T03:02:06.519Z"
+}
+```
+
+## FILE: examples/ha-tang-one-era/project/package.json
+
+```json
+{
+  "name": "probe",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.9.28 preview",
+    "check": "npx --yes hyperframes@0.9.28 check",
+    "render": "npx --yes hyperframes@0.9.28 render",
+    "publish": "npx --yes hyperframes@0.9.28 publish"
+  }
+}
+```
+
+## FILE: requirements.txt
+
+```
+# Phiên bản đã dựng các video mẫu (khác phiên bản có thể đổi điểm ảnh — chạy scripts/doctor.py)
+numpy==2.5.3
+pillow==12.3.0
+opencv-python-headless==5.0.0.93
+shapely==2.2.0
+faster-whisper==1.2.1
 ```
 
 ## FILE: templates/ha-tang-flight/LOG.md
@@ -8918,6 +9644,56 @@ print(len(S), "cảnh; kiểm tra liền mạch:", all(abs(a["start"] + a["dur"]
 
 ## Không nhúng (có trong thư mục/zip)
 
+- examples/ha-tang-one-era/golden/g0001.50.jpg
+- examples/ha-tang-one-era/golden/g0005.50.jpg
+- examples/ha-tang-one-era/golden/g0014.00.jpg
+- examples/ha-tang-one-era/golden/g0022.00.jpg
+- examples/ha-tang-one-era/golden/g0030.00.jpg
+- examples/ha-tang-one-era/golden/g0033.00.jpg
+- examples/ha-tang-one-era/golden/g0038.40.jpg
+- examples/ha-tang-one-era/golden/g0047.00.jpg
+- examples/ha-tang-one-era/golden/g0055.00.jpg
+- examples/ha-tang-one-era/golden/g0061.00.jpg
+- examples/ha-tang-one-era/golden/g0065.00.jpg
+- examples/ha-tang-one-era/golden/g0073.60.jpg
+- examples/ha-tang-one-era/golden/g0077.00.jpg
+- examples/ha-tang-one-era/golden/g0089.10.jpg
+- examples/ha-tang-one-era/golden/g0096.00.jpg
+- examples/ha-tang-one-era/golden/g0102.00.jpg
+- examples/ha-tang-one-era/golden/g0107.50.jpg
+- examples/ha-tang-one-era/golden/g0117.00.jpg
+- examples/ha-tang-one-era/golden/g0124.00.jpg
+- examples/ha-tang-one-era/golden/g0128.50.jpg
+- examples/ha-tang-one-era/project/flight.json
+- examples/ha-tang-one-era/project/geo.json
+- examples/ha-tang-one-era/project/icons/add_road.svg
+- examples/ha-tang-one-era/project/icons/apartment.svg
+- examples/ha-tang-one-era/project/icons/calendar_month.svg
+- examples/ha-tang-one-era/project/icons/check_circle.svg
+- examples/ha-tang-one-era/project/icons/construction.svg
+- examples/ha-tang-one-era/project/icons/directions_car.svg
+- examples/ha-tang-one-era/project/icons/flight.svg
+- examples/ha-tang-one-era/project/icons/groups.svg
+- examples/ha-tang-one-era/project/icons/help.svg
+- examples/ha-tang-one-era/project/icons/hourglass_top.svg
+- examples/ha-tang-one-era/project/icons/landscape.svg
+- examples/ha-tang-one-era/project/icons/location_city.svg
+- examples/ha-tang-one-era/project/icons/payments.svg
+- examples/ha-tang-one-era/project/icons/percent.svg
+- examples/ha-tang-one-era/project/icons/route.svg
+- examples/ha-tang-one-era/project/icons/schedule.svg
+- examples/ha-tang-one-era/project/icons/straighten.svg
+- examples/ha-tang-one-era/project/icons/subway.svg
+- examples/ha-tang-one-era/project/icons/swap_horiz.svg
+- examples/ha-tang-one-era/project/icons/traffic.svg
+- examples/ha-tang-one-era/project/icons/train.svg
+- examples/ha-tang-one-era/project/icons/trending_up.svg
+- examples/ha-tang-one-era/project/icons/warning.svg
+- examples/ha-tang-one-era/project/sfx/impact.wav
+- examples/ha-tang-one-era/project/sfx/pop.wav
+- examples/ha-tang-one-era/project/sfx/riser.wav
+- examples/ha-tang-one-era/project/sfx/whoosh.wav
+- examples/ha-tang-one-era/project/vo.mp3
 - templates/ha-tang-flight/flight.json
 - templates/kinh-te-dia-phuong/assets/fonts/be-vietnam-pro-latin-400-normal.woff2
 - templates/kinh-te-dia-phuong/assets/fonts/be-vietnam-pro-latin-500-normal.woff2

@@ -26,6 +26,20 @@ Skill này đứng trên skill chính thức HyperFrames: `npx skills add heygen
 - `ffmpeg`.
 - Mạng tới: nền vệ tinh Esri (server.arcgisonline.com), các báo nguồn, Wikimedia/Pexels (footage), npm (icon Material Symbols, phông).
 
+## Đảm bảo máy khác làm ra video giống (BẮT BUỘC lần đầu)
+
+Sau khi cài, trên máy mới chạy:
+
+```bash
+cd parallax-bds-kinhte
+pip install -r requirements.txt
+bash examples/ha-tang-one-era/build.sh ~/dung-thu
+```
+
+Script tự kiểm phiên bản công cụ, tải lại đúng các ảnh vệ tinh/ảnh báo của video mẫu và đối chiếu từng điểm ảnh, dựng lại video
+mẫu rồi so 20 khung hình với khung chuẩn của video đã giao. Phải ra "TẤT CẢ ĐẦU VÀO KHỚP" và "20/20 mốc đạt" thì máy đó mới làm
+video giống. Thêm `--render` để xuất luôn video đầy đủ (~70 phút). Không đạt: xem `examples/ha-tang-one-era/README.md`.
+
 ## Ba phong cách có sẵn
 
 | Phong cách | Kết quả | Công cụ chính | Ví dụ |
@@ -50,3 +64,11 @@ Mỗi công cụ tự kiểm luật (nhịp, lặp hiệu ứng, tốc độ cam
 - `scripts/sat_grid.py` (MỚI): dò tuyến đường trên ảnh vệ tinh có lưới toạ độ khi OSM không phản hồi.
 - `flight.py`: CAMLOG.md có thêm "Mốc cần snapshot" (mọi lúc cửa sổ ảnh/thẻ logo/số lớn hiện) vì bộ kiểm HyperFrames không thấy chồng chéo giữa bản đồ và HUD.
 - Sửa lỗi template: cờ `lead=False` và `logo=""` không bị lọc mất.
+
+## Bản cập nhật kiểm máy mới (17/11/2026)
+
+- `examples/ha-tang-one-era/` (MỚI): video mẫu chuẩn dựng lại được từ đầu — danh sách đầu vào kèm hash điểm ảnh, 20 khung chuẩn, `build.sh`.
+- `scripts/doctor.py`, `requirements.txt` (MỚI): ghim và kiểm phiên bản numpy/Pillow/OpenCV/shapely/ffmpeg/node.
+- `scripts/verify_golden.py` (MỚI): so khung dựng với khung chuẩn bằng SSIM; ra ảnh so sánh cho mốc lệch.
+- Đã thử trên thư mục sạch: 18/18 đầu vào khớp, 20/20 khung đạt (SSIM 0,985–0,996); dịch một nhãn 80 px thì bị bắt (SSIM 0,949).
+- `examples/ha-tang-one-era/project/vo.mp3` là giọng đọc gốc của video mẫu — xoá nếu không muốn gửi kèm (xem README của ví dụ).
