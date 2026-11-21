@@ -27,6 +27,7 @@ function makeMap3(opts) {
   const addLine = (d, ly) => {
     const kind = ly.kind || "adm", w = ly.w || 5, id = ly.id || "";
     const g = el("g", { id, class: "lyr k-" + kind + (ly.cls ? " " + ly.cls : ""), opacity: ly.op ?? 0 });
+    if (ly.color) g.setAttribute("style", ["adm", "proj", "green", "route", "yel"].map((k) => `--${k}:${ly.color}`).join(";"));
     if (ly.fill) S(el("path", { d, class: "fill", id: id + "-fill", style: "opacity:0" }, g), 0);
     const ga = { d, class: "glow", id: id + "-glow" }, ca = { d, class: "core", id: id + "-core" };
     if (ly.len) { ga.pathLength = 100; ca.pathLength = 100; ga.class += " len"; ca.class += " len"; }
