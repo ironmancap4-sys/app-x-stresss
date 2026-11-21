@@ -9,7 +9,7 @@ Thông tin là các LỚP trên bản đồ (bật/tắt bằng sự kiện `ev`
 flight.json:
 { "duration", "audio", "gsap", "sat":[...], "points":{"k":[lng,lat]}, "blocks":"blocks.json", "blockH":{"g":m},
   "cam": [[t,lat,lng,Z,pitch,bearing], ...],
-  "layers":[{id,geo,kind,w,fill,len,color}], "links":[{id,a,b,bend,kind,w,color}], "circles":[{id,pt,r_m,kind,heat,lat}],
+  "layers":[{id,geo,kind,w,fill,len,color,glow}], "links":[{id,a,b,bend,kind,w,color,glow}], "circles":[{id,pt,r_m,kind,heat,lat}],
   "rings":[{id,pt,lat,t,km,out}], "movers":[{path,t,d,icon,out}],
   "labels":[{at,lx,ly,align,big,text,small,color,t,d,xl,count}], "pins":[{at,text,t,d,left}], "ground":[{at,text,t,d,size}],
   "ev":[{t,act:"draw|show|hide|dim|grow|fade",id,d,to}],

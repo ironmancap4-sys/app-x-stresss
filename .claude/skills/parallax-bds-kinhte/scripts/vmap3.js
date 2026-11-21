@@ -31,7 +31,8 @@ function makeMap3(opts) {
     if (ly.fill) S(el("path", { d, class: "fill", id: id + "-fill", style: "opacity:0" }, g), 0);
     const ga = { d, class: "glow", id: id + "-glow" }, ca = { d, class: "core", id: id + "-core" };
     if (ly.len) { ga.pathLength = 100; ca.pathLength = 100; ga.class += " len"; ca.class += " len"; }
-    S(el("path", ga, g), w * 3.2); S(el("path", ca, g), w);
+    const gl = ly.glow ?? 1, gp = el("path", ga, g); S(gp, w * 3.2 * Math.max(1, gl)); S(el("path", ca, g), w);
+    if (gl !== 1) gp.style.opacity = Math.min(1, 0.55 * gl);
     return g;
   };
   (opts.layers || []).forEach((ly) => { const [ns, key] = ly.geo.split(":");
